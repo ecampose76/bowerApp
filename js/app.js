@@ -631,7 +631,7 @@ function renderHome() {
     <div class="home-hero-plate">
       <div>
         <p class="home-title">${BRAND.fullName}</p>
-        <p class="home-title-sub">Staff training</p>
+        <p class="home-title-sub">Vegetable-forward &middot; Est. 2026</p>
       </div>
       <div class="home-account">
         ${authedUser ? `<p class="home-account-name">${authedUser.name || ""}</p>` : ""}
@@ -759,26 +759,35 @@ function renderHome() {
   options.className = "home-grid";
   options.innerHTML = `
     <div class="home-card" data-go="menu">
+      <span class="home-card-icon"><svg viewBox="0 0 16 16"><path d="M4 1v6a2 2 0 0 0 2 2v6M4 1a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2M4 1v8M12 1c-1.5 0-2.5 1.5-2.5 4S10.5 9 12 9v6M12 1v14"/></svg></span>
       <span class="nav-idx">01</span>
+      <p class="home-card-stat">${DISHES.length}</p>
       <p class="home-card-title">Food</p>
-      <span class="home-card-sub">Full menu</span>
+      <span class="home-card-sub">dishes across ${SECTION_ORDER.length} sections</span>
     </div>
     <div class="home-card" data-go="wine">
+      <span class="home-card-icon"><svg viewBox="0 0 16 16"><path d="M4 1h8l-1 6a3 3 0 0 1-6 0L4 1zM8 10v5M5.5 15h5"/></svg></span>
       <span class="nav-idx">02</span>
+      <p class="home-card-stat">${WINES.length + BOTTLE_WINES.length}</p>
       <p class="home-card-title">Wine</p>
-      <span class="home-card-sub">Glass, bottle &amp; pairing</span>
+      <span class="home-card-sub">by the glass &amp; bottle</span>
     </div>
     <div class="home-card" data-go="bar">
+      <span class="home-card-icon"><svg viewBox="0 0 16 16"><path d="M2 2h12l-5 6.5V14M8 8.5 2 2M6 14h4"/></svg></span>
       <span class="nav-idx">03</span>
+      <p class="home-card-stat">${COCKTAILS.length + CLASSIC_COCKTAILS.length}</p>
       <p class="home-card-title">Bar</p>
-      <span class="home-card-sub">Cocktails &amp; back bar</span>
+      <span class="home-card-sub">cocktails &amp; ${LIQUOR.length} back-bar spirits</span>
     </div>
     <div class="home-card" data-go="coffee">
+      <span class="home-card-icon"><svg viewBox="0 0 16 16"><path d="M2.5 6h9v4.5a3 3 0 0 1-3 3h-3a3 3 0 0 1-3-3V6zM11.5 7c1.5 0 2.5 1 2.5 2.2s-1 2.2-2.5 2.2M5 3.5c0-1 .8-1.2.8-2.2M8 3.5c0-1 .8-1.2.8-2.2"/></svg></span>
       <span class="nav-idx">04</span>
+      <p class="home-card-stat">${COFFEE_SIPHON.length}</p>
       <p class="home-card-title">Coffee</p>
-      <span class="home-card-sub">By the cup &amp; tableside siphon</span>
+      <span class="home-card-sub">tableside pours, plus by the cup</span>
     </div>
     <div class="home-card home-card-play" data-go="gameroom">
+      <span class="home-card-icon"><svg viewBox="0 0 16 16"><path d="M2 5.5 8 2l6 3.5v5L8 14l-6-3.5v-5z"/><path d="M2 5.5 8 9l6-3.5M8 9v5"/></svg></span>
       <span class="nav-idx">05</span>
       <span class="home-card-tag">Play</span>
       <p class="home-card-title">Game Room</p>
