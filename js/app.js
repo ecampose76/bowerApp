@@ -276,6 +276,7 @@ function render() {
   else if (current.view === "cocktail-type") renderCocktailTypeChooser();
   else if (current.view === "cocktail-list") renderCocktailList();
   else if (current.view === "classic-cocktail-list") renderClassicCocktailList();
+  else if (current.view === "mocktail-list") renderMocktailList();
   else if (current.view === "cocktail-detail") renderCocktailDetail(current.params.cocktailId);
   else if (current.view === "wine-type") renderWineTypeChooser();
   else if (current.view === "wine-bottle-list") renderByTheBottleList();
@@ -1183,6 +1184,10 @@ function renderCocktailTypeChooser() {
       <div class="home-icon-circle">&#127865;</div>
       <div class="home-option-text"><p>Classic Cocktails</p><span>Timeless recipes, by base spirit</span></div>
     </div>
+    <div class="home-option" data-go="mocktail">
+      <div class="home-icon-circle">&#127817;</div>
+      <div class="home-option-text"><p>Mocktails</p><span>Non-alcoholic, same garden thinking</span></div>
+    </div>
     <div class="home-option" data-go="liquor">
       <div class="home-icon-circle">&#127866;</div>
       <div class="home-option-text"><p>Liquor</p><span>The back bar, by category</span></div>
@@ -1190,6 +1195,7 @@ function renderCocktailTypeChooser() {
   `;
   options.querySelector('[data-go="house"]').onclick = () => go("cocktail-list");
   options.querySelector('[data-go="classic"]').onclick = () => go("classic-cocktail-list");
+  options.querySelector('[data-go="mocktail"]').onclick = () => go("mocktail-list");
   options.querySelector('[data-go="liquor"]').onclick = () => go("liquor-list");
   app.appendChild(options);
 }
@@ -1522,7 +1528,36 @@ function renderCocktailList() {
   app.appendChild(wrap);
 }
 
-function findCocktail(id) { return COCKTAILS.find(c => c.id === id) || CLASSIC_COCKTAILS.find(c => c.id === id); }
+function renderMocktailList() {
+  header("Mocktails");
+  const wrap = document.createElement("div");
+  const input = document.createElement("input");
+  input.className = "search-input";
+  input.placeholder = "Search mocktails";
+  wrap.appendChild(input);
+  const listWrap = document.createElement("div");
+  wrap.appendChild(listWrap);
+
+  function draw(filter) {
+    listWrap.innerHTML = "";
+    const filtered = MOCKTAILS.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
+    filtered.forEach(c => {
+      const row = document.createElement("div");
+      row.className = "list-row";
+      row.innerHTML = `<span class="list-row-main"><span class="dish-icon">&#127817;</span>${c.name}</span>`;
+      row.onclick = () => go("cocktail-detail", { cocktailId: c.id });
+      listWrap.appendChild(row);
+    });
+    if (!filtered.length) {
+      listWrap.innerHTML = `<p class="empty-note">No mocktails match that search.</p>`;
+    }
+  }
+  draw("");
+  input.oninput = () => draw(input.value);
+  app.appendChild(wrap);
+}
+
+function findCocktail(id) { return COCKTAILS.find(c => c.id === id) || CLASSIC_COCKTAILS.find(c => c.id === id) || (typeof MOCKTAILS !== "undefined" ? MOCKTAILS.find(c => c.id === id) : undefined); }
 
 function renderCocktailDetail(cocktailId) {
   const cocktail = findCocktail(cocktailId);

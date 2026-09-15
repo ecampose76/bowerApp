@@ -24,6 +24,7 @@ const FEATURES = {
   wineBTG: true,
   cocktails: true,
   classicCocktails: true,
+  mocktails: true,
   gameRoom: true
 };
 
