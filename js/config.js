@@ -54,3 +54,8 @@ const REVIEW_STREAK_RECORD = {
   best: 106,
   lastEndedDays: null
 };
+
+// Bower has no Houston Restaurant Weeks-style promo wine list (that's a
+// Prime131-specific feature). Stubbed empty so findWine()'s HRW_WINES
+// fallback in app.js never throws, even though no UI links to it.
+const HRW_WINES = [];

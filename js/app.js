@@ -840,10 +840,6 @@ function renderWineTypeChooser() {
   const options = document.createElement("div");
   options.className = "home-options";
   options.innerHTML = `
-    <div class="home-option" data-go="hrw">
-      <div class="home-icon-circle">&#127881;</div>
-      <div class="home-option-text"><p>HRW Wine Selections</p><span>Houston Restaurant Weeks list</span></div>
-    </div>
     <div class="home-option" data-go="glass">
       <div class="home-icon-circle">&#127863;</div>
       <div class="home-option-text"><p>By The Glass</p><span>Learn the full BTG list</span></div>
@@ -861,7 +857,6 @@ function renderWineTypeChooser() {
       <div class="home-option-text"><p>Pair Food with Wine</p><span>Start from the dish</span></div>
     </div>
   `;
-  options.querySelector('[data-go="hrw"]').onclick = () => go("hrw-list");
   options.querySelector('[data-go="glass"]').onclick = () => go("study-list");
   options.querySelector('[data-go="bottle"]').onclick = () => go("wine-bottle-list");
   options.querySelector('[data-go="pairwf"]').onclick = () => go("pairwf-list");
