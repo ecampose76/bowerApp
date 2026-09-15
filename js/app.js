@@ -277,6 +277,10 @@ function render() {
   else if (current.view === "cocktail-list") renderCocktailList();
   else if (current.view === "classic-cocktail-list") renderClassicCocktailList();
   else if (current.view === "mocktail-list") renderMocktailList();
+  else if (current.view === "coffee-type") renderCoffeeTypeChooser();
+  else if (current.view === "coffee-cup-list") renderCoffeeCupList();
+  else if (current.view === "coffee-siphon-list") renderCoffeeSiphonList();
+  else if (current.view === "coffee-siphon-card") renderCoffeeSiphonDetail(current.params.coffeeId);
   else if (current.view === "cocktail-detail") renderCocktailDetail(current.params.cocktailId);
   else if (current.view === "wine-type") renderWineTypeChooser();
   else if (current.view === "wine-bottle-list") renderByTheBottleList();
@@ -769,8 +773,13 @@ function renderHome() {
       <p class="home-card-title">Bar</p>
       <span class="home-card-sub">Cocktails &amp; back bar</span>
     </div>
-    <div class="home-card home-card-play" data-go="gameroom">
+    <div class="home-card" data-go="coffee">
       <span class="nav-idx">04</span>
+      <p class="home-card-title">Coffee</p>
+      <span class="home-card-sub">By the cup &amp; tableside siphon</span>
+    </div>
+    <div class="home-card home-card-play" data-go="gameroom">
+      <span class="nav-idx">05</span>
       <span class="home-card-tag">Play</span>
       <p class="home-card-title">Game Room</p>
       <span class="home-card-sub">Quiz, match, judgment calls</span>
@@ -778,6 +787,7 @@ function renderHome() {
   `;
   options.querySelector('[data-go="wine"]').onclick = () => go("wine-type");
   options.querySelector('[data-go="bar"]').onclick = () => go("cocktail-type");
+  options.querySelector('[data-go="coffee"]').onclick = () => go("coffee-type");
   options.querySelector('[data-go="menu"]').onclick = () => go("menu-list");
   options.querySelector('[data-go="gameroom"]').onclick = () => go("game-room");
   app.appendChild(options);
@@ -1163,6 +1173,181 @@ function renderPairFoodWineList() {
 
 function renderMenuList() {
   renderDishList("Food menu", "Search the menu", true);
+}
+
+const COFFEE_STRUCTURE_BANDS = {
+  acidity: ["Very Low", "Low", "Medium", "Bright", "Vibrant"],
+  sweetness: ["Dry", "Subtle", "Medium", "Sweet", "Very Sweet"],
+  body: ["Light", "Light(+)", "Medium", "Full", "Very Full"],
+  complexity: ["Simple", "Straightforward", "Layered", "Complex", "Very Complex"],
+  finish: ["Short", "Medium(-)", "Medium", "Medium(+)", "Long"]
+};
+
+function coffeeStructureBars(structure) {
+  const order = ["acidity", "sweetness", "body", "complexity", "finish"];
+  return order.map((key) => {
+    const val = structure[key];
+    if (!val) return "";
+    const band = COFFEE_STRUCTURE_BANDS[key][val - 1] || COFFEE_STRUCTURE_BANDS[key][0];
+    const width = val * 20;
+    return `<div class="bar-block"><div class="bar-track"><div class="bar-fill" style="width:${width}%;"></div></div><p>${band} ${key.charAt(0).toUpperCase() + key.slice(1)}</p></div>`;
+  }).join("");
+}
+
+function buildCoffeeFaceHTML(c, idx) {
+  const hasSellContent = c.guestDescription || (c.sellingPoints && c.sellingPoints.length) || c.arsenal;
+  const hasUnderstandContent = c.originNote || c.brewingNote || (c.flavorTags && c.flavorTags.length) || c.structure;
+  const hasKnowledgeContent = c.funFact || c.funFact2 || c.shortStory || c.moment || c.memory;
+
+  if (idx === 0) {
+    if (!hasSellContent) return `<p class="flip-label">1/3</p><p class="face-title">Sell it</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
+    return `
+      <p class="flip-label">1/3</p>
+      <p class="face-title">Sell it</p>
+      ${c.guestDescription ? `<p class="face-h3"><span class="ic">&#128172;</span> Guest description</p><p class="face-desc">${c.guestDescription}</p>` : ""}
+      ${c.sellingPoints && c.sellingPoints.length ? `<p class="face-h3"><span class="ic">&#10003;</span> Selling points</p>${c.sellingPoints.map(p => `<div class="point-row"><span class="ic">&#10003;</span><span>${p}</span></div>`).join("")}` : ""}
+      ${c.arsenal ? `<div class="arsenal-block"><p class="arsenal-label">Table-side line</p><p class="arsenal-text">${c.arsenal}</p></div>` : ""}
+    `;
+  } else if (idx === 1) {
+    if (!hasUnderstandContent) return `<p class="flip-label">2/3</p><p class="face-title">Understand it</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
+    return `
+      <p class="flip-label">2/3</p>
+      <p class="face-title">Understand it</p>
+      ${c.originNote ? `<p class="face-h3"><span class="ic">&#127811;</span> Origin</p><p class="face-desc" style="margin-bottom:14px;">${c.originNote}</p>` : ""}
+      ${c.brewingNote ? `<p class="face-h3"><span class="ic">&#9749;</span> Brewing note</p><p class="face-desc" style="margin-bottom:14px;">${c.brewingNote}</p>` : ""}
+      ${c.flavorTags && c.flavorTags.length ? `<p class="face-h3"><span class="ic">&#127815;</span> Flavor profile</p><div class="flavor-grid">${c.flavorTags.map(t => `<div class="flavor-item"><div class="icon">${getFlavorIcon(t)}</div><p>${t}</p></div>`).join("")}</div>` : ""}
+      ${c.structure ? `<p class="face-h3"><span class="ic">&#128202;</span> Structure</p>${coffeeStructureBars(c.structure)}` : ""}
+    `;
+  } else {
+    if (!hasKnowledgeContent) return `<p class="flip-label">3/3</p><p class="face-title">Barista knowledge</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
+    return `
+      <p class="flip-label">3/3</p>
+      <p class="face-title">Barista knowledge</p>
+      ${c.funFact || c.funFact2 ? `<p class="face-h3"><span class="ic">&#10024;</span> Fun facts</p>${c.funFact ? `<div class="fact-block"><p>${c.funFact}</p></div>` : ""}${c.funFact2 ? `<div class="fact-block"><p>${c.funFact2}</p></div>` : ""}` : ""}
+      ${c.shortStory ? `<p class="face-h3"><span class="ic">&#128214;</span> Short story</p><p class="face-desc" style="margin-bottom:14px;">${c.shortStory}</p>` : ""}
+      ${c.moment ? `<p class="face-h3"><span class="ic">&#128278;</span> The moment</p><p class="face-desc">${c.moment}</p>` : ""}
+      ${c.memory ? `<p class="face-h3"><span class="ic">&#128142;</span> The memory</p><p class="face-desc">${c.memory}</p>` : ""}
+    `;
+  }
+}
+
+function renderCoffeeFlipCard(c) {
+  const flipcard = document.createElement("div");
+  flipcard.className = "flipcard";
+  const inner = document.createElement("div");
+  inner.className = "flip-inner face-0";
+  inner.innerHTML = buildCoffeeFaceHTML(c, 0);
+  flipcard.appendChild(inner);
+
+  let faceIndex = 0;
+  flipcard.onclick = () => {
+    flipcard.classList.add("flipping");
+    setTimeout(() => {
+      faceIndex = (faceIndex + 1) % 3;
+      inner.className = "flip-inner face-" + faceIndex;
+      inner.innerHTML = buildCoffeeFaceHTML(c, faceIndex);
+      flipcard.classList.remove("flipping");
+    }, 200);
+  };
+
+  return flipcard;
+}
+
+function findCoffee(id) { return COFFEE_SIPHON.find(c => c.id === id); }
+
+function renderCoffeeTypeChooser() {
+  header("Coffee");
+
+  const options = document.createElement("div");
+  options.className = "home-options";
+  options.innerHTML = `
+    <div class="home-option" data-go="cup">
+      <div class="home-icon-circle">&#9749;</div>
+      <div class="home-option-text"><p>Coffee by the Cup</p><span>Château Belleville, our house assemblage</span></div>
+    </div>
+    <div class="home-option" data-go="siphon">
+      <div class="home-icon-circle">&#127871;</div>
+      <div class="home-option-text"><p>Tableside Siphon</p><span>Rotating single-origin, brewed at the table</span></div>
+    </div>
+  `;
+  options.querySelector('[data-go="cup"]').onclick = () => go("coffee-cup-list");
+  options.querySelector('[data-go="siphon"]').onclick = () => go("coffee-siphon-list");
+  app.appendChild(options);
+}
+
+function renderCoffeeCupList() {
+  header("Coffee by the Cup");
+  const sourceNote = document.createElement("p");
+  sourceNote.className = "hero-meta";
+  sourceNote.style.padding = "0 20px 12px";
+  sourceNote.textContent = "Sourced by Belleville Brûlerie, roasted in Paris.";
+  app.appendChild(sourceNote);
+
+  const listWrap = document.createElement("div");
+  COFFEE_BY_THE_CUP.forEach(c => {
+    const row = document.createElement("div");
+    row.className = "list-row";
+    row.innerHTML = `<span class="list-row-main"><span class="dish-icon">&#9749;</span>${c.name}<br><span class="hero-meta" style="margin:2px 0 0;">${c.description}</span></span><span class="list-row-price">$${c.price}</span>`;
+    listWrap.appendChild(row);
+  });
+  app.appendChild(listWrap);
+}
+
+function renderCoffeeSiphonList() {
+  header("Tableside Siphon");
+  const note = document.createElement("p");
+  note.className = "hero-meta";
+  note.style.padding = "0 20px 12px";
+  note.textContent = "An immersion brewing method using gravity and heat, for a bolder cup with more texture. Recommended for two guests.";
+  app.appendChild(note);
+
+  const listWrap = document.createElement("div");
+  COFFEE_SIPHON.forEach(c => {
+    const row = document.createElement("div");
+    row.className = "list-row";
+    row.innerHTML = `<span class="list-row-main"><span class="dish-icon">&#127871;</span>${c.name}<br><span class="hero-meta" style="margin:2px 0 0;">${c.region}</span></span><span class="list-row-price">$${c.price}</span>`;
+    row.onclick = () => go("coffee-siphon-card", { coffeeId: c.id });
+    listWrap.appendChild(row);
+  });
+  app.appendChild(listWrap);
+}
+
+function renderCoffeeSiphonDetail(coffeeId) {
+  const coffee = findCoffee(coffeeId) || COFFEE_SIPHON[0];
+  header("Tableside Siphon");
+
+  const hero = document.createElement("div");
+  hero.innerHTML = `
+    <p class="hero-name">${coffee.name}</p>
+    <p class="hero-meta">${coffee.process}</p>
+    <p class="hero-meta">${coffee.region}</p>
+    <p class="hero-meta strong">Producer: ${coffee.producer}</p>
+    ${coffee.recommendedFor ? `<p class="hero-meta strong">${coffee.recommendedFor}</p>` : ""}
+    <p class="hero-price"><span class="hero-price-amount">$${coffee.price}</span><span class="hero-price-label">per service</span></p>
+  `;
+  app.appendChild(hero);
+
+  if (coffee.pairingDishIds && coffee.pairingDishIds.length) {
+    const pairsLabel = document.createElement("p");
+    pairsLabel.className = "pairs-label";
+    pairsLabel.innerHTML = `<span class="ic">&#127860;</span>Pairs with`;
+    app.appendChild(pairsLabel);
+
+    const pillRow = document.createElement("div");
+    pillRow.className = "pill-row";
+    coffee.pairingDishIds.forEach(dishId => {
+      const dish = findDish(dishId);
+      if (!dish) return;
+      const pill = document.createElement("button");
+      pill.className = "pill";
+      pill.textContent = dish.name;
+      pill.onclick = () => go("dish-detail", { dishId: dish.id });
+      pillRow.appendChild(pill);
+    });
+    app.appendChild(pillRow);
+  }
+
+  app.appendChild(renderCoffeeFlipCard(coffee));
 }
 
 function renderCocktailTypeChooser() {
