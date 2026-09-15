@@ -1,50 +1,82 @@
 /* Self-hosted fonts — cached by the service worker like every other
    asset, so type renders correctly even on the venue's weak wifi
    instead of depending on a live Google Fonts fetch every load. */
-@font-face { font-family:'Oswald'; font-style:normal; font-weight:500; font-display:swap; src:url('../fonts/oswald-latin-500-normal.woff2') format('woff2'); }
-@font-face { font-family:'Oswald'; font-style:normal; font-weight:600; font-display:swap; src:url('../fonts/oswald-latin-600-normal.woff2') format('woff2'); }
-@font-face { font-family:'Oswald'; font-style:normal; font-weight:700; font-display:swap; src:url('../fonts/oswald-latin-700-normal.woff2') format('woff2'); }
-@font-face { font-family:'Inter'; font-style:normal; font-weight:400; font-display:swap; src:url('../fonts/inter-latin-400-normal.woff2') format('woff2'); }
-@font-face { font-family:'Inter'; font-style:normal; font-weight:500; font-display:swap; src:url('../fonts/inter-latin-500-normal.woff2') format('woff2'); }
-@font-face { font-family:'Inter'; font-style:normal; font-weight:600; font-display:swap; src:url('../fonts/inter-latin-600-normal.woff2') format('woff2'); }
-@font-face { font-family:'Inter'; font-style:normal; font-weight:700; font-display:swap; src:url('../fonts/inter-latin-700-normal.woff2') format('woff2'); }
-@font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:400; font-display:swap; src:url('../fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2'); }
-@font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:500; font-display:swap; src:url('../fonts/jetbrains-mono-latin-500-normal.woff2') format('woff2'); }
-@font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:700; font-display:swap; src:url('../fonts/jetbrains-mono-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family:'Fraunces'; font-style:normal; font-weight:400; font-display:swap; src:url('../fonts/fraunces-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family:'Fraunces'; font-style:normal; font-weight:500; font-display:swap; src:url('../fonts/fraunces-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family:'Fraunces'; font-style:normal; font-weight:600; font-display:swap; src:url('../fonts/fraunces-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family:'Fraunces'; font-style:normal; font-weight:700; font-display:swap; src:url('../fonts/fraunces-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family:'Fraunces'; font-style:italic; font-weight:500; font-display:swap; src:url('../fonts/fraunces-latin-500-italic.woff2') format('woff2'); }
+@font-face { font-family:'Fraunces'; font-style:italic; font-weight:600; font-display:swap; src:url('../fonts/fraunces-latin-600-italic.woff2') format('woff2'); }
+@font-face { font-family:'Public Sans'; font-style:normal; font-weight:400; font-display:swap; src:url('../fonts/public-sans-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family:'Public Sans'; font-style:normal; font-weight:500; font-display:swap; src:url('../fonts/public-sans-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family:'Public Sans'; font-style:normal; font-weight:600; font-display:swap; src:url('../fonts/public-sans-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family:'Public Sans'; font-style:normal; font-weight:700; font-display:swap; src:url('../fonts/public-sans-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family:'Space Mono'; font-style:normal; font-weight:400; font-display:swap; src:url('../fonts/space-mono-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family:'Space Mono'; font-style:normal; font-weight:700; font-display:swap; src:url('../fonts/space-mono-latin-700-normal.woff2') format('woff2'); }
 
 :root {
-  /* ===== Prime 131 structural-industrial tokens (design system v1.0) ===== */
-  --sumi-900: #0B0A08;   /* void */
-  --sumi-700: #17130E;   /* surface */
-  --sumi-500: #241A12;   /* wood / mid-dark */
-  --washi-100: #0B0A08;  /* base bg = void */
-  --washi-200: #17130E;  /* panel bg = surface */
-  --washi-300: #2A2118;  /* structural divider, 2px */
-  --washi-300-soft: #1C1712; /* nested divider, 1px */
-  --shoyu-700: #EDE6D8;  /* text primary */
-  --shoyu-500: #B7AD9A;  /* text secondary */
-  --shoyu-300: #7A7266;  /* text muted */
-  --shoyu-200: #5A5246;  /* text faint / indices / chevrons */
-  --bronze-600: #8A4E2A; /* rust 700 */
-  --bronze-500: #A8531E; /* rust 600 — primary accent */
-  --bronze-200: #C97A42; /* rust 400 — accent text on dark */
-  --ink-on-rust: #100E0C;
-  --ink-on-rust-soft: #3A2313;
-  --neon: #FF2D55;       /* rare accent only */
-  --wasabi-500: #5C8E4F;
-  --error-600: #8A3F2C;
-  --error-500: #C0463F;
+  /* ===== Bower "Pressed Herbarium" tokens — same token names as the
+     shared engine's design system, entirely new light botanical values.
+     Naming kept for engine compatibility; think of sumi/washi/shoyu/bronze
+     as generic void/panel/ink/accent slots, not literal Japanese terms
+     here. ===== */
+  --sumi-900: #F3EEDE;   /* sunken/inset tone (search inputs, flip-card backs, fact blocks) — same as page bg, "cut into" the page */
+  --sumi-700: #FBF8EF;   /* raised card surface (home cards, list rows, panels) */
+  --sumi-500: #EDE5CD;   /* mid wash, light wood-toned */
+  --washi-100: #F3EEDE;  /* base page bg = warm parchment ivory */
+  --washi-200: #FBF8EF;  /* panel bg = raised card-stock white */
+  --washi-300: #DCD2B4;  /* structural divider — soft sage-taupe hairline */
+  --washi-300-soft: #E9E1C9; /* nested divider, lighter */
+  --shoyu-700: #2C3323;  /* text primary — deep botanical ink-green */
+  --shoyu-500: #64705A;  /* text secondary — muted sage */
+  --shoyu-300: #96977F;  /* text muted — pale sage-taupe */
+  --shoyu-200: #B7B79C;  /* text faint / indices / chevrons */
+  --bronze-600: #35502F; /* deep moss */
+  --bronze-500: #4C7440; /* primary accent — rich fern/moss green */
+  --bronze-200: #5E8A4E; /* accent text on light bg */
+  --ink-on-rust: #FBF8EF;      /* text on filled-green surfaces */
+  --ink-on-rust-soft: #DCE8D1; /* muted text on filled-green surfaces */
+  --neon: #BE7A72;       /* rare accent — dusty pressed-rose */
+  --wasabi-500: #B99123; /* success/mastery — honeyed gold, distinct from primary green */
+  --error-600: #8C4438;
+  --error-500: #B65A48;
 
   --flipcard-height: 460px;
+  --radius: 16px;
+  --radius-sm: 9px;
 
-  --font-display: 'Oswald', sans-serif;
-  --font-body: 'Inter', -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Public Sans', -apple-system, sans-serif;
+  --font-mono: 'Space Mono', monospace;
 
   --press-duration: 120ms;
-  --focus-ring: 0 0 0 2px var(--sumi-900), 0 0 0 4px var(--neon);
+  --focus-ring: 0 0 0 2px var(--washi-100), 0 0 0 4px var(--neon);
 }
 * { box-sizing: border-box; border-radius: 0; }
+
+/* Herbarium soft-edge pass — rounded, card-stock corners applied to every
+   card/surface/control in one place, rather than touching each rule's
+   own declaration. Deliberately excludes .list-row and hairline dividers,
+   which stay flat-edged for a crisp "specimen label" read. */
+.home-card, .home-option, .search-input, .pill, .chip, .nav-chip,
+.flip-inner, .dish-flip-inner, .footer-btn, .mc-btn, .wcard, .match-tile,
+.confirm-card, .auth-input, .auth-submit, .milestone-strip, .arsenal-block,
+.fact-block, .flavor-item, .asort-well, .asort-placed, .asort-active,
+.somm-card, .somm-btn, .speed-toggle, .quiz-opt, .seq-slot, .seq-chip,
+.learning-card, .video-frame, .illo-frame,
+.followup-chip, .btn-start, .confidence-btn,
+.imposter-tile, .theme-toggle, .streak-strip, .wotd-strip, .wotd-shuffle,
+.auth-pin-toggle, .confirm-cancel, .confirm-ok, .home-hero-plate,
+.knockout-hint-btn, .asort-fallback-btn, .intro-meta-row, .auth-stamp,
+.complete-badge, .somm-card, .list-row.active {
+  border-radius: var(--radius);
+}
+.dot, .style-dot, .wcard-badge, .asort-badge, .play-btn, .mastery-fill,
+.bar-fill, .mini-fill, .timer-fill, .mod-dot {
+  border-radius: 50%;
+}
+.bar-fill, .mini-fill, .timer-fill { border-radius: var(--radius-sm); }
+
 
 html, body {
   margin: 0; padding: 0;
@@ -126,8 +158,8 @@ button, input {
 .home-hero { margin: 0; }
 .home-hero-plate {
   background: var(--bronze-500);
-  clip-path: polygon(0 0, 100% 0, 100% 82%, 90% 100%, 0 100%);
-  padding: 16px 16px 20px;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 18px 18px 22px;
   margin: 0;
   display: flex; align-items: flex-start; justify-content: space-between;
   position: relative;
@@ -140,17 +172,18 @@ button, input {
 }
 .home-logout-btn {
   background: none; border: 1px solid var(--ink-on-rust-soft); color: var(--ink-on-rust);
+  border-radius: var(--radius-sm);
   font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;
   padding: 4px 9px; cursor: pointer;
 }
 .home-logout-btn:active { transform: scale(0.97); }
 .home-hero-plate::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
-  background: repeating-linear-gradient(90deg, var(--washi-100) 0 6px, transparent 6px 8px);
+  content: ""; position: absolute; left: 18px; right: 18px; bottom: 8px; height: 1px;
+  background: repeating-linear-gradient(90deg, var(--ink-on-rust-soft) 0 5px, transparent 5px 10px);
 }
 .home-title {
-  font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--ink-on-rust);
-  letter-spacing: 0.3px; text-transform: uppercase; margin: 0;
+  font-family: var(--font-display); font-size: 24px; font-weight: 600; font-style: italic; color: var(--ink-on-rust);
+  letter-spacing: 0; margin: 0;
 }
 .home-title-sub {
   font-family: var(--font-mono); font-size: 9px; color: var(--ink-on-rust-soft);
@@ -163,6 +196,7 @@ button, input {
   display: flex; align-items: center; gap: 14px;
 }
 .home-icon-circle { display: none; }
+
 
 /* Top-level home grid: bordered nav cells, solid accent on the primary/play cell only.
    flex: 1 consumes whatever room is left in #app.home-view's fixed
@@ -189,8 +223,8 @@ button, input {
 }
 .home-card-play .nav-idx { color: var(--ink-on-rust-soft); }
 .home-card-title {
-  font-family: var(--font-display); font-size: 15px; font-weight: 600;
-  color: var(--shoyu-700); margin: 2px 0 0; text-transform: uppercase; letter-spacing: 0.4px;
+  font-family: var(--font-display); font-size: 18px; font-weight: 600;
+  color: var(--shoyu-700); margin: 2px 0 0; letter-spacing: 0;
 }
 .home-card-sub { font-size: 11px; color: var(--shoyu-300); line-height: 1.35; }
 .home-card-play {
@@ -237,10 +271,10 @@ button, input {
 .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bronze-500); flex-shrink: 0; }
 .dot.wasabi { background: var(--wasabi-500); }
 .style-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-.style-dot.sparkling { background: #D9B98A; }
+.style-dot.sparkling { background: #D9C9A0; }
 .style-dot.white { background: var(--washi-300); border: 1px solid var(--shoyu-300); }
+.style-dot.rosé { background: var(--neon); }
 .style-dot.red { background: var(--bronze-600); }
-.style-dot.sake { background: var(--bronze-500); }
 .style-dot.dessert { background: var(--wasabi-500); }
 .dish-icon { font-size: 15px; flex-shrink: 0; }
 
@@ -259,7 +293,7 @@ button, input {
 
 /* Wine / dish hero header */
 .hero-name {
-  font-family: var(--font-display); font-size: 26px; font-weight: 700;
+  font-family: var(--font-display); font-size: 27px; font-weight: 600; font-style: italic;
   color: var(--shoyu-700); margin: 0 0 4px; line-height: 1.15;
 }
 .hero-meta { font-size: 13px; color: var(--shoyu-300); margin: 0 0 2px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.3px; }
@@ -303,8 +337,8 @@ button, input {
   text-transform: uppercase; letter-spacing: 1px; margin: 0 0 4px;
 }
 .face-title {
-  font-family: var(--font-display); font-size: 20px; font-weight: 700;
-  color: var(--shoyu-700); margin: 0 0 14px; text-transform: uppercase; letter-spacing: 0.3px;
+  font-family: var(--font-display); font-size: 21px; font-weight: 600;
+  color: var(--shoyu-700); margin: 0 0 14px; letter-spacing: 0;
 }
 .face-h3 {
   font-family: var(--font-body); font-size: 15px; font-weight: 600;
@@ -409,7 +443,7 @@ button, input {
   font-family: var(--font-mono); font-size: 10px; color: var(--bronze-200);
   text-transform: uppercase; letter-spacing: 1px; margin: 0 0 4px;
 }
-.dish-flip-title { font-size: 18px; font-weight: 700; color: var(--shoyu-700); margin: 0 0 14px; display: flex; align-items: center; gap: 7px; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.3px; }
+.dish-flip-title { font-size: 20px; font-weight: 600; font-style: italic; color: var(--shoyu-700); margin: 0 0 14px; display: flex; align-items: center; gap: 7px; font-family: var(--font-display); letter-spacing: 0; }
 .ingredient-list { margin: 0; padding: 0; list-style: none; }
 .ingredient-list li {
   font-size: 14px; color: var(--shoyu-500); line-height: 1.5;
@@ -555,10 +589,10 @@ button, input {
    would clash with the app's warm bronze identity) -- deep red through
    amber to wasabi green, so "3" reads as a real midpoint instead of
    disappearing against the dark background. */
-.confidence-btn[data-rating="1"] { background: #9C3B2E; color: var(--shoyu-700); }
-.confidence-btn[data-rating="2"] { background: #B15A2A; color: var(--shoyu-700); }
-.confidence-btn[data-rating="3"] { background: #B98026; color: var(--ink-on-rust); }
-.confidence-btn[data-rating="4"] { background: #8FA042; color: var(--ink-on-rust); }
+.confidence-btn[data-rating="1"] { background: #A6483A; color: var(--washi-100); }
+.confidence-btn[data-rating="2"] { background: #BC7847; color: var(--washi-100); }
+.confidence-btn[data-rating="3"] { background: #C2A23A; color: var(--ink-on-rust); }
+.confidence-btn[data-rating="4"] { background: #8FA565; color: var(--ink-on-rust); }
 .confidence-btn[data-rating="5"] { background: var(--wasabi-500); color: var(--ink-on-rust); }
 
 /* Answer reconnects to clue */
@@ -634,7 +668,7 @@ button, input {
   text-transform: uppercase; letter-spacing: 0.5px; min-height: 12px; margin-bottom: 8px;
 }
 .wcard-icon { font-size: 26px; margin-bottom: 8px; }
-.wcard-name { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--shoyu-700); margin: 0 0 4px; line-height: 1.2; }
+.wcard-name { font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--shoyu-700); margin: 0 0 4px; line-height: 1.2; }
 .wcard-meta { font-family: var(--font-mono); font-size: 9px; color: var(--shoyu-300); line-height: 1.5; }
 .knockout-explain { margin-top: 16px; }
 .knockout-hint-row { display: flex; justify-content: center; margin: 12px 0 0; }
@@ -811,7 +845,7 @@ button, input {
 /* Module cover screen */
 .intro-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; }
 .intro-eyebrow { font-family: var(--font-mono); font-size: 10px; color: var(--bronze-200); text-transform: uppercase; letter-spacing: 0.6px; }
-.intro-title { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--shoyu-700); margin: 0; line-height: 1.15; }
+.intro-title { font-family: var(--font-display); font-size: 28px; font-weight: 600; font-style: italic; color: var(--shoyu-700); margin: 0; line-height: 1.15; }
 .intro-meta-row { display: flex; gap: 0; border: 2px solid var(--washi-300); }
 .intro-meta { flex: 1; padding: 10px 12px; border-right: 1px solid var(--washi-300-soft); }
 .intro-meta:last-child { border-right: none; }
@@ -826,7 +860,7 @@ button, input {
 .dot-seg.filled { background: var(--bronze-500); }
 .slide-body { flex: 1; display: flex; flex-direction: column; }
 .slide-kicker { font-family: var(--font-mono); font-size: 10px; color: var(--bronze-200); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 8px; }
-.slide-title { font-family: var(--font-display); font-size: 21px; font-weight: 700; color: var(--shoyu-700); margin: 0 0 12px; line-height: 1.2; }
+.slide-title { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--shoyu-700); margin: 0 0 12px; line-height: 1.2; }
 .slide-text { font-size: 14.5px; color: var(--shoyu-500); line-height: 1.65; margin: 0 0 10px; }
 .illo-frame { border: 2px solid var(--washi-300); background: var(--sumi-700); padding: 14px; margin-bottom: 14px; min-height: 100px; display: flex; align-items: center; justify-content: center; }
 
@@ -864,7 +898,7 @@ button, input {
 /* Completion screen — reuses .milestone-strip for the celebration line */
 .complete-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 14px; }
 .complete-badge { width: 64px; height: 64px; border: 2px solid var(--bronze-500); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 26px; color: var(--bronze-200); }
-.complete-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--shoyu-700); margin: 0; }
+.complete-title { font-family: var(--font-display); font-size: 24px; font-weight: 600; font-style: italic; color: var(--shoyu-700); margin: 0; }
 .complete-sub { font-size: 13.5px; color: var(--shoyu-500); margin: 0; max-width: 260px; }
 
 /* ============================================================
