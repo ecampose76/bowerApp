@@ -22,8 +22,6 @@
   --moss: #8CA36B; --moss-ink: #263A1B; --moss-ink-soft: #4F6142;
   --plum: #B79BC0; --plum-ink: #40304A; --plum-ink-soft: #6B5A73;
   --charcoal: #232E1F; --cream-on-charcoal: #F6F1E4; --cream-on-charcoal-soft: #ACB59F;
-  --timber: #7A5738; --timber-dark: #5E4229; --timber-light: #9A7550;
-  --soil: #4A3A28; --paper: #F1E9D2; --paper-shadow: #DCCFA9;
 
   --sumi-900: #FDFBF3;   /* inset tone (search fields, card backs) */
   --sumi-700: #FDFBF3;   /* raised tile surface */
@@ -166,56 +164,37 @@ button, input {
 .section-toggle:first-child { margin-top: 0; }
 .section-chevron { color: var(--shoyu-200); font-size: 14px; font-family: var(--font-mono); }
 
-/* Home screen — you arrive at the garden gate. */
+/* Home screen */
 .home-hero { margin: 0; }
 .home-hero-plate {
-  background:
-    repeating-linear-gradient(45deg, var(--timber-light) 0 2px, transparent 2px 22px),
-    repeating-linear-gradient(-45deg, var(--timber-dark) 0 2px, transparent 2px 22px),
-    var(--timber);
-  border-radius: 0 0 55% 55% / 0 0 34px 34px;
-  padding: 30px 22px 34px;
+  background: var(--charcoal);
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 20px 20px 24px;
   margin: 0;
-  display: flex; align-items: flex-start; justify-content: center;
+  display: flex; align-items: flex-start; justify-content: space-between;
   position: relative;
-  min-height: 108px;
 }
-.home-account {
-  position: absolute; top: 14px; right: 16px; text-align: right; flex-shrink: 0;
-  background: var(--paper); padding: 6px 10px 7px; transform: rotate(3deg);
-  box-shadow: 0 2px 0 rgba(0,0,0,0.15);
-}
-.home-account::before {
-  content: ""; position: absolute; top: -5px; left: 50%; margin-left: -3px;
-  width: 6px; height: 6px; background: var(--timber-dark); border-radius: 50%;
-}
+.home-account { text-align: right; flex-shrink: 0; padding-left: 12px; }
 .home-account-name {
-  font-family: var(--font-body); font-size: 10px; color: var(--shoyu-500);
-  letter-spacing: 0; margin: 0 0 3px; max-width: 110px;
+  font-family: var(--font-body); font-size: 11px; color: var(--shoyu-300);
+  letter-spacing: 0; margin: 0 0 4px; max-width: 140px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .home-logout-btn {
-  background: none; border: none; color: var(--terracotta-ink);
-  font-family: var(--font-display); font-size: 10px; font-weight: 700; text-decoration: underline;
-  padding: 0; cursor: pointer;
+  background: var(--washi-100); border: none; color: var(--charcoal);
+  border-radius: 999px;
+  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  padding: 6px 14px; cursor: pointer;
 }
-.home-logout-btn:active { opacity: 0.6; }
-.home-hero-plate::after {
-  content: ""; position: absolute; left: 50%; top: 0; width: 3px; height: 100%;
-  background: rgba(0,0,0,0.15); margin-left: -1.5px;
-}
+.home-logout-btn:active { transform: scale(0.97); }
+.home-hero-plate::after { content: none; }
 .home-title {
-  font-family: var(--font-display); font-size: 25px; font-weight: 800; color: var(--paper);
-  letter-spacing: -0.3px; margin: 0; text-align: center;
-  background: var(--charcoal);
-  padding: 8px 22px; transform: rotate(-1.5deg);
-  box-shadow: 0 3px 0 rgba(0,0,0,0.2);
-  position: relative; z-index: 1;
+  font-family: var(--font-display); font-size: 26px; font-weight: 800; color: var(--cream-on-charcoal);
+  letter-spacing: -0.3px; margin: 0;
 }
 .home-title-sub {
-  font-family: var(--font-body); font-size: 10px; color: var(--timber-dark);
-  letter-spacing: 0.3px; margin: 8px 0 0; text-align: center; width: 100%;
-  position: absolute; left: 0; bottom: 10px; opacity: 0.8;
+  font-family: var(--font-body); font-size: 11px; color: var(--shoyu-300);
+  letter-spacing: 0; margin: 4px 0 0;
 }
 .home-options { display: flex; flex-direction: column; gap: 10px; padding: 12px; }
 .home-option {
@@ -229,32 +208,17 @@ button, input {
    color-blocked cards, first card spanning full width as a featured
    tile, matching a real dashboard's varied-size bento layout rather
    than a uniform grid or a text list. */
-/* Top-level home: a garden bed map, not a card grid. Named areas give
-   each section a genuinely different plot size and shape; the gap
-   color reads as the gravel path between beds. */
 .home-grid {
-  display: grid;
-  grid-template-columns: 1.15fr 1fr;
-  grid-template-areas:
-    "food food"
-    "wine bar"
-    "coffee bar"
-    "game game";
-  gap: 10px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
   flex: 1; align-content: start;
   margin: 0; padding: 14px; overflow-y: auto;
-  background: var(--soil);
 }
-.home-card:nth-child(1) { grid-area: food; clip-path: polygon(0 0, 100% 0, 100% 92%, 94% 100%, 0 100%); }
-.home-card:nth-child(2) { grid-area: wine; clip-path: polygon(0 0, 94% 0, 100% 8%, 100% 100%, 6% 100%, 0 92%); }
-.home-card:nth-child(3) { grid-area: bar; clip-path: polygon(6% 0, 100% 0, 100% 100%, 0 100%, 0 6%); }
-.home-card:nth-child(4) { grid-area: coffee; clip-path: polygon(0 0, 100% 0, 100% 100%, 8% 100%, 0 92%); }
-.home-card.home-card-play { grid-area: game; clip-path: polygon(4% 0, 100% 0, 100% 88%, 96% 100%, 0 100%, 0 12%); }
+.home-card:first-child { grid-column: 1 / -1; }
 .home-card {
   background: var(--terracotta); color: var(--terracotta-ink);
   border: none; padding: 18px; cursor: pointer;
   display: flex; flex-direction: column; justify-content: flex-end; gap: 3px;
-  min-height: 118px; position: relative; overflow: hidden;
+  min-height: 128px; position: relative; overflow: hidden;
 }
 .home-card:nth-child(1) { background: var(--terracotta); color: var(--terracotta-ink); }
 .home-card:nth-child(2) { background: var(--moss); color: var(--moss-ink); }
@@ -353,20 +317,18 @@ button, input {
 }
 .list-row.active .list-row-price { background: var(--washi-200); color: var(--terracotta-ink); }
 
-/* Nav carousel chips — plant marker stakes in a row, stuck along a
-   soil-toned strip, not a fused tab bar. */
+/* Nav carousel chips */
 .nav-chips {
-  display: flex; gap: 8px; overflow-x: auto; padding: 10px 8px 14px;
-  margin-bottom: 14px; border: none; background: var(--soil);
+  display: flex; gap: 0; overflow-x: auto; padding-bottom: 0;
+  margin-bottom: 14px; border: 2px solid var(--washi-300);
 }
 .nav-chip {
-  font-family: var(--font-display); font-size: 11px; font-weight: 700; padding: 8px 13px 12px;
-  background: var(--paper); color: var(--timber-dark);
-  white-space: nowrap; cursor: pointer; border: none;
-  flex-shrink: 0;
-  clip-path: polygon(0 0, 100% 0, 100% 78%, 50% 100%, 0 78%);
+  font-family: var(--font-mono); font-size: 11px; padding: 9px 14px;
+  background: var(--washi-200); color: var(--shoyu-300);
+  white-space: nowrap; cursor: pointer; border: none; border-right: 1px solid var(--washi-300-soft);
+  flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.4px;
 }
-.nav-chip.active { background: var(--moss); color: var(--moss-ink); }
+.nav-chip.active { background: var(--bronze-500); color: var(--ink-on-rust); font-weight: 700; }
 
 /* Wine / dish hero header */
 .hero-name {
@@ -397,31 +359,23 @@ button, input {
 .pill:nth-child(even) { transform: none; }
 .pill.active { background: var(--bronze-500); border-color: var(--bronze-500); border-style: solid; color: var(--ink-on-rust); font-weight: 700; }
 
-/* Flip card — an actual seed packet pulled from the rack: kraft-paper
-   body, a torn zigzag top edge in a face-specific accent, not a
-   bordered box or a flat color panel. */
+/* Flip card — reimagined as a mounted specimen page with pages
+/* Flip card — a bold color-blocked panel per face, matching the
+   reference's saturated stat cards, not a bordered box or a page. */
 .flipcard {
-  height: var(--flipcard-height); margin-top: 24px; cursor: pointer; perspective: 1000px;
+  height: var(--flipcard-height); margin-top: 20px; cursor: pointer; perspective: 1000px;
   position: relative;
 }
 .flip-inner {
-  width: 100%; height: 100%; padding: 30px 22px 24px; border: none;
+  width: 100%; height: 100%; padding: 24px 22px; border: none;
   overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column;
   transition: transform 0.2s ease-in-out; transform: rotateY(0deg);
-  background: var(--paper); position: relative;
-  clip-path: polygon(0 5%, 7% 1%, 14% 5%, 21% 1%, 28% 5%, 35% 1%, 42% 5%, 50% 1%, 58% 5%, 65% 1%, 72% 5%, 79% 1%, 86% 5%, 93% 1%, 100% 5%, 100% 100%, 0 100%);
-  box-shadow: -3px 3px 0 rgba(0,0,0,0.08);
+  background: var(--terracotta); position: relative;
 }
 .flipcard.flipping .flip-inner { transform: rotateY(90deg); }
-.flip-inner::before {
-  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 26px;
-}
-.flip-inner.face-0 { --face-accent: var(--terracotta); color: var(--terracotta-ink); --ink-soft: var(--terracotta-ink-soft); transform: rotate(-0.8deg); }
-.flip-inner.face-1 { --face-accent: var(--moss); color: var(--moss-ink); --ink-soft: var(--moss-ink-soft); transform: rotate(0.6deg); }
-.flip-inner.face-2 { --face-accent: var(--charcoal); color: var(--charcoal); --ink-soft: var(--shoyu-500); transform: rotate(-0.4deg); }
-.flip-inner.face-0::before, .flip-inner.face-1::before, .flip-inner.face-2::before { background: var(--face-accent); }
-.flipcard.flipping .flip-inner.face-0, .flipcard.flipping .flip-inner.face-1, .flipcard.flipping .flip-inner.face-2 { transform: rotateY(90deg); }
-
+.flip-inner.face-0 { background: var(--terracotta); color: var(--terracotta-ink); --ink-soft: var(--terracotta-ink-soft); }
+.flip-inner.face-1 { background: var(--moss); color: var(--moss-ink); --ink-soft: var(--moss-ink-soft); }
+.flip-inner.face-2 { background: var(--charcoal); color: var(--cream-on-charcoal); --ink-soft: var(--cream-on-charcoal-soft); }
 
 .flip-label {
   font-family: var(--font-display); font-size: 11px; font-weight: 700;
@@ -570,39 +524,28 @@ button, input {
   display: flex; align-items: center; justify-content: center;
 }
 
-/* Streak strip — a wooden marker stake stuck in a soil bed, not a
-   data block. Same elements, read as "how long this vine has grown"
-   rather than a KPI. */
+/* Streak strip — hero data block: hard-divided number + label, no gradient */
 .streak-strip {
-  display: flex; align-items: center; gap: 14px;
-  background: var(--soil); border: none;
-  padding: 16px 18px 18px; margin: 0;
-  position: relative;
-}
-.streak-strip::before {
-  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px;
-  background: repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 3px, transparent 3px 9px);
+  display: flex; align-items: stretch; gap: 0;
+  background: var(--washi-200); border: none; border-bottom: 2px solid var(--washi-300); border-left: 4px solid var(--neon);
+  padding: 14px 16px; margin: 0;
 }
 .streak-num-block {
-  background: var(--paper);
-  clip-path: polygon(15% 0, 85% 0, 100% 78%, 50% 100%, 0 78%);
-  padding: 10px 12px 20px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  flex-shrink: 0; min-width: 64px;
-  transform: rotate(-2deg);
+  border-right: 2px solid var(--washi-300); padding-right: 14px; margin-right: 14px;
+  display: flex; flex-direction: column; justify-content: center; align-self: stretch;
 }
-.streak-num-block .streak-num { font-size: 24px; margin: 0; color: var(--terracotta-ink); }
+.streak-num-block .streak-num { font-size: 30px; margin: 0; }
 .streak-num-lbl {
-  font-family: var(--font-display); font-size: 8px; font-weight: 700; color: var(--terracotta-ink-soft);
-  text-transform: uppercase; letter-spacing: 0.5px; margin: 2px 0 0;
+  font-family: var(--font-mono); font-size: 8.5px; color: var(--shoyu-300);
+  text-transform: uppercase; letter-spacing: 0.5px; margin: 3px 0 0;
 }
 .streak-main { flex: 1; }
 .streak-num { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--shoyu-700); line-height: 1; margin: 0; }
-.streak-label { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--cream-on-charcoal-soft); margin: 4px 0 0; line-height: 1.35; }
+.streak-label { font-family: var(--font-mono); font-size: 9.5px; color: var(--shoyu-300); text-transform: uppercase; letter-spacing: 0.4px; margin: 4px 0 0; }
 .streak-best-pill {
-  font-family: var(--font-display); font-size: 10px; color: var(--cream-on-charcoal);
-  border: 1px dashed var(--cream-on-charcoal-soft); padding: 5px 10px;
-  font-weight: 600; letter-spacing: 0.2px; align-self: center; flex-shrink: 0;
+  font-family: var(--font-mono); font-size: 9.5px; color: var(--bronze-200);
+  border: 1px solid var(--bronze-500); padding: 5px 9px;
+  font-weight: 600; letter-spacing: 0.3px; align-self: center;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -618,32 +561,24 @@ button, input {
 }
 
 .wotd-strip {
-  display: flex; align-items: stretch; gap: 0;
-  background: var(--timber-dark); border: none;
-  padding: 14px 18px 18px; margin: 0; cursor: pointer;
-  position: relative;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--washi-200); border: none; border-bottom: 2px solid var(--washi-300);
+  padding: 12px 16px; margin: 0; cursor: pointer;
 }
-.wotd-main {
-  flex: 1; min-width: 0;
-  background: var(--paper);
-  clip-path: polygon(0 14%, 6% 0, 94% 0, 100% 14%, 100% 100%, 0 100%);
-  padding: 16px 16px 12px; transform: rotate(-1deg);
-  box-shadow: 3px 4px 0 rgba(0,0,0,0.18);
-}
+.wotd-main { flex: 1; min-width: 0; }
 .wotd-label {
-  font-family: var(--font-display); font-size: 10px; font-weight: 700; color: var(--terracotta-ink-soft);
-  text-transform: uppercase; letter-spacing: 0.6px; margin: 0 0 4px;
+  font-family: var(--font-mono); font-size: 9.5px; color: var(--bronze-200);
+  text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 3px;
 }
 .wotd-name {
-  font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--terracotta-ink); margin: 0;
+  font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--shoyu-700); margin: 0;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;
 }
 .wotd-shuffle {
-  background: var(--moss); border: 3px solid var(--timber-dark);
-  padding: 0; width: 46px; height: 46px; border-radius: 50%; cursor: pointer; flex-shrink: 0; color: var(--moss-ink);
-  font-family: var(--font-display); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2px;
-  display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.1;
-  margin-left: 14px; align-self: center; transform: rotate(-8deg);
+  background: var(--sumi-700); border: 2px solid var(--washi-300);
+  padding: 0 14px; height: 42px; cursor: pointer; flex-shrink: 0; color: var(--shoyu-700);
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+  display: flex; align-items: center; justify-content: center;
 }
 .wotd-shuffle:disabled { opacity: 0.6; cursor: default; }
 @media (prefers-reduced-motion: no-preference) {
