@@ -657,7 +657,7 @@ function renderHome() {
       <p class="streak-num-lbl">${initialDays === 1 ? "Day" : "Days"}</p>
     </div>
     <div class="streak-main">
-      <p class="streak-label">Since last 1-star review</p>
+      <p class="streak-label">Since last 1-star review (illustrative demo data)</p>
     </div>
     <span class="streak-best-pill">Best: ${bestDisplay}</span>
   `;
