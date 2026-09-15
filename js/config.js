@@ -40,10 +40,11 @@ const SPIRIT_ICON_MAP = {
 };
 
 // Icon shown next to each food menu section (must match data.js's SECTION_ORDER).
-// PLACEHOLDER — Prime131's steakhouse sections don't fit Bower's
-// vegetable-forward French menu. Rebuilding this to match Bower's real
-// section names once the menu (data.js) is drafted.
-const SECTION_ICON_MAP = {};
+const SECTION_ICON_MAP = {
+  "From the Garden": "\u{1F331}", "Starters": "\u{1F35E}", "Soups & Salads": "\u{1F957}",
+  "Entr\u00E9es": "\u{1F37D}\uFE0F", "Accompaniments": "\u{1F955}", "Sauces & Butters": "\u{1F9C8}",
+  "Desserts": "\u{1F370}"
+};
 
 // Zero-star review streak — home screen counter.
 // Bower doesn't exist, so this is explicitly illustrative demo data
@@ -59,3 +60,11 @@ const REVIEW_STREAK_RECORD = {
 // Prime131-specific feature). Stubbed empty so findWine()'s HRW_WINES
 // fallback in app.js never throws, even though no UI links to it.
 const HRW_WINES = [];
+
+// Prime131's deep-dive staff "Learning" curriculum (multi-chapter training
+// modules like the Olive Wagyu article) is a separate, large content system
+// tied to Prime131's real dishes — out of scope for this Bower build unless
+// requested. Stubbed empty so the Learning section's engine code (which
+// .forEach's and .find's over this array) never throws; it'll just show
+// an empty state.
+const LEARNING_MODULES = [];

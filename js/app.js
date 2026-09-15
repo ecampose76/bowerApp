@@ -791,17 +791,6 @@ function renderHome() {
   options.querySelector('[data-go="menu"]').onclick = () => go("menu-list");
   options.querySelector('[data-go="gameroom"]').onclick = () => go("game-room");
   app.appendChild(options);
-
-  const learningCard = document.createElement("div");
-  learningCard.className = "home-card learning-card";
-  learningCard.innerHTML = `
-    <span class="nav-idx">05</span>
-    <span class="home-card-tag">New</span>
-    <p class="home-card-title">Learning</p>
-    <span class="home-card-sub">Modules &amp; courses</span>
-  `;
-  learningCard.onclick = () => go("learning-hub");
-  app.appendChild(learningCard);
 }
 
 function renderSearchableWineList(onSelect, placeholder, wineSource) {
