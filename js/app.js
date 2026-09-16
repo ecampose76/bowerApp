@@ -630,7 +630,8 @@ function renderHome() {
   const topbar = document.createElement("div");
   topbar.className = "home-topbar";
   topbar.innerHTML = `
-    <div>
+    <span class="home-topbar-spacer" aria-hidden="true"></span>
+    <div class="home-wordmark-block">
       <p class="home-wordmark">${BRAND.fullName}</p>
       <p class="home-wordmark-sub">Vegetable-forward &middot; Est. 2026</p>
     </div>
