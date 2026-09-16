@@ -1,4 +1,4 @@
-const CACHE_NAME = "bower-v2";
+const CACHE_NAME = "bower-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -18,13 +18,11 @@ const ASSETS = [
   "./icons/icon-512.png",
   "./icons/icon-512-maskable.png",
   "./icons/apple-touch-icon.png",
-  "./fonts/manrope-latin-500-normal.woff2",
-  "./fonts/manrope-latin-700-normal.woff2",
-  "./fonts/manrope-latin-800-normal.woff2",
-  "./fonts/public-sans-latin-400-normal.woff2",
-  "./fonts/public-sans-latin-500-normal.woff2",
-  "./fonts/public-sans-latin-600-normal.woff2",
-  "./fonts/public-sans-latin-700-normal.woff2",
+  "./fonts/gloock-latin-400-normal.woff2",
+  "./fonts/inter-latin-400-normal.woff2",
+  "./fonts/inter-latin-500-normal.woff2",
+  "./fonts/inter-latin-600-normal.woff2",
+  "./fonts/inter-latin-700-normal.woff2",
   "./fonts/space-mono-latin-400-normal.woff2",
   "./fonts/space-mono-latin-700-normal.woff2"
 ];
