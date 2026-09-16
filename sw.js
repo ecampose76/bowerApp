@@ -1,4 +1,4 @@
-const CACHE_NAME = "bower-v1";
+const CACHE_NAME = "bower-v2";
 const ASSETS = [
   "./",
   "./index.html",
@@ -10,6 +10,10 @@ const ASSETS = [
   "./js/allergy-sort-engine.js",
   "./js/app.js",
   "./manifest.json",
+  "./images/food-hero.jpg",
+  "./images/wine-circle.jpg",
+  "./images/bar-circle.jpg",
+  "./images/coffee-circle.jpg",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-512-maskable.png",
