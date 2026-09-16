@@ -633,7 +633,6 @@ function renderHome() {
     <span class="home-topbar-spacer" aria-hidden="true"></span>
     <div class="home-wordmark-block">
       <p class="home-wordmark">${BRAND.fullName}</p>
-      <p class="home-wordmark-sub">Vegetable-forward &middot; Est. 2026</p>
     </div>
     <button type="button" class="home-account-btn" aria-label="Account">
       <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.8"/><path d="M2.5 14c.8-3 3-4.5 5.5-4.5S13.2 11 14 14"/></svg>
@@ -650,8 +649,8 @@ function renderHome() {
   const greetingEl = document.createElement("div");
   greetingEl.className = "home-greeting";
   greetingEl.innerHTML = `
-    <p class="home-greeting-main">${greeting}.</p>
-    <p class="home-greeting-sub">What are we pouring tonight?</p>
+    <p class="home-greeting-main">${greeting}, Alex!</p>
+    <p class="home-greeting-sub">What are you learning today?</p>
   `;
   app.appendChild(greetingEl);
 
