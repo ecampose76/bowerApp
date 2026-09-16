@@ -658,7 +658,7 @@ function renderHome() {
   const heroCard = document.createElement("div");
   heroCard.className = "home-hero-card";
   heroCard.innerHTML = `
-    <div class="home-hero-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14c-4-1-6-4.5-6-9 4.5 0 8 2 9 6 .5-3 2-4 4-4.5-.5 4-2.5 6.5-6 7.5z"/><path d="M8 14V7"/></svg></div>
+    <div class="home-hero-scrim"></div>
     <p class="home-hero-eyebrow">The Menu</p>
     <p class="home-hero-title">Food</p>
     <p class="home-hero-sub">${DISHES.length} dishes across ${SECTION_ORDER.length} sections</p>
@@ -676,15 +676,15 @@ function renderHome() {
   collectionRow.className = "home-collection-row";
   collectionRow.innerHTML = `
     <div class="home-circle-item" data-go="wine">
-      <div class="home-circle"><svg viewBox="0 0 16 16" fill="none"><path d="M4 1h8l-1 6a3 3 0 0 1-6 0L4 1zM8 10v5M5.5 15h5"/></svg></div>
+      <div class="home-circle home-circle-wine"></div>
       <p>Wine</p>
     </div>
     <div class="home-circle-item" data-go="bar">
-      <div class="home-circle"><svg viewBox="0 0 16 16" fill="none"><path d="M2 2h12l-5 6.5V14M8 8.5 2 2M6 14h4"/></svg></div>
+      <div class="home-circle home-circle-bar"></div>
       <p>Bar</p>
     </div>
     <div class="home-circle-item" data-go="coffee">
-      <div class="home-circle"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 6h9v4.5a3 3 0 0 1-3 3h-3a3 3 0 0 1-3-3V6zM11.5 7c1.5 0 2.5 1 2.5 2.2s-1 2.2-2.5 2.2M5 3.5c0-1 .8-1.2.8-2.2M8 3.5c0-1 .8-1.2.8-2.2"/></svg></div>
+      <div class="home-circle home-circle-coffee"></div>
       <p>Coffee</p>
     </div>
   `;
