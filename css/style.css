@@ -35,6 +35,7 @@
   --shoyu-300: #96977F;  /* text muted */
   --shoyu-200: #B7B79C;
   --bronze-600: #B86440; /* deep terracotta */
+  --bronze-700: #A6553A; /* darkest — for text needing AA contrast on light surfaces */
   --bronze-500: #D9805C; /* primary accent = terracotta (the reference's "hero" coral) */
   --bronze-200: #C26A45;
   --ink-on-rust: #3D2415;      /* dark ink text on terracotta fill */
@@ -61,13 +62,14 @@
 /* Radius scale — three deliberate tiers instead of one blanket value:
    large surfaces (cards/panels) get the biggest radius, mid-size tiles
    a smaller one, and small controls/chips/buttons go full-pill. */
-.flip-inner, .dish-flip-inner, .home-hero-plate, .learning-card,
+.flip-inner, .dish-flip-inner, .home-hero-plate, .home-hero-card,
+.home-banner-card, .learning-card,
 .video-frame, .illo-frame, .confirm-card, .somm-card, .imposter-tile,
 .wcard, .match-tile {
   border-radius: var(--radius-card);
 }
-.home-card, .home-option, .list-row, .asort-well, .asort-placed,
-.asort-active, .streak-strip, .wotd-strip, .milestone-strip,
+.home-option, .list-row, .asort-well, .asort-placed,
+.asort-active, .wotd-strip, .milestone-strip,
 .arsenal-block, .intro-meta-row, .auth-stamp, .speed-toggle,
 .quiz-opt, .seq-slot, .seq-chip, .auth-input {
   border-radius: var(--radius);
@@ -76,11 +78,11 @@
 .followup-chip, .confidence-btn, .theme-toggle, .wotd-shuffle,
 .auth-pin-toggle, .confirm-cancel, .confirm-ok, .list-row-price,
 .knockout-hint-btn, .asort-fallback-btn, .btn-start, .auth-submit,
-.complete-badge, .back-btn {
+.complete-badge, .back-btn, .home-account-btn, .home-hero-btn {
   border-radius: 999px;
 }
 .dot, .style-dot, .wcard-badge, .asort-badge, .play-btn, .mastery-fill,
-.bar-fill, .mini-fill, .timer-fill, .mod-dot, .dish-icon-badge {
+.bar-fill, .mini-fill, .timer-fill, .mod-dot, .dish-icon-badge, .home-circle {
   border-radius: 50%;
 }
 .bar-fill, .mini-fill, .timer-fill { border-radius: 999px; }
@@ -106,23 +108,7 @@ html, body {
    Higher specificity (#app.home-view) wins over both the base #app rule
    above and the desktop-breakpoint #app rule below, in every viewport
    size, regardless of source order -- so this needs to exist only once. */
-#app.home-view {
-  max-width: none;
-  width: 100vw;
-  /* vh is the LARGEST possible mobile viewport (address bar hidden);
-     the real visible area shrinks whenever the address bar is showing,
-     which happens intermittently as the bar auto-hides/reappears --
-     that mismatch is what caused the scroll to appear only sometimes.
-     dvh tracks the actual visible viewport; vh stays as a fallback
-     for older browsers without dvh support. */
-  height: 100vh;
-  height: 100dvh;
-  min-height: 100vh;
-  min-height: 100dvh;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
+.home-hero-card, .home-banner-card { cursor: pointer; }
 
 button, input {
   font-family: var(--font-body);
@@ -164,37 +150,110 @@ button, input {
 .section-toggle:first-child { margin-top: 0; }
 .section-chevron { color: var(--shoyu-200); font-size: 14px; font-family: var(--font-mono); }
 
-/* Home screen */
-.home-hero { margin: 0; }
-.home-hero-plate {
-  background: var(--charcoal);
-  border-radius: 0 0 var(--radius) var(--radius);
-  padding: 20px 20px 24px;
-  margin: 0;
+/* Home screen — modeled directly on the reference: clean top bar,
+   a greeting, one large featured card, a row of circular category
+   items, and a banner card. Normal page scroll, not a fixed grid.
+   Type scale (6 sizes, deliberately): 30 display / 22 heading /
+   14 body / 13 sub / 12 label / 10.5 eyebrow. Spacing on an 8px
+   rhythm: 8 / 16 / 24 / 32. */
+.home-topbar {
   display: flex; align-items: flex-start; justify-content: space-between;
-  position: relative;
+  padding: 20px 20px 8px;
 }
-.home-account { text-align: right; flex-shrink: 0; padding-left: 12px; }
-.home-account-name {
-  font-family: var(--font-body); font-size: 11px; color: var(--shoyu-300);
-  letter-spacing: 0; margin: 0 0 4px; max-width: 140px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.home-logout-btn {
-  background: var(--washi-100); border: none; color: var(--charcoal);
-  border-radius: 999px;
-  font-family: var(--font-display); font-size: 11px; font-weight: 700;
-  padding: 6px 14px; cursor: pointer;
-}
-.home-logout-btn:active { transform: scale(0.97); }
-.home-hero-plate::after { content: none; }
-.home-title {
-  font-family: var(--font-display); font-size: 26px; font-weight: 800; color: var(--cream-on-charcoal);
+.home-wordmark {
+  font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--shoyu-700);
   letter-spacing: -0.3px; margin: 0;
 }
-.home-title-sub {
-  font-family: var(--font-body); font-size: 11px; color: var(--shoyu-300);
-  letter-spacing: 0; margin: 4px 0 0;
+.home-wordmark-sub {
+  font-family: var(--font-body); font-size: 10.5px; color: var(--shoyu-500);
+  letter-spacing: 0.3px; margin: 3px 0 0;
+}
+.home-account-btn {
+  background: var(--washi-200); border: none; width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer;
+}
+.home-account-btn svg { width: 17px; height: 17px; stroke: var(--shoyu-700); stroke-width: 1.5; fill: none; }
+.home-account-btn:active { transform: scale(0.95); }
+
+.home-greeting { padding: 16px 20px; }
+.home-greeting-main {
+  font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--shoyu-700);
+  margin: 0; letter-spacing: -0.2px;
+}
+.home-greeting-sub {
+  font-family: var(--font-body); font-size: 13px; color: var(--shoyu-500);
+  margin: 4px 0 0;
+}
+
+.home-hero-card {
+  background: var(--terracotta); color: var(--terracotta-ink);
+  margin: 0 20px 32px; padding: 24px; min-height: 190px;
+  position: relative; overflow: hidden;
+}
+.home-hero-icon {
+  position: absolute; right: 18px; bottom: 18px; width: 76px; height: 76px;
+  opacity: 0.16;
+}
+.home-hero-icon svg { width: 100%; height: 100%; stroke: currentColor; stroke-width: 1; fill: none; }
+.home-hero-eyebrow {
+  font-family: var(--font-display); font-size: 10.5px; font-weight: 700; color: var(--terracotta-ink);
+  text-transform: uppercase; letter-spacing: 0.8px; margin: 0 0 6px; position: relative; z-index: 1;
+}
+.home-hero-title {
+  font-family: var(--font-display); font-size: 30px; font-weight: 800; margin: 0 0 6px;
+  letter-spacing: -0.4px; line-height: 1; position: relative; z-index: 1;
+}
+.home-hero-sub {
+  font-family: var(--font-body); font-size: 13px; color: var(--terracotta-ink);
+  margin: 0 0 20px; position: relative; z-index: 1;
+}
+.home-hero-btn {
+  display: inline-block; background: var(--charcoal); color: var(--cream-on-charcoal);
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  padding: 11px 22px; position: relative; z-index: 1;
+}
+
+.home-collection-label {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 0 20px; margin-bottom: 16px;
+}
+.home-collection-label p {
+  font-family: var(--font-display); font-size: 10.5px; font-weight: 700; color: var(--shoyu-700);
+  text-transform: uppercase; letter-spacing: 0.8px; margin: 0;
+}
+.home-collection-row {
+  display: flex; gap: 14px; padding: 0 20px; margin-bottom: 32px;
+}
+.home-circle-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 9px; cursor: pointer;
+}
+.home-circle {
+  width: 100%; aspect-ratio: 1; max-width: 84px;
+  background: var(--washi-200);
+  display: flex; align-items: center; justify-content: center;
+}
+.home-circle svg { width: 28px; height: 28px; stroke: var(--bronze-500); stroke-width: 1.4; fill: none; }
+.home-circle-item p {
+  font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--shoyu-700);
+  margin: 0; letter-spacing: 0.1px;
+}
+
+.home-banner-card {
+  background: var(--washi-200); margin: 0 20px;
+  padding: 20px; display: flex; align-items: center; gap: 16px;
+}
+.home-banner-icon {
+  width: 34px; height: 34px; flex-shrink: 0; color: var(--bronze-500);
+}
+.home-banner-icon svg { width: 100%; height: 100%; stroke: currentColor; stroke-width: 1.4; fill: none; }
+.home-banner-text { flex: 1; }
+.home-banner-title {
+  font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--shoyu-700);
+  margin: 0 0 6px; line-height: 1.3;
+}
+.home-banner-link {
+  font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--bronze-700);
+  margin: 0;
 }
 .home-options { display: flex; flex-direction: column; gap: 10px; padding: 12px; }
 .home-option {
@@ -203,69 +262,6 @@ button, input {
   display: flex; align-items: center; gap: 14px;
 }
 .home-icon-circle { display: none; }
-
-/* Top-level home: an actual bento dashboard — 2-column grid of bold
-   color-blocked cards, first card spanning full width as a featured
-   tile, matching a real dashboard's varied-size bento layout rather
-   than a uniform grid or a text list. */
-.home-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-  flex: 1; align-content: start;
-  margin: 0; padding: 14px; overflow-y: auto;
-}
-.home-card:first-child { grid-column: 1 / -1; }
-.home-card {
-  background: var(--terracotta); color: var(--terracotta-ink);
-  border: none; padding: 18px; cursor: pointer;
-  display: flex; flex-direction: column; justify-content: flex-end; gap: 3px;
-  min-height: 128px; position: relative; overflow: hidden;
-}
-.home-card:nth-child(1) { background: var(--terracotta); color: var(--terracotta-ink); }
-.home-card:nth-child(2) { background: var(--moss); color: var(--moss-ink); }
-.home-card:nth-child(3) { background: var(--plum); color: var(--plum-ink); }
-.home-card:nth-child(4) { background: var(--washi-200); color: var(--shoyu-700); }
-.home-card-icon {
-  position: absolute; top: 16px; right: 16px; width: 30px; height: 30px;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(0,0,0,0.08); z-index: 1;
-}
-.home-card:nth-child(4) .home-card-icon { background: var(--washi-100); }
-.home-card-play .home-card-icon { background: rgba(255,255,255,0.1); }
-.home-card-icon svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.6; fill: none; }
-.nav-idx {
-  position: absolute; top: 18px; left: 18px;
-  font-family: var(--font-display); font-size: 11px; font-weight: 600; color: inherit;
-}
-.home-card-play .nav-idx { color: var(--cream-on-charcoal-soft); }
-.home-card-stat {
-  font-family: var(--font-display); font-size: 34px; font-weight: 800;
-  margin: 0; line-height: 1; letter-spacing: -0.5px; position: relative; z-index: 1;
-}
-.home-card-title {
-  font-family: var(--font-display); font-size: 17px; font-weight: 700;
-  color: inherit; margin: 2px 0 0; letter-spacing: -0.1px; line-height: 1.15;
-  position: relative; z-index: 1;
-}
-.home-card-title::after { content: none; }
-.home-card-sub {
-  font-size: 12px; color: var(--terracotta-ink-soft); line-height: 1.3;
-  font-family: var(--font-body); font-weight: 500; margin-top: 1px;
-  position: relative; z-index: 1;
-}
-.home-card:nth-child(2) .home-card-sub { color: var(--moss-ink-soft); }
-.home-card:nth-child(3) .home-card-sub { color: var(--plum-ink-soft); }
-.home-card:nth-child(4) .home-card-sub { color: var(--shoyu-300); }
-.home-card-play { background: var(--charcoal); color: var(--cream-on-charcoal); grid-column: 1 / -1; }
-.home-card-play .home-card-title { color: var(--cream-on-charcoal); }
-.home-card-play .home-card-sub { color: var(--cream-on-charcoal-soft); }
-.home-card-tag {
-  position: absolute; top: 14px; right: 14px;
-  font-family: var(--font-display); font-size: 9px; font-weight: 700;
-  color: var(--charcoal); letter-spacing: 0.3px;
-  background: var(--cream-on-charcoal);
-  padding: 3px 9px; z-index: 1;
-}
-.home-card-tag::before { content: none; }
 .home-option-text p {
   font-family: var(--font-body); font-size: 15px; font-weight: 600;
   color: var(--shoyu-700); margin: 0;
@@ -524,61 +520,27 @@ button, input {
   display: flex; align-items: center; justify-content: center;
 }
 
-/* Streak strip — hero data block: hard-divided number + label, no gradient */
-.streak-strip {
-  display: flex; align-items: stretch; gap: 0;
-  background: var(--washi-200); border: none; border-bottom: 2px solid var(--washi-300); border-left: 4px solid var(--neon);
-  padding: 14px 16px; margin: 0;
-}
-.streak-num-block {
-  border-right: 2px solid var(--washi-300); padding-right: 14px; margin-right: 14px;
-  display: flex; flex-direction: column; justify-content: center; align-self: stretch;
-}
-.streak-num-block .streak-num { font-size: 30px; margin: 0; }
-.streak-num-lbl {
-  font-family: var(--font-mono); font-size: 8.5px; color: var(--shoyu-300);
-  text-transform: uppercase; letter-spacing: 0.5px; margin: 3px 0 0;
-}
-.streak-main { flex: 1; }
-.streak-num { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--shoyu-700); line-height: 1; margin: 0; }
-.streak-label { font-family: var(--font-mono); font-size: 9.5px; color: var(--shoyu-300); text-transform: uppercase; letter-spacing: 0.4px; margin: 4px 0 0; }
-.streak-best-pill {
-  font-family: var(--font-mono); font-size: 9.5px; color: var(--bronze-200);
-  border: 1px solid var(--bronze-500); padding: 5px 9px;
-  font-weight: 600; letter-spacing: 0.3px; align-self: center;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .streak-strip.shaking { animation: streak-shake 0.5s ease-in-out; }
-  .streak-main.ashen-out { transition: opacity 150ms ease; opacity: 0; }
-}
-@keyframes streak-shake {
-  0%, 100% { transform: translateX(0) rotate(0deg); }
-  20% { transform: translateX(-4px) rotate(-1deg); }
-  40% { transform: translateX(4px) rotate(1deg); }
-  60% { transform: translateX(-3px) rotate(-1deg); }
-  80% { transform: translateX(3px) rotate(1deg); }
-}
-
+/* Wine of the day — sits at the top of the Wine section now, a
+   horizontal strip above the By-the-Glass/Bottle/Pairing options. */
 .wotd-strip {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--washi-200); border: none; border-bottom: 2px solid var(--washi-300);
-  padding: 12px 16px; margin: 0; cursor: pointer;
+  display: flex; align-items: center; gap: 14px;
+  background: var(--terracotta); border: none;
+  padding: 16px 18px; margin: 0 0 16px; cursor: pointer;
 }
 .wotd-main { flex: 1; min-width: 0; }
 .wotd-label {
-  font-family: var(--font-mono); font-size: 9.5px; color: var(--bronze-200);
-  text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 3px;
+  font-family: var(--font-display); font-size: 10px; font-weight: 700; color: var(--terracotta-ink-soft);
+  text-transform: uppercase; letter-spacing: 0.6px; margin: 0 0 4px;
 }
 .wotd-name {
-  font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--shoyu-700); margin: 0;
+  font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--terracotta-ink); margin: 0;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;
 }
 .wotd-shuffle {
-  background: var(--sumi-700); border: 2px solid var(--washi-300);
-  padding: 0 14px; height: 42px; cursor: pointer; flex-shrink: 0; color: var(--shoyu-700);
-  font-family: var(--font-mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
-  display: flex; align-items: center; justify-content: center;
+  background: var(--charcoal); border: none; color: var(--cream-on-charcoal);
+  padding: 0; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; flex-shrink: 0;
+  font-family: var(--font-display); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1px;
+  display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.1;
 }
 .wotd-shuffle:disabled { opacity: 0.6; cursor: default; }
 @media (prefers-reduced-motion: no-preference) {
@@ -950,14 +912,14 @@ button, input {
 /* ============================================================
    Press feedback — mechanical, not glossy: steep ease-out, short.
    ============================================================ */
-.home-option, .home-card, .list-row, .pill, .nav-chip, .footer-btn, .speed-toggle,
+.home-option, .home-hero-card, .home-banner-card, .home-circle-item, .home-account-btn, .list-row, .pill, .nav-chip, .footer-btn, .speed-toggle,
 .wotd-strip, .wotd-main, .wotd-shuffle, .theme-toggle, .back-btn, .section-toggle,
 .match-tile, .allergen-filter-chip, .testme-reset, .confidence-btn, .mc-btn, .somm-btn,
 .flipcard, .dish-flipcard, .testme-card, .imposter-tile,
 .learning-card, .quiz-opt, .btn-start, .video-frame, .wcard, .knockout-hint-btn {
   transition: transform var(--press-duration) ease-out, background var(--press-duration) ease-out, border-color var(--press-duration) ease-out;
 }
-.home-option:active, .home-card:active, .list-row:active, .pill:active, .nav-chip:active,
+.home-option:active, .home-hero-card:active, .home-banner-card:active, .home-circle-item:active, .home-account-btn:active, .list-row:active, .pill:active, .nav-chip:active,
 .footer-btn:not(:disabled):active, .speed-toggle:active, .wotd-strip:active,
 .wotd-main:active, .wotd-shuffle:active, .theme-toggle:active, .back-btn:active, .section-toggle:active,
 .match-tile:not(.matched):not(.picked):active, .allergen-filter-chip:active,
@@ -972,7 +934,7 @@ button, input {
 /* ============================================================
    Focus visibility — hard neon/rust ring, never soft.
    ============================================================ */
-.home-option:focus-visible, .home-card:focus-visible, .list-row:focus-visible, .pill:focus-visible,
+.home-option:focus-visible, .home-hero-card:focus-visible, .home-banner-card:focus-visible, .home-circle-item:focus-visible, .home-account-btn:focus-visible, .list-row:focus-visible, .pill:focus-visible,
 .nav-chip:focus-visible, .footer-btn:focus-visible, .speed-toggle:focus-visible,
 .wotd-strip:focus-visible, .wotd-main:focus-visible, .wotd-shuffle:focus-visible, .theme-toggle:focus-visible,
 .back-btn:focus-visible, .section-toggle:focus-visible, .match-tile:focus-visible,
@@ -990,7 +952,7 @@ button, input {
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   .flip-inner, .dish-flip-inner, .confetti, .match-tile,
-  .home-option, .home-card, .list-row, .pill, .nav-chip, .footer-btn, .speed-toggle,
+  .home-option, .home-hero-card, .home-banner-card, .home-circle-item, .home-account-btn, .list-row, .pill, .nav-chip, .footer-btn, .speed-toggle,
   .wotd-strip, .wotd-shuffle, .theme-toggle, .back-btn, .section-toggle,
   .allergen-filter-chip, .testme-reset, .confidence-btn, .mc-btn, .somm-btn,
   .flipcard, .dish-flipcard, .testme-card, .imposter-tile,

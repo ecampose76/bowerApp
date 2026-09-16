@@ -624,65 +624,129 @@ function randomWine(excludeId) {
 
 
 function renderHome() {
-  const authedUser = getStoredAuth();
-  const hero = document.createElement("div");
-  hero.className = "home-hero";
-  hero.innerHTML = `
-    <div class="home-hero-plate">
-      <div>
-        <p class="home-title">${BRAND.fullName}</p>
-        <p class="home-title-sub">Vegetable-forward &middot; Est. 2026</p>
-      </div>
-      <div class="home-account">
-        ${authedUser ? `<p class="home-account-name">${authedUser.name || ""}</p>` : ""}
-        <button type="button" class="home-logout-btn">Log out</button>
-      </div>
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+
+  const topbar = document.createElement("div");
+  topbar.className = "home-topbar";
+  topbar.innerHTML = `
+    <div>
+      <p class="home-wordmark">${BRAND.fullName}</p>
+      <p class="home-wordmark-sub">Vegetable-forward &middot; Est. 2026</p>
     </div>
+    <button type="button" class="home-account-btn" aria-label="Account">
+      <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.8"/><path d="M2.5 14c.8-3 3-4.5 5.5-4.5S13.2 11 14 14"/></svg>
+    </button>
   `;
-  hero.querySelector(".home-logout-btn").onclick = () => {
+  topbar.querySelector(".home-account-btn").onclick = () => {
     showConfirm("Exit?", "Log out", () => {
       clearAuth();
       location.reload();
     });
   };
-  app.appendChild(hero);
+  app.appendChild(topbar);
 
-  const currentDays = reviewStreakDays(REVIEW_STREAK_RECORD.start);
-  const bestDisplay = Math.max(REVIEW_STREAK_RECORD.best || 0, currentDays);
-  const pending = reviewStreakPendingAnimation;
-  const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const showAnimation = pending && pending.endedDays !== null && !reduceMotion;
-  const initialDays = showAnimation ? pending.endedDays : currentDays;
-
-  const streakStrip = document.createElement("div");
-  streakStrip.className = "streak-strip";
-  streakStrip.innerHTML = `
-    <div class="streak-num-block">
-      <p class="streak-num">${initialDays}</p>
-      <p class="streak-num-lbl">${initialDays === 1 ? "Day" : "Days"}</p>
-    </div>
-    <div class="streak-main">
-      <p class="streak-label">Since last 1-star review (illustrative demo data)</p>
-    </div>
-    <span class="streak-best-pill">Best: ${bestDisplay}</span>
+  const greetingEl = document.createElement("div");
+  greetingEl.className = "home-greeting";
+  greetingEl.innerHTML = `
+    <p class="home-greeting-main">${greeting}.</p>
+    <p class="home-greeting-sub">What are we pouring tonight?</p>
   `;
-  app.appendChild(streakStrip);
+  app.appendChild(greetingEl);
 
-  if (pending) reviewStreakPendingAnimation = null; // only ever plays once
+  const heroCard = document.createElement("div");
+  heroCard.className = "home-hero-card";
+  heroCard.innerHTML = `
+    <div class="home-hero-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14c-4-1-6-4.5-6-9 4.5 0 8 2 9 6 .5-3 2-4 4-4.5-.5 4-2.5 6.5-6 7.5z"/><path d="M8 14V7"/></svg></div>
+    <p class="home-hero-eyebrow">The Menu</p>
+    <p class="home-hero-title">Food</p>
+    <p class="home-hero-sub">${DISHES.length} dishes across ${SECTION_ORDER.length} sections</p>
+    <span class="home-hero-btn">View Menu</span>
+  `;
+  heroCard.onclick = () => go("menu-list");
+  app.appendChild(heroCard);
 
-  if (showAnimation) {
-    setTimeout(() => {
-      playStreakExtinguish(streakStrip, () => {
-        const numEl = streakStrip.querySelector(".streak-num");
-        const numLblEl = streakStrip.querySelector(".streak-num-lbl");
-        const labelEl = streakStrip.querySelector(".streak-label");
-        if (numEl) numEl.textContent = `${currentDays}`;
-        if (numLblEl) numLblEl.textContent = currentDays === 1 ? "Day" : "Days";
-        if (labelEl) labelEl.textContent = "Since last 1-star review";
-        streakStrip.classList.remove("shaking");
+  const collectionLabel = document.createElement("div");
+  collectionLabel.className = "home-collection-label";
+  collectionLabel.innerHTML = `<p>The Bar</p>`;
+  app.appendChild(collectionLabel);
+
+  const collectionRow = document.createElement("div");
+  collectionRow.className = "home-collection-row";
+  collectionRow.innerHTML = `
+    <div class="home-circle-item" data-go="wine">
+      <div class="home-circle"><svg viewBox="0 0 16 16" fill="none"><path d="M4 1h8l-1 6a3 3 0 0 1-6 0L4 1zM8 10v5M5.5 15h5"/></svg></div>
+      <p>Wine</p>
+    </div>
+    <div class="home-circle-item" data-go="bar">
+      <div class="home-circle"><svg viewBox="0 0 16 16" fill="none"><path d="M2 2h12l-5 6.5V14M8 8.5 2 2M6 14h4"/></svg></div>
+      <p>Bar</p>
+    </div>
+    <div class="home-circle-item" data-go="coffee">
+      <div class="home-circle"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 6h9v4.5a3 3 0 0 1-3 3h-3a3 3 0 0 1-3-3V6zM11.5 7c1.5 0 2.5 1 2.5 2.2s-1 2.2-2.5 2.2M5 3.5c0-1 .8-1.2.8-2.2M8 3.5c0-1 .8-1.2.8-2.2"/></svg></div>
+      <p>Coffee</p>
+    </div>
+  `;
+  collectionRow.querySelector('[data-go="wine"]').onclick = () => go("wine-type");
+  collectionRow.querySelector('[data-go="bar"]').onclick = () => go("cocktail-type");
+  collectionRow.querySelector('[data-go="coffee"]').onclick = () => go("coffee-type");
+  app.appendChild(collectionRow);
+
+  const bannerCard = document.createElement("div");
+  bannerCard.className = "home-banner-card";
+  bannerCard.innerHTML = `
+    <div class="home-banner-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M2 5.5 8 2l6 3.5v5L8 14l-6-3.5v-5z"/><path d="M2 5.5 8 9l6-3.5M8 9v5"/></svg></div>
+    <div class="home-banner-text">
+      <p class="home-banner-title">Test your palate.<br>Sharpen your craft.</p>
+      <p class="home-banner-link">Game Room &rsaquo;</p>
+    </div>
+  `;
+  bannerCard.onclick = () => go("game-room");
+  app.appendChild(bannerCard);
+}
+
+function renderSearchableWineList(onSelect, placeholder, wineSource) {
+  const source = wineSource || WINES;
+  const wrap = document.createElement("div");
+  const input = document.createElement("input");
+  input.className = "search-input";
+  input.placeholder = placeholder || "Search wines";
+  wrap.appendChild(input);
+
+  const listWrap = document.createElement("div");
+  wrap.appendChild(listWrap);
+
+  function draw(filter) {
+    listWrap.innerHTML = "";
+    const filtered = source.filter(w => w.name.toLowerCase().includes(filter.toLowerCase()));
+    const groups = groupByStyle(filtered);
+    STYLE_ORDER.forEach(style => {
+      const wines = groups[style];
+      if (!wines.length) return;
+      const label = document.createElement("p");
+      label.className = "section-label";
+      label.textContent = STYLE_LABELS[style];
+      listWrap.appendChild(label);
+      wines.forEach(w => {
+        const row = document.createElement("div");
+        row.className = "list-row";
+        const priceHtml = typeof w.price === "number" ? `<span class="list-row-price">$${w.price}</span>` : "";
+        row.innerHTML = `<span class="list-row-main"><span class="style-dot ${w.style}"></span>${w.name}</span>${priceHtml}`;
+        row.onclick = () => onSelect(w.id);
+        listWrap.appendChild(row);
       });
-    }, 500);
+    });
+    if (!filtered.length) {
+      listWrap.innerHTML = `<p class="empty-note">No wines match that search.</p>`;
+    }
   }
+  draw("");
+  input.oninput = () => draw(input.value);
+  return wrap;
+}
+
+function renderWineTypeChooser() {
+  header("Wine");
 
   const wotd = wineOfTheDay();
   let currentWotd = wotd;
@@ -754,96 +818,6 @@ function renderHome() {
     requestAnimationFrame(tick);
   };
   app.appendChild(wotdStrip);
-
-  const options = document.createElement("div");
-  options.className = "home-grid";
-  options.innerHTML = `
-    <div class="home-card" data-go="menu">
-      <span class="home-card-icon"><svg viewBox="0 0 16 16"><path d="M4 1v6a2 2 0 0 0 2 2v6M4 1a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2M4 1v8M12 1c-1.5 0-2.5 1.5-2.5 4S10.5 9 12 9v6M12 1v14"/></svg></span>
-      <span class="nav-idx">01</span>
-      <p class="home-card-stat">${DISHES.length}</p>
-      <p class="home-card-title">Food</p>
-      <span class="home-card-sub">dishes across ${SECTION_ORDER.length} sections</span>
-    </div>
-    <div class="home-card" data-go="wine">
-      <span class="home-card-icon"><svg viewBox="0 0 16 16"><path d="M4 1h8l-1 6a3 3 0 0 1-6 0L4 1zM8 10v5M5.5 15h5"/></svg></span>
-      <span class="nav-idx">02</span>
-      <p class="home-card-stat">${WINES.length + BOTTLE_WINES.length}</p>
-      <p class="home-card-title">Wine</p>
-      <span class="home-card-sub">by the glass &amp; bottle</span>
-    </div>
-    <div class="home-card" data-go="bar">
-      <span class="home-card-icon"><svg viewBox="0 0 16 16"><path d="M2 2h12l-5 6.5V14M8 8.5 2 2M6 14h4"/></svg></span>
-      <span class="nav-idx">03</span>
-      <p class="home-card-stat">${COCKTAILS.length + CLASSIC_COCKTAILS.length}</p>
-      <p class="home-card-title">Bar</p>
-      <span class="home-card-sub">cocktails &amp; ${LIQUOR.length} back-bar spirits</span>
-    </div>
-    <div class="home-card" data-go="coffee">
-      <span class="home-card-icon"><svg viewBox="0 0 16 16"><path d="M2.5 6h9v4.5a3 3 0 0 1-3 3h-3a3 3 0 0 1-3-3V6zM11.5 7c1.5 0 2.5 1 2.5 2.2s-1 2.2-2.5 2.2M5 3.5c0-1 .8-1.2.8-2.2M8 3.5c0-1 .8-1.2.8-2.2"/></svg></span>
-      <span class="nav-idx">04</span>
-      <p class="home-card-stat">${COFFEE_SIPHON.length}</p>
-      <p class="home-card-title">Coffee</p>
-      <span class="home-card-sub">tableside pours, plus by the cup</span>
-    </div>
-    <div class="home-card home-card-play" data-go="gameroom">
-      <span class="home-card-icon"><svg viewBox="0 0 16 16"><path d="M2 5.5 8 2l6 3.5v5L8 14l-6-3.5v-5z"/><path d="M2 5.5 8 9l6-3.5M8 9v5"/></svg></span>
-      <span class="nav-idx">05</span>
-      <span class="home-card-tag">Play</span>
-      <p class="home-card-title">Game Room</p>
-      <span class="home-card-sub">Quiz, match, judgment calls</span>
-    </div>
-  `;
-  options.querySelector('[data-go="wine"]').onclick = () => go("wine-type");
-  options.querySelector('[data-go="bar"]').onclick = () => go("cocktail-type");
-  options.querySelector('[data-go="coffee"]').onclick = () => go("coffee-type");
-  options.querySelector('[data-go="menu"]').onclick = () => go("menu-list");
-  options.querySelector('[data-go="gameroom"]').onclick = () => go("game-room");
-  app.appendChild(options);
-}
-
-function renderSearchableWineList(onSelect, placeholder, wineSource) {
-  const source = wineSource || WINES;
-  const wrap = document.createElement("div");
-  const input = document.createElement("input");
-  input.className = "search-input";
-  input.placeholder = placeholder || "Search wines";
-  wrap.appendChild(input);
-
-  const listWrap = document.createElement("div");
-  wrap.appendChild(listWrap);
-
-  function draw(filter) {
-    listWrap.innerHTML = "";
-    const filtered = source.filter(w => w.name.toLowerCase().includes(filter.toLowerCase()));
-    const groups = groupByStyle(filtered);
-    STYLE_ORDER.forEach(style => {
-      const wines = groups[style];
-      if (!wines.length) return;
-      const label = document.createElement("p");
-      label.className = "section-label";
-      label.textContent = STYLE_LABELS[style];
-      listWrap.appendChild(label);
-      wines.forEach(w => {
-        const row = document.createElement("div");
-        row.className = "list-row";
-        const priceHtml = typeof w.price === "number" ? `<span class="list-row-price">$${w.price}</span>` : "";
-        row.innerHTML = `<span class="list-row-main"><span class="style-dot ${w.style}"></span>${w.name}</span>${priceHtml}`;
-        row.onclick = () => onSelect(w.id);
-        listWrap.appendChild(row);
-      });
-    });
-    if (!filtered.length) {
-      listWrap.innerHTML = `<p class="empty-note">No wines match that search.</p>`;
-    }
-  }
-  draw("");
-  input.oninput = () => draw(input.value);
-  return wrap;
-}
-
-function renderWineTypeChooser() {
-  header("Wine");
 
   const options = document.createElement("div");
   options.className = "home-options";
