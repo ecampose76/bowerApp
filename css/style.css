@@ -66,7 +66,7 @@
 .wcard, .match-tile {
   border-radius: var(--radius-card);
 }
-.home-option, .list-row, .asort-well, .asort-placed,
+.home-option, .list-row, .menu-card, .asort-well, .asort-placed,
 .asort-active, .wotd-strip, .milestone-strip,
 .arsenal-block, .intro-meta-row, .auth-stamp, .speed-toggle,
 .quiz-opt, .seq-slot, .seq-chip, .auth-input {
@@ -480,6 +480,57 @@ button, input {
 }
 .chip.in-recipe { color: var(--bronze-200); border-color: var(--bronze-500); }
 .chip.removable { color: var(--shoyu-300); border-color: var(--washi-300); }
+
+/* Food menu — section filter pills (single-select, replaces the old
+   accordion) and product-style cards, matching the reference layout. */
+.menu-section-pills {
+  display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px;
+  margin-bottom: 16px;
+}
+.menu-section-pill {
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  padding: 9px 16px; white-space: nowrap; flex-shrink: 0; cursor: pointer;
+  background: var(--washi-200); color: var(--shoyu-500); border: none;
+  border-radius: 999px; letter-spacing: 0.3px;
+}
+.menu-section-pill.active { background: var(--charcoal); color: var(--cream-on-charcoal); }
+
+.menu-card-list { display: flex; flex-direction: column; gap: 10px; }
+.menu-card {
+  display: flex; align-items: stretch; overflow: hidden; position: relative;
+  background: var(--washi-200); cursor: pointer; min-height: 104px;
+  box-shadow: 0 6px 14px -8px rgba(43,51,36,0.18);
+}
+.menu-card-thumb {
+  width: 104px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 34px;
+  background: var(--terracotta);
+}
+.menu-card:nth-of-type(3n+2) .menu-card-thumb { background: var(--moss); }
+.menu-card:nth-of-type(3n+3) .menu-card-thumb { background: var(--plum); }
+.menu-card-thumb.style-sparkling { background: #D9C9A0; }
+.menu-card-thumb.style-white { background: var(--washi-100); }
+.menu-card-thumb.style-rosé { background: var(--neon); }
+.menu-card-thumb.style-red { background: var(--bronze-600); }
+.menu-card-thumb.style-dessert { background: var(--wasabi-500); }
+.menu-card-info { flex: 1; min-width: 0; padding: 10px 44px 10px 10px; display: flex; flex-direction: column; justify-content: space-between; }
+.menu-card-name {
+  font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--shoyu-700);
+  margin: 0; font-variant: small-caps; letter-spacing: 0.3px; line-height: 1.25;
+  white-space: normal;
+}
+.menu-card-price {
+  font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--bronze-700);
+  margin: 0;
+}
+.menu-card-btn {
+  width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%; border: none;
+  background: var(--charcoal); color: var(--cream-on-charcoal); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  position: absolute; right: 10px; bottom: 10px;
+}
+.menu-card-btn svg { width: 12px; height: 12px; stroke: currentColor; stroke-width: 2; fill: none; }
+.menu-card.static { cursor: default; }
 
 .dish-flipcard { height: var(--flipcard-height); margin: 4px 0 8px; cursor: pointer; }
 .dish-flip-inner {
@@ -920,14 +971,14 @@ button, input {
 /* ============================================================
    Press feedback — mechanical, not glossy: steep ease-out, short.
    ============================================================ */
-.home-option, .home-hero-card, .home-banner-card, .home-circle-item, .home-account-btn, .list-row, .pill, .nav-chip, .footer-btn, .speed-toggle,
+.home-option, .home-hero-card, .home-banner-card, .home-circle-item, .home-account-btn, .list-row, .menu-section-pill, .menu-card, .menu-card-btn, .pill, .nav-chip, .footer-btn, .speed-toggle,
 .wotd-strip, .wotd-main, .wotd-shuffle, .theme-toggle, .back-btn, .section-toggle,
 .match-tile, .allergen-filter-chip, .testme-reset, .confidence-btn, .mc-btn, .somm-btn,
 .flipcard, .dish-flipcard, .testme-card, .imposter-tile,
 .learning-card, .quiz-opt, .btn-start, .video-frame, .wcard, .knockout-hint-btn {
   transition: transform var(--press-duration) ease-out, background var(--press-duration) ease-out, border-color var(--press-duration) ease-out;
 }
-.home-option:active, .home-hero-card:active, .home-banner-card:active, .home-circle-item:active, .home-account-btn:active, .list-row:active, .pill:active, .nav-chip:active,
+.home-option:active, .home-hero-card:active, .home-banner-card:active, .home-circle-item:active, .home-account-btn:active, .list-row:active, .menu-section-pill:active, .menu-card:active, .menu-card-btn:active, .pill:active, .nav-chip:active,
 .footer-btn:not(:disabled):active, .speed-toggle:active, .wotd-strip:active,
 .wotd-main:active, .wotd-shuffle:active, .theme-toggle:active, .back-btn:active, .section-toggle:active,
 .match-tile:not(.matched):not(.picked):active, .allergen-filter-chip:active,
@@ -942,7 +993,7 @@ button, input {
 /* ============================================================
    Focus visibility — hard neon/rust ring, never soft.
    ============================================================ */
-.home-option:focus-visible, .home-hero-card:focus-visible, .home-banner-card:focus-visible, .home-circle-item:focus-visible, .home-account-btn:focus-visible, .list-row:focus-visible, .pill:focus-visible,
+.home-option:focus-visible, .home-hero-card:focus-visible, .home-banner-card:focus-visible, .home-circle-item:focus-visible, .home-account-btn:focus-visible, .list-row:focus-visible, .menu-section-pill:focus-visible, .menu-card:focus-visible, .menu-card-btn:focus-visible, .pill:focus-visible,
 .nav-chip:focus-visible, .footer-btn:focus-visible, .speed-toggle:focus-visible,
 .wotd-strip:focus-visible, .wotd-main:focus-visible, .wotd-shuffle:focus-visible, .theme-toggle:focus-visible,
 .back-btn:focus-visible, .section-toggle:focus-visible, .match-tile:focus-visible,
@@ -960,7 +1011,7 @@ button, input {
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   .flip-inner, .dish-flip-inner, .confetti, .match-tile,
-  .home-option, .home-hero-card, .home-banner-card, .home-circle-item, .home-account-btn, .list-row, .pill, .nav-chip, .footer-btn, .speed-toggle,
+  .home-option, .home-hero-card, .home-banner-card, .home-circle-item, .home-account-btn, .list-row, .menu-section-pill, .menu-card, .menu-card-btn, .pill, .nav-chip, .footer-btn, .speed-toggle,
   .wotd-strip, .wotd-shuffle, .theme-toggle, .back-btn, .section-toggle,
   .allergen-filter-chip, .testme-reset, .confidence-btn, .mc-btn, .somm-btn,
   .flipcard, .dish-flipcard, .testme-card, .imposter-tile,

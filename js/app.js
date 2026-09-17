@@ -705,6 +705,42 @@ function renderHome() {
   app.appendChild(bannerCard);
 }
 
+/* Shared card builder — full-height colored thumb, name pinned to top,
+   price pinned to bottom, small corner button. Used by every list
+   screen (food, wine, cocktails, liquor, coffee) for one consistent
+   product-card language instead of six separate implementations. */
+function buildMenuCard(name, priceLabel, thumbIcon, onClick, thumbClass) {
+  const card = document.createElement("div");
+  card.className = "menu-card" + (onClick ? "" : " static");
+  card.innerHTML = `
+    <div class="menu-card-thumb${thumbClass ? " " + thumbClass : ""}"><span>${thumbIcon}</span></div>
+    <div class="menu-card-info">
+      <p class="menu-card-name">${name}</p>
+      <p class="menu-card-price">${priceLabel || ""}</p>
+    </div>
+    ${onClick ? `<button class="menu-card-btn" aria-label="View ${name}"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10"/></svg></button>` : ""}
+  `;
+  if (onClick) card.onclick = onClick;
+  return card;
+}
+
+/* Shared single-select pill row — used wherever a list has a real,
+   meaningfully-sized category to filter by (wine style, spirit
+   family). Lists with too few items per category to make filtering
+   useful skip this and stay a flat card list instead. */
+function buildFilterPills(options, activeValue, onChange) {
+  const row = document.createElement("div");
+  row.className = "menu-section-pills";
+  options.forEach(opt => {
+    const pill = document.createElement("button");
+    pill.className = "menu-section-pill" + (opt === activeValue ? " active" : "");
+    pill.textContent = opt;
+    pill.onclick = () => onChange(opt);
+    row.appendChild(pill);
+  });
+  return row;
+}
+
 function renderSearchableWineList(onSelect, placeholder, wineSource) {
   const source = wineSource || WINES;
   const wrap = document.createElement("div");
@@ -713,32 +749,39 @@ function renderSearchableWineList(onSelect, placeholder, wineSource) {
   input.placeholder = placeholder || "Search wines";
   wrap.appendChild(input);
 
+  let activeStyle = "All";
+  const pillsHolder = document.createElement("div");
+  wrap.appendChild(pillsHolder);
+
   const listWrap = document.createElement("div");
+  listWrap.className = "menu-card-list";
   wrap.appendChild(listWrap);
 
+  function drawPills() {
+    pillsHolder.innerHTML = "";
+    const styleNames = ["All", ...STYLE_ORDER.map(s => STYLE_LABELS[s])];
+    pillsHolder.appendChild(buildFilterPills(styleNames, activeStyle, (val) => {
+      activeStyle = val;
+      draw(input.value);
+    }));
+  }
+
   function draw(filter) {
+    drawPills();
     listWrap.innerHTML = "";
-    const filtered = source.filter(w => w.name.toLowerCase().includes(filter.toLowerCase()));
-    const groups = groupByStyle(filtered);
-    STYLE_ORDER.forEach(style => {
-      const wines = groups[style];
-      if (!wines.length) return;
-      const label = document.createElement("p");
-      label.className = "section-label";
-      label.textContent = STYLE_LABELS[style];
-      listWrap.appendChild(label);
-      wines.forEach(w => {
-        const row = document.createElement("div");
-        row.className = "list-row";
-        const priceHtml = typeof w.price === "number" ? `<span class="list-row-price">$${w.price}</span>` : "";
-        row.innerHTML = `<span class="list-row-main"><span class="style-dot ${w.style}"></span>${w.name}</span>${priceHtml}`;
-        row.onclick = () => onSelect(w.id);
-        listWrap.appendChild(row);
-      });
-    });
+    let filtered = source.filter(w => w.name.toLowerCase().includes(filter.toLowerCase()));
+    if (activeStyle !== "All") {
+      filtered = filtered.filter(w => STYLE_LABELS[w.style] === activeStyle);
+    }
     if (!filtered.length) {
       listWrap.innerHTML = `<p class="empty-note">No wines match that search.</p>`;
+      return;
     }
+    filtered.forEach(w => {
+      const priceLabel = typeof w.price === "number" ? `$${w.price}` : "";
+      const card = buildMenuCard(w.name, priceLabel, "\u{1F377}", () => onSelect(w.id), "style-" + w.style);
+      listWrap.appendChild(card);
+    });
   }
   draw("");
   input.oninput = () => draw(input.value);
@@ -871,64 +914,22 @@ function renderByTheBottleList() {
   wrap.appendChild(input);
 
   const listWrap = document.createElement("div");
+  listWrap.className = "menu-card-list";
   wrap.appendChild(listWrap);
-
-  const manualExpanded = new Set();
 
   function draw(filter) {
     listWrap.innerHTML = "";
-    const filtered = BOTTLE_WINES.filter(w => w.name.toLowerCase().includes(filter.toLowerCase()));
-    const hasActiveFilter = filter.trim().length > 0;
-    const groups = groupByBottleCategory(filtered);
-
-    function appendWineRow(w) {
-      const row = document.createElement("div");
-      row.className = "list-row";
-      const priceHtml = typeof w.price === "number" ? `<span class="list-row-price">$${w.price}</span>` : "";
-      row.innerHTML = `<span class="list-row-main">${w.name}</span>${priceHtml}`;
-      row.onclick = () => go("bottle-card", { wineId: w.id });
-      listWrap.appendChild(row);
-    }
-
-    BOTTLE_CATEGORY_ORDER.forEach(category => {
-      const wines = groups[category];
-      if (!wines.length) return;
-
-      const isExpanded = hasActiveFilter || manualExpanded.has(category);
-
-      const label = document.createElement("button");
-      label.className = "section-label section-toggle";
-      label.innerHTML = `<span>${category} &middot; ${wines.length}</span><span class="section-chevron">${isExpanded ? "\u25BE" : "\u25B8"}</span>`;
-      label.onclick = () => {
-        if (hasActiveFilter) return;
-        if (manualExpanded.has(category)) manualExpanded.delete(category);
-        else manualExpanded.add(category);
-        draw(input.value);
-      };
-      listWrap.appendChild(label);
-
-      if (!isExpanded) return;
-
-      const subOrder = BOTTLE_SUBCATEGORY_ORDER[category];
-      if (subOrder) {
-        subOrder.forEach(sub => {
-          const subWines = wines.filter(w => w.subcategory === sub);
-          if (!subWines.length) return;
-          const subLabel = document.createElement("p");
-          subLabel.className = "section-label";
-          subLabel.textContent = sub;
-          listWrap.appendChild(subLabel);
-          subWines.forEach(appendWineRow);
-        });
-        wines.filter(w => !subOrder.includes(w.subcategory)).forEach(appendWineRow);
-      } else {
-        wines.forEach(appendWineRow);
-      }
-    });
-
+    const filtered = BOTTLE_WINES.filter(w => w.name.toLowerCase().includes(filter.toLowerCase()))
+      .sort((a, b) => BOTTLE_CATEGORY_ORDER.indexOf(a.category) - BOTTLE_CATEGORY_ORDER.indexOf(b.category));
     if (!filtered.length) {
       listWrap.innerHTML = `<p class="empty-note">No wines match that search.</p>`;
+      return;
     }
+    filtered.forEach(w => {
+      const priceLabel = typeof w.price === "number" ? `$${w.price}` : "";
+      const card = buildMenuCard(w.name, priceLabel, "\u{1F377}", () => go("bottle-card", { wineId: w.id }), "style-" + w.style);
+      listWrap.appendChild(card);
+    });
   }
   draw("");
   input.oninput = () => draw(input.value);
@@ -1087,10 +1088,27 @@ function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter) {
     wrap.appendChild(filterRow);
   }
 
-  const listWrap = document.createElement("div");
-  wrap.appendChild(listWrap);
+  let activeSection = "All";
+  const pillsScroll = document.createElement("div");
+  pillsScroll.className = "menu-section-pills";
+  const pillOptions = ["All", ...SECTION_ORDER];
+  pillOptions.forEach(sec => {
+    const pill = document.createElement("button");
+    pill.className = "menu-section-pill" + (sec === "All" ? " active" : "");
+    pill.textContent = sec;
+    pill.onclick = () => {
+      activeSection = sec;
+      pillsScroll.querySelectorAll(".menu-section-pill").forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+      draw(input.value);
+    };
+    pillsScroll.appendChild(pill);
+  });
+  wrap.appendChild(pillsScroll);
 
-  const manualExpanded = new Set();
+  const listWrap = document.createElement("div");
+  listWrap.className = "menu-card-list";
+  wrap.appendChild(listWrap);
 
   function draw(filter) {
     listWrap.innerHTML = "";
@@ -1101,38 +1119,27 @@ function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter) {
         return !excludedAllergens.some(a => has.includes(a));
       });
     }
-    const hasActiveFilter = excludedAllergens.length > 0 || filter.trim().length > 0;
-    const groups = groupBySection(filtered);
-    SECTION_ORDER.forEach(section => {
-      const dishes = groups[section];
-      if (!dishes.length) return;
-
-      const isExpanded = hasActiveFilter || manualExpanded.has(section);
-
-      const label = document.createElement("button");
-      label.className = "section-label section-toggle";
-      label.innerHTML = `<span>${section}</span><span class="section-chevron">${isExpanded ? "\u25BE" : "\u25B8"}</span>`;
-      label.onclick = () => {
-        if (hasActiveFilter) return;
-        if (manualExpanded.has(section)) manualExpanded.delete(section);
-        else manualExpanded.add(section);
-        draw(input.value);
-      };
-      listWrap.appendChild(label);
-
-      if (!isExpanded) return;
-
-      dishes.forEach(d => {
-        const row = document.createElement("div");
-        row.className = "list-row";
-        row.innerHTML = `<span class="list-row-main"><span class="dish-icon">${getSectionIcon(d.section)}</span>${d.name}</span>`;
-        row.onclick = () => go("dish-detail", { dishId: d.id });
-        listWrap.appendChild(row);
-      });
-    });
+    if (activeSection !== "All") {
+      filtered = filtered.filter(d => d.section === activeSection);
+    }
     if (!filtered.length) {
       listWrap.innerHTML = `<p class="empty-note">No dishes match that search.</p>`;
+      return;
     }
+    filtered.forEach(d => {
+      const card = document.createElement("div");
+      card.className = "menu-card";
+      card.innerHTML = `
+        <div class="menu-card-thumb"><span>${getSectionIcon(d.section)}</span></div>
+        <div class="menu-card-info">
+          <p class="menu-card-name">${d.name}</p>
+          <p class="menu-card-price">$${d.price}</p>
+        </div>
+        <button class="menu-card-btn" aria-label="View ${d.name}"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10"/></svg></button>
+      `;
+      card.onclick = () => go("dish-detail", { dishId: d.id });
+      listWrap.appendChild(card);
+    });
   }
   draw("");
   input.oninput = () => draw(input.value);
@@ -1256,11 +1263,9 @@ function renderCoffeeCupList() {
   app.appendChild(sourceNote);
 
   const listWrap = document.createElement("div");
+  listWrap.className = "menu-card-list";
   COFFEE_BY_THE_CUP.forEach(c => {
-    const row = document.createElement("div");
-    row.className = "list-row";
-    row.innerHTML = `<span class="list-row-main"><span class="dish-icon">&#9749;</span>${c.name}<br><span class="hero-meta" style="margin:2px 0 0;">${c.description}</span></span><span class="list-row-price">$${c.price}</span>`;
-    listWrap.appendChild(row);
+    listWrap.appendChild(buildMenuCard(c.name, `$${c.price}`, "\u2615", null));
   });
   app.appendChild(listWrap);
 }
@@ -1274,12 +1279,9 @@ function renderCoffeeSiphonList() {
   app.appendChild(note);
 
   const listWrap = document.createElement("div");
+  listWrap.className = "menu-card-list";
   COFFEE_SIPHON.forEach(c => {
-    const row = document.createElement("div");
-    row.className = "list-row";
-    row.innerHTML = `<span class="list-row-main"><span class="dish-icon">&#127871;</span>${c.name}<br><span class="hero-meta" style="margin:2px 0 0;">${c.region}</span></span><span class="list-row-price">$${c.price}</span>`;
-    row.onclick = () => go("coffee-siphon-card", { coffeeId: c.id });
-    listWrap.appendChild(row);
+    listWrap.appendChild(buildMenuCard(c.name, `$${c.price}`, "\u{1F3FA}", () => go("coffee-siphon-card", { coffeeId: c.id })));
   });
   app.appendChild(listWrap);
 }
@@ -1443,76 +1445,40 @@ function renderLiquorList() {
   input.className = "search-input";
   input.placeholder = "Search the back bar";
   wrap.appendChild(input);
+
+  let activeCategory = "All";
+  const pillsHolder = document.createElement("div");
+  wrap.appendChild(pillsHolder);
+
   const listWrap = document.createElement("div");
+  listWrap.className = "menu-card-list";
   wrap.appendChild(listWrap);
 
-  const manualExpanded = new Set();
-
-  function appendLiquorRow(l, category) {
-    const row = document.createElement("div");
-    row.className = "list-row";
-    const priceHtml = liquorPriceLabel(l) ? `<span class="list-row-price">${liquorPriceLabel(l)}</span>` : "";
-    const allocFlag = l.allocation ? `<span class="dish-icon" title="Rotating supplier allocation — ask your server">*</span>` : "";
-    row.innerHTML = `<span class="list-row-main"><span class="dish-icon">${SPIRIT_ICON_MAP[category] || "\u{1F943}"}</span>${l.name}${allocFlag}</span>${priceHtml}`;
-    row.onclick = () => go("liquor-card", { liquorId: l.id });
-    listWrap.appendChild(row);
+  function drawPills() {
+    pillsHolder.innerHTML = "";
+    pillsHolder.appendChild(buildFilterPills(["All", ...SPIRIT_ORDER], activeCategory, (val) => {
+      activeCategory = val;
+      draw(input.value);
+    }));
   }
 
   function draw(filter) {
+    drawPills();
     listWrap.innerHTML = "";
     const filterLower = filter.toLowerCase();
-    const hasActiveFilter = filterLower.trim().length > 0;
+    let filtered = LIQUOR.filter(l => l.name.toLowerCase().includes(filterLower));
+    if (activeCategory !== "All") filtered = filtered.filter(l => l.category === activeCategory);
+    filtered.sort((a, b) => SPIRIT_ORDER.indexOf(a.category) - SPIRIT_ORDER.indexOf(b.category) || a.name.localeCompare(b.name));
 
-    SPIRIT_ORDER.forEach(category => {
-      const items = LIQUOR.filter(l => l.category === category && l.name.toLowerCase().includes(filterLower))
-        .sort((a, b) => a.name.localeCompare(b.name));
-      if (hasActiveFilter && !items.length) return;
-
-      const isExpanded = hasActiveFilter || manualExpanded.has(category);
-
-      const label = document.createElement("button");
-      label.className = "section-label section-toggle";
-      label.innerHTML = `<span>${category}${items.length ? " &middot; " + items.length : ""}</span><span class="section-chevron">${isExpanded ? "\u25BE" : "\u25B8"}</span>`;
-      label.onclick = () => {
-        if (hasActiveFilter) return;
-        if (manualExpanded.has(category)) manualExpanded.delete(category);
-        else manualExpanded.add(category);
-        draw(input.value);
-      };
-      listWrap.appendChild(label);
-
-      if (!isExpanded) return;
-
-      if (!items.length) {
-        const empty = document.createElement("p");
-        empty.className = "empty-note";
-        empty.style.textAlign = "left";
-        empty.style.fontStyle = "italic";
-        empty.textContent = "No bottles added yet.";
-        listWrap.appendChild(empty);
-        return;
-      }
-
-      const subOrder = LIQUOR_SUBCATEGORY_ORDER[category];
-      if (subOrder) {
-        subOrder.forEach(sub => {
-          const subItems = items.filter(l => l.subcategory === sub);
-          if (!subItems.length) return;
-          const subLabel = document.createElement("p");
-          subLabel.className = "section-label";
-          subLabel.textContent = sub;
-          listWrap.appendChild(subLabel);
-          subItems.forEach(l => appendLiquorRow(l, category));
-        });
-        items.filter(l => !subOrder.includes(l.subcategory)).forEach(l => appendLiquorRow(l, category));
-      } else {
-        items.forEach(l => appendLiquorRow(l, category));
-      }
-    });
-
-    if (!listWrap.children.length) {
+    if (!filtered.length) {
       listWrap.innerHTML = `<p class="empty-note">No bottles match that search.</p>`;
+      return;
     }
+    filtered.forEach(l => {
+      const nameLabel = l.allocation ? `${l.name} *` : l.name;
+      const card = buildMenuCard(nameLabel, liquorPriceLabel(l), SPIRIT_ICON_MAP[l.category] || "\u{1F943}", () => go("liquor-card", { liquorId: l.id }));
+      listWrap.appendChild(card);
+    });
   }
   draw("");
   input.oninput = () => draw(input.value);
@@ -1621,30 +1587,39 @@ function renderClassicCocktailList() {
   input.className = "search-input";
   input.placeholder = "Search classic cocktails";
   wrap.appendChild(input);
+
+  let activeSpirit = "All";
+  const pillsHolder = document.createElement("div");
+  wrap.appendChild(pillsHolder);
+
   const listWrap = document.createElement("div");
+  listWrap.className = "menu-card-list";
   wrap.appendChild(listWrap);
 
+  function drawPills() {
+    pillsHolder.innerHTML = "";
+    pillsHolder.appendChild(buildFilterPills(["All", ...SPIRIT_ORDER], activeSpirit, (val) => {
+      activeSpirit = val;
+      draw(input.value);
+    }));
+  }
+
   function draw(filter) {
+    drawPills();
     listWrap.innerHTML = "";
-    const filtered = CLASSIC_COCKTAILS.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
-    SPIRIT_ORDER.forEach(spirit => {
-      const group = filtered.filter(c => c.spirit === spirit);
-      if (!group.length) return;
-      const label = document.createElement("p");
-      label.className = "section-label";
-      label.textContent = spirit;
-      listWrap.appendChild(label);
-      group.forEach(c => {
-        const row = document.createElement("div");
-        row.className = "list-row";
-        row.innerHTML = `<span class="list-row-main"><span class="dish-icon">${SPIRIT_ICON_MAP[spirit] || "\u{1F378}"}</span>${c.name}</span>`;
-        row.onclick = () => go("cocktail-detail", { cocktailId: c.id });
-        listWrap.appendChild(row);
-      });
-    });
+    let filtered = CLASSIC_COCKTAILS.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
+    if (activeSpirit !== "All") filtered = filtered.filter(c => c.spirit === activeSpirit);
+    filtered.sort((a, b) => SPIRIT_ORDER.indexOf(a.spirit) - SPIRIT_ORDER.indexOf(b.spirit));
+
     if (!filtered.length) {
       listWrap.innerHTML = `<p class="empty-note">No cocktails match that search.</p>`;
+      return;
     }
+    filtered.forEach(c => {
+      const priceLabel = typeof c.price === "number" ? `$${c.price}` : "";
+      const card = buildMenuCard(c.name, priceLabel, SPIRIT_ICON_MAP[c.spirit] || "\u{1F378}", () => go("cocktail-detail", { cocktailId: c.id }));
+      listWrap.appendChild(card);
+    });
   }
   draw("");
   input.oninput = () => draw(input.value);
@@ -1659,21 +1634,21 @@ function renderCocktailList() {
   input.placeholder = "Search cocktails";
   wrap.appendChild(input);
   const listWrap = document.createElement("div");
+  listWrap.className = "menu-card-list";
   wrap.appendChild(listWrap);
 
   function draw(filter) {
     listWrap.innerHTML = "";
     const filtered = COCKTAILS.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
-    filtered.forEach(c => {
-      const row = document.createElement("div");
-      row.className = "list-row";
-      row.innerHTML = `<span class="list-row-main"><span class="dish-icon">&#127864;</span>${c.name}</span>`;
-      row.onclick = () => go("cocktail-detail", { cocktailId: c.id });
-      listWrap.appendChild(row);
-    });
     if (!filtered.length) {
       listWrap.innerHTML = `<p class="empty-note">No cocktails match that search.</p>`;
+      return;
     }
+    filtered.forEach(c => {
+      const priceLabel = typeof c.price === "number" ? `$${c.price}` : "";
+      const card = buildMenuCard(c.name, priceLabel, "\u{1F378}", () => go("cocktail-detail", { cocktailId: c.id }));
+      listWrap.appendChild(card);
+    });
   }
   draw("");
   input.oninput = () => draw(input.value);
@@ -1688,21 +1663,21 @@ function renderMocktailList() {
   input.placeholder = "Search mocktails";
   wrap.appendChild(input);
   const listWrap = document.createElement("div");
+  listWrap.className = "menu-card-list";
   wrap.appendChild(listWrap);
 
   function draw(filter) {
     listWrap.innerHTML = "";
     const filtered = MOCKTAILS.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
-    filtered.forEach(c => {
-      const row = document.createElement("div");
-      row.className = "list-row";
-      row.innerHTML = `<span class="list-row-main"><span class="dish-icon">&#127817;</span>${c.name}</span>`;
-      row.onclick = () => go("cocktail-detail", { cocktailId: c.id });
-      listWrap.appendChild(row);
-    });
     if (!filtered.length) {
       listWrap.innerHTML = `<p class="empty-note">No mocktails match that search.</p>`;
+      return;
     }
+    filtered.forEach(c => {
+      const priceLabel = typeof c.price === "number" ? `$${c.price}` : "";
+      const card = buildMenuCard(c.name, priceLabel, "\u{1F379}", () => go("cocktail-detail", { cocktailId: c.id }));
+      listWrap.appendChild(card);
+    });
   }
   draw("");
   input.oninput = () => draw(input.value);
