@@ -1062,13 +1062,15 @@ function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter) {
   let excludedAllergens = [];
   if (showAllergenFilter) {
     const allAllergens = [...new Set(DISHES.flatMap(d => d.allergensInRecipe || []))].sort();
-    const filterLabel = document.createElement("p");
-    filterLabel.className = "allergen-group-label";
-    filterLabel.style.marginTop = "4px";
-    filterLabel.textContent = "Hide dishes containing:";
-    wrap.appendChild(filterLabel);
+    let filtersOpen = false;
+
+    const filterToggle = document.createElement("button");
+    filterToggle.className = "section-label section-toggle allergen-toggle";
+    wrap.appendChild(filterToggle);
+
     const filterRow = document.createElement("div");
     filterRow.className = "allergen-row";
+    filterRow.style.display = "none";
     allAllergens.forEach(a => {
       const chip = document.createElement("button");
       chip.className = "chip removable allergen-filter-chip";
@@ -1081,11 +1083,24 @@ function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter) {
           excludedAllergens.push(a);
           chip.classList.add("filter-active");
         }
+        updateToggleLabel();
         draw(input.value);
       };
       filterRow.appendChild(chip);
     });
     wrap.appendChild(filterRow);
+
+    function updateToggleLabel() {
+      const count = excludedAllergens.length;
+      const label = count ? `Hide dishes containing &middot; ${count} selected` : "Hide dishes containing";
+      filterToggle.innerHTML = `<span>${label}</span><span class="section-chevron">${filtersOpen ? "\u25BE" : "\u25B8"}</span>`;
+    }
+    filterToggle.onclick = () => {
+      filtersOpen = !filtersOpen;
+      filterRow.style.display = filtersOpen ? "flex" : "none";
+      updateToggleLabel();
+    };
+    updateToggleLabel();
   }
 
   let activeSection = "All";
@@ -2075,7 +2090,7 @@ function renderIngredientGroups(groups) {
   }).join("");
 }
 
-function renderDishFlipCard(dish) {
+function renderDishFlipCard(dish, onFaceChange) {
   const ingredientItems = splitIngredients(dish.ingredients);
   const flipcard = document.createElement("div");
   flipcard.className = "dish-flipcard";
@@ -2100,15 +2115,21 @@ function renderDishFlipCard(dish) {
   inner.innerHTML = faceHTML(0);
   flipcard.appendChild(inner);
   let faceIndex = 0;
-  flipcard.onclick = () => {
+
+  function goToFace(nextIndex) {
+    if (nextIndex === faceIndex) return;
     flipcard.classList.add("flipping");
     setTimeout(() => {
-      faceIndex = (faceIndex + 1) % 2;
+      faceIndex = nextIndex;
       inner.className = "dish-flip-inner" + (faceIndex === 1 ? " chefprep" : "");
       inner.innerHTML = faceHTML(faceIndex);
       flipcard.classList.remove("flipping");
+      if (onFaceChange) onFaceChange(faceIndex);
     }, 200);
-  };
+  }
+
+  flipcard.onclick = () => goToFace((faceIndex + 1) % 2);
+  flipcard.setFace = goToFace;
   return flipcard;
 }
 
@@ -2152,17 +2173,29 @@ function renderDishDetail(dishId) {
   const dish = findDish(dishId);
   if (!dish) { go("pairfw-list", {}, false); return; }
 
-  header(dish.section);
-
   const container = document.createElement("div");
-  const name = document.createElement("p");
-  name.className = "hero-name";
-  name.textContent = dish.name;
-  container.appendChild(name);
+
+  // ---- Hero: rounded-bottom banner, back button overlaid top-left,
+  //      name + dropline overlaid at the bottom ----
+  const colorIdx = SECTION_ORDER.indexOf(dish.section) % 3;
+  const colorClass = ["ph-terracotta", "ph-moss", "ph-plum"][colorIdx];
+  const hero = document.createElement("div");
+  hero.className = "dd-hero " + colorClass;
+  const dropText = dish.dropLine ? `\u201C${dish.dropLine}\u201D` : (dish.description || "");
+  hero.innerHTML = `
+    <button class="back-btn dd-hero-back" aria-label="Back">&#8592;</button>
+    <div class="dd-hero-overlay">
+      <h1 class="dd-hero-title">${dish.name}</h1>
+      ${dropText ? `<p class="dd-hero-subtitle">${dropText}</p>` : ""}
+    </div>
+  `;
+  hero.querySelector(".dd-hero-back").onclick = goBack;
+  container.appendChild(hero);
 
   if (dish.pronunciation || dish.translation) {
     const pronLine = document.createElement("p");
     pronLine.className = "hero-meta";
+    pronLine.style.marginTop = "14px";
     pronLine.innerHTML = [
       dish.pronunciation ? `<i>${dish.pronunciation}</i>` : "",
       dish.translation ? dish.translation : ""
@@ -2170,18 +2203,27 @@ function renderDishDetail(dishId) {
     container.appendChild(pronLine);
   }
 
-  if (dish.dropLine) {
-    const dropLine = document.createElement("p");
-    dropLine.className = "drop-line";
-    dropLine.textContent = "\u201C" + dish.dropLine + "\u201D";
-    container.appendChild(dropLine);
-  } else {
-    const desc = document.createElement("p");
-    desc.className = "hero-meta";
-    desc.textContent = dish.description;
-    container.appendChild(desc);
+  // ---- Allergens: heading above, small noticeable pills below ----
+  if (dish.allergensInRecipe && dish.allergensInRecipe.length) {
+    const allergenHeading = document.createElement("p");
+    allergenHeading.className = "dd-item-count";
+    allergenHeading.textContent = "Allergens";
+    container.appendChild(allergenHeading);
+
+    const nav = document.createElement("div");
+    nav.className = "dd-nav";
+    dish.allergensInRecipe.forEach(a => {
+      const item = document.createElement("span");
+      item.className = "chip in-recipe";
+      item.textContent = a.charAt(0).toUpperCase() + a.slice(1);
+      nav.appendChild(item);
+    });
+    container.appendChild(nav);
   }
 
+  // ---- Flip card (tap to cycle Ingredients / Chef prep — its own face
+  //      title already names which side you're on, so no separate
+  //      external tab row repeating "Ingredients"/"Preparation") ----
   if (dish.ingredients && dish.chefPrep) {
     container.appendChild(renderDishFlipCard(dish));
   } else if (dish.whatItIs && dish.goodToKnow) {
@@ -2200,70 +2242,72 @@ function renderDishDetail(dishId) {
     container.appendChild(factText);
   }
 
-  if (dish.allergensInRecipe && dish.allergensInRecipe.length) {
-    const allergenTitle = document.createElement("p");
-    allergenTitle.className = "detail-h3";
-    allergenTitle.innerHTML = `<span>&#9888;&#65039;</span> Allergens`;
-    container.appendChild(allergenTitle);
+  // ---- "Can be removed" nuance only — the in-recipe list is already
+  //      shown in the nav row above, so it isn't repeated here ----
+  if (dish.allergensRemovable && dish.allergensRemovable.length) {
+    const removableLabel = document.createElement("p");
+    removableLabel.className = "allergen-group-label";
+    removableLabel.style.marginTop = "18px";
+    removableLabel.textContent = "Can be made without";
+    container.appendChild(removableLabel);
 
-    const inRecipeLabel = document.createElement("p");
-    inRecipeLabel.className = "allergen-group-label";
-    inRecipeLabel.textContent = "In recipe";
-    container.appendChild(inRecipeLabel);
-
-    const inRecipeRow = document.createElement("div");
-    inRecipeRow.className = "allergen-row";
-    dish.allergensInRecipe.forEach(a => {
+    const removableRow = document.createElement("div");
+    removableRow.className = "allergen-row";
+    dish.allergensRemovable.forEach(a => {
       const chip = document.createElement("span");
-      chip.className = "chip in-recipe";
+      chip.className = "chip removable";
       chip.textContent = a.charAt(0).toUpperCase() + a.slice(1);
-      inRecipeRow.appendChild(chip);
+      removableRow.appendChild(chip);
     });
-    container.appendChild(inRecipeRow);
-
-    if (dish.allergensRemovable && dish.allergensRemovable.length) {
-      const removableLabel = document.createElement("p");
-      removableLabel.className = "allergen-group-label";
-      removableLabel.textContent = "Can be removed";
-      container.appendChild(removableLabel);
-
-      const removableRow = document.createElement("div");
-      removableRow.className = "allergen-row";
-      dish.allergensRemovable.forEach(a => {
-        const chip = document.createElement("span");
-        chip.className = "chip removable";
-        chip.textContent = a.charAt(0).toUpperCase() + a.slice(1);
-        removableRow.appendChild(chip);
-      });
-      container.appendChild(removableRow);
-    }
+    container.appendChild(removableRow);
   }
 
-  const pairsLabel = document.createElement("p");
-  pairsLabel.className = "pairs-label";
-  pairsLabel.innerHTML = `<span class="ic">&#127863;</span>Pairs with`;
-  container.appendChild(pairsLabel);
+  // ---- Pairs With: bigger label + wine name as an actual pill button ----
+  const firstWine = dish.pairedWineIds.length ? findWine(dish.pairedWineIds[0]) : null;
+  const detailsRow = document.createElement("div");
+  detailsRow.className = "dd-details-row";
+  const titleGroup = document.createElement("div");
+  titleGroup.className = "dd-title-group";
+  titleGroup.innerHTML = `<h2 class="dd-product-title">Pairs With</h2>`;
+  if (firstWine) {
+    const wineBtn = document.createElement("button");
+    wineBtn.className = "pill dd-pairs-pill";
+    wineBtn.textContent = firstWine.name;
+    wineBtn.onclick = () => go("pairing-explain", { wineId: firstWine.id, dishId: dish.id });
+    titleGroup.appendChild(wineBtn);
+  } else {
+    const noneLabel = document.createElement("span");
+    noneLabel.className = "dd-product-brand";
+    noneLabel.textContent = "No pairing set yet";
+    titleGroup.appendChild(noneLabel);
+  }
+  detailsRow.appendChild(titleGroup);
+  if (typeof dish.price === "number") {
+    const priceEl = document.createElement("span");
+    priceEl.className = "dd-product-price";
+    priceEl.textContent = `$${dish.price}`;
+    detailsRow.appendChild(priceEl);
+  }
+  container.appendChild(detailsRow);
 
-  const pillRow = document.createElement("div");
-  pillRow.className = "pill-row";
-  if (dish.pairedWineIds.length) {
-    dish.pairedWineIds.forEach(wineId => {
+  if (dish.pairedWineIds.length > 1) {
+    const morePillsLabel = document.createElement("p");
+    morePillsLabel.className = "detail-h3";
+    morePillsLabel.style.marginTop = "16px";
+    morePillsLabel.textContent = "Also pairs with";
+    container.appendChild(morePillsLabel);
+    const morePills = document.createElement("div");
+    morePills.className = "pill-row";
+    dish.pairedWineIds.slice(1).forEach(wineId => {
       const wine = findWine(wineId);
       if (!wine) return;
       const pill = document.createElement("button");
       pill.className = "pill";
       pill.textContent = wine.name;
       pill.onclick = () => go("pairing-explain", { wineId: wine.id, dishId: dish.id });
-      pillRow.appendChild(pill);
+      morePills.appendChild(pill);
     });
-  }
-  container.appendChild(pillRow);
-
-  if (!dish.pairedWineIds.length) {
-    const empty = document.createElement("p");
-    empty.className = "empty-note";
-    empty.textContent = "No wine pairing set for this dish yet.";
-    container.appendChild(empty);
+    container.appendChild(morePills);
   }
 
   app.appendChild(container);

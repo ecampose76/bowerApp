@@ -334,7 +334,67 @@ button, input {
 }
 .nav-chip.active { background: var(--bronze-500); color: var(--ink-on-rust); font-weight: 700; }
 
-/* Wine / dish hero header */
+/* Dish detail — literal port of the reference layout's structure,
+   spacing, and type scale, with Bower's own colors/fonts substituted
+   in place of the reference's raw values. */
+.dd-hero {
+  position: relative; height: 310px;
+  width: calc(100% + 32px); margin: -16px -16px 0;
+  border-radius: 0 0 28px 28px; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 20px 28px; background-size: cover; background-position: center;
+}
+.dd-hero-back {
+  position: absolute; top: 16px; left: 16px; z-index: 2;
+  box-shadow: 0 4px 12px -4px rgba(0,0,0,0.3);
+}
+.dd-hero.ph-terracotta { background-color: var(--terracotta); }
+.dd-hero.ph-moss { background-color: var(--moss); }
+.dd-hero.ph-plum { background-color: var(--plum); }
+.dd-hero::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(35,46,31,0) 45%, rgba(35,46,31,0.72) 100%);
+}
+.dd-hero-overlay { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
+.dd-hero-title {
+  font-family: var(--font-display); color: var(--cream-on-charcoal);
+  font-size: 34px; line-height: 1.08; font-weight: 700; letter-spacing: -0.3px;
+  margin: 0; text-shadow: 0 2px 16px rgba(0,0,0,0.25);
+}
+.dd-hero-subtitle {
+  font-family: var(--font-body); color: rgba(255,255,255,0.88);
+  font-size: 13px; font-weight: 400; font-style: italic; line-height: 1.4; margin: 0;
+}
+
+.dd-nav {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px;
+  padding: 0 0 20px;
+}
+
+.dd-item-count {
+  font-family: var(--font-body); font-size: 15px; font-weight: 600; letter-spacing: 0;
+  color: var(--shoyu-700); margin: 24px 0 12px;
+}
+
+.dd-details-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding-top: 16px; margin-top: 24px; border-top: 1px solid var(--washi-300);
+}
+.dd-title-group { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.dd-product-title {
+  font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: -0.1px;
+  line-height: 1.2; color: var(--shoyu-700); margin: 0;
+}
+.dd-pairs-pill { align-self: flex-start; }
+.dd-product-brand {
+  display: block; font-family: var(--font-body); font-size: 13px;
+  color: var(--shoyu-500); margin-top: 2px;
+}
+.dd-product-price {
+  font-family: var(--font-display); font-size: 19px; font-weight: 700; letter-spacing: -0.1px;
+  color: var(--shoyu-700); white-space: nowrap; margin: 0;
+}
+
 .hero-name {
   font-family: var(--font-display); font-size: 26px; font-weight: 700;
   color: var(--shoyu-700); margin: 0 0 4px; line-height: 1.15; letter-spacing: 0.7px;
@@ -470,16 +530,16 @@ button, input {
 }
 .detail-h3:first-of-type { margin-top: 0; }
 .allergen-group-label {
-  font-family: var(--font-mono); font-size: 10px; color: var(--shoyu-300);
+  font-family: var(--font-mono); font-size: 10px; color: var(--shoyu-500);
   text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 5px;
 }
 .allergen-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .chip {
   font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px;
-  padding: 5px 9px; font-weight: 500; background: none; border: 1px solid var(--washi-300);
+  padding: 6px 10px; font-weight: 600; background: var(--washi-200); border: 1px solid var(--washi-300);
 }
-.chip.in-recipe { color: var(--bronze-200); border-color: var(--bronze-500); }
-.chip.removable { color: var(--shoyu-300); border-color: var(--washi-300); }
+.chip.in-recipe { color: var(--bronze-700); border-color: var(--bronze-500); }
+.chip.removable { color: var(--shoyu-500); border-color: var(--washi-300); }
 
 /* Food menu — section filter pills (single-select, replaces the old
    accordion) and product-style cards, matching the reference layout. */
