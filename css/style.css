@@ -602,12 +602,12 @@ button, input {
 .dish-flipcard { height: var(--flipcard-height); margin: 4px 0 8px; cursor: pointer; }
 .dish-flipcard-tall { height: auto; }
 .dish-flip-inner {
-  width: 100%; height: 100%; padding: 18px; border: 2px solid var(--washi-300); border-top: 4px solid var(--bronze-500);
+  width: 100%; height: 100%; padding: 22px 18px; border: none; border-radius: 18px;
   overflow-y: auto; display: flex; flex-direction: column;
-  background: var(--sumi-700); transition: transform 0.2s ease-in-out;
+  background: #F7F1E3; box-shadow: 0 10px 24px -14px rgba(43,51,36,0.28);
+  transition: transform 0.2s ease-in-out;
 }
 .dish-flipcard-tall .dish-flip-inner { height: auto; overflow-y: visible; }
-.dish-flip-inner.chefprep { border-top-color: var(--shoyu-300); }
 .dish-flipcard.flipping .dish-flip-inner { transform: rotateY(90deg); }
 .dish-flip-tag {
   font-family: var(--font-mono); font-size: 10px; color: var(--bronze-200);
@@ -615,7 +615,7 @@ button, input {
 }
 .dish-flip-title { font-size: 20px; font-weight: 600; font-style: italic; color: var(--shoyu-700); margin: 0 0 14px; display: flex; align-items: center; gap: 7px; font-family: var(--font-display); letter-spacing: 0; }
 
-.dish-info-hr { height: 1px; background: var(--washi-300); margin: 20px 0; }
+.dish-info-hr { height: 1px; background: linear-gradient(90deg, var(--bronze-500), transparent 60%); opacity: 0.35; margin: 20px 0; }
 .dish-info-heading {
   font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
   text-transform: uppercase; letter-spacing: 1.2px; color: var(--shoyu-700);
@@ -639,24 +639,40 @@ button, input {
   margin-top: 1px;
 }
 .dish-step-text { font-size: 13px; color: var(--shoyu-500); line-height: 1.55; }
+
 .ingredient-list { margin: 0; padding: 0; list-style: none; }
 .ingredient-list li {
-  font-size: 13px; color: var(--shoyu-500); line-height: 1.5;
-  margin-bottom: 10px; padding-left: 14px; position: relative;
+  display: flex; align-items: center; gap: 11px;
+  font-size: 13.5px; color: var(--shoyu-700); line-height: 1.4;
+  margin-bottom: 14px; padding: 4px 6px; border-radius: 10px;
 }
-.ingredient-list li::before { content: "\2013"; position: absolute; left: 0; color: var(--bronze-200); }
-.ingredient-list li.ingredient-group { padding-left: 0; margin-bottom: 14px; }
-.ingredient-list li.ingredient-group::before { content: none; }
+.ingredient-icon-wrap {
+  flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--washi-200);
+  display: flex; align-items: center; justify-content: center;
+}
+.ingredient-icon { width: 9px; height: 9px; fill: var(--bronze-500); }
+.ingredient-text { min-width: 0; }
+.ingredient-hero {
+  border: 1px solid rgba(217,128,92,0.35);
+  background: rgba(217,128,92,0.07);
+}
+.ingredient-hero .ingredient-icon-wrap { background: var(--terracotta); }
+.ingredient-hero .ingredient-icon { fill: var(--terracotta-ink); }
+.ingredient-hero .ingredient-text { font-weight: 600; }
+.ingredient-list li.ingredient-group {
+  display: block; padding: 0; border-radius: 0; margin-bottom: 16px;
+}
 .ingredient-group-label {
   display: block; font-family: var(--font-mono); font-size: 10px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.6px; color: var(--bronze-200); margin-bottom: 6px;
+  text-transform: uppercase; letter-spacing: 0.6px; color: var(--bronze-200); margin-bottom: 8px;
 }
 .ingredient-sublist { margin: 0; padding: 0; list-style: none; }
 .ingredient-sublist li {
-  font-size: 13px; color: var(--shoyu-500); line-height: 1.5;
-  margin-bottom: 6px; padding-left: 14px; position: relative;
+  display: flex; align-items: center; gap: 11px;
+  font-size: 13.5px; color: var(--shoyu-700); line-height: 1.4;
+  margin-bottom: 10px; padding: 4px 6px; border-radius: 10px;
 }
-.ingredient-sublist li::before { content: "\2013"; position: absolute; left: 0; color: var(--bronze-200); }
 .chefprep-text { font-size: 13px; color: var(--shoyu-500); line-height: 1.6; margin: 0; }
 
 /* Cocktail follow-up questions */

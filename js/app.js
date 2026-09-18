@@ -2084,8 +2084,15 @@ function splitIngredients(text) {
 }
 
 function renderIngredientGroups(groups) {
+  let globalIndex = 0;
+  const iconSvg = `<svg class="ingredient-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3.25"/></svg>`;
+  function renderItem(item) {
+    const isHero = globalIndex === 0;
+    globalIndex++;
+    return `<li class="${isHero ? "ingredient-hero" : ""}"><span class="ingredient-icon-wrap">${iconSvg}</span><span class="ingredient-text">${item}</span></li>`;
+  }
   return groups.map(g => {
-    const itemsHtml = g.items.map(i => `<li>${i}</li>`).join("");
+    const itemsHtml = g.items.map(renderItem).join("");
     if (g.label) {
       return `<li class="ingredient-group"><span class="ingredient-group-label">${g.label}</span><ul class="ingredient-sublist">${itemsHtml}</ul></li>`;
     }
