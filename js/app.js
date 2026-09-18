@@ -2109,10 +2109,29 @@ function renderDishFlipStepsCard(dish) {
   const inner = document.createElement("div");
   inner.className = "dish-flip-inner dish-info-inner";
 
+  if (typeof dish.price === "number") {
+    const priceBadge = document.createElement("span");
+    priceBadge.className = "dish-flip-price";
+    priceBadge.textContent = `$${dish.price}`;
+    flipcard.appendChild(priceBadge);
+  }
+
   function allergenTagsHTML(list) {
     return list.map(a =>
       `<span class="chip in-recipe">${capitalizeFirst(a)}</span>`
     ).join("");
+  }
+
+  const pairedWines = dish.pairedWineIds.map(id => findWine(id)).filter(Boolean);
+
+  function pairsWithHTML() {
+    return `
+      <div class="dish-info-hr"></div>
+      <p class="dish-info-heading">Pairs with</p>
+      ${pairedWines.length
+        ? `<div class="pill-row">${pairedWines.map(w => `<button type="button" class="pill dd-pairs-pill" data-wine-id="${w.id}">${w.name}</button>`).join("")}</div>`
+        : `<p class="chefprep-text">No pairing set yet.</p>`}
+    `;
   }
 
   function faceHTML(idx) {
@@ -2140,13 +2159,24 @@ function renderDishFlipStepsCard(dish) {
         ? `<div class="dd-nav">${allergenTagsHTML(dish.allergensInRecipe)}</div>`
         : `<p class="chefprep-text">No known allergens in this recipe.</p>`}
       ${hasRemovable ? `
-        <p class="dish-info-heading" style="margin-top:20px;">Can be made without</p>
+        <p class="dish-info-heading" style="margin-top:14px;">Can be made without</p>
         <div class="dd-nav">${allergenTagsHTML(dish.allergensRemovable)}</div>
       ` : ""}
+      ${pairsWithHTML()}
     `;
   }
 
+  function wireFace() {
+    inner.querySelectorAll(".dd-pairs-pill").forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        go("pairing-explain", { wineId: btn.dataset.wineId, dishId: dish.id });
+      };
+    });
+  }
+
   inner.innerHTML = faceHTML(0);
+  wireFace();
   flipcard.appendChild(inner);
   let faceIndex = 0;
   flipcard.onclick = () => {
@@ -2154,6 +2184,7 @@ function renderDishFlipStepsCard(dish) {
     setTimeout(() => {
       faceIndex = (faceIndex + 1) % 3;
       inner.innerHTML = faceHTML(faceIndex);
+      wireFace();
       flipcard.classList.remove("flipping");
     }, 200);
   };
@@ -2260,39 +2291,6 @@ function renderDishDetail(dishId) {
     factText.textContent = dish.funFact;
     container.appendChild(factText);
   }
-
-  // ---- Pairs With: label + all paired wines as pills in one continuous row ----
-  const pairedWines = dish.pairedWineIds.map(id => findWine(id)).filter(Boolean);
-  const detailsRow = document.createElement("div");
-  detailsRow.className = "dd-details-row";
-  const titleGroup = document.createElement("div");
-  titleGroup.className = "dd-title-group";
-  titleGroup.innerHTML = `<h2 class="dd-product-title">Pairs With</h2>`;
-  if (pairedWines.length) {
-    const pillRow = document.createElement("div");
-    pillRow.className = "pill-row";
-    pairedWines.forEach(wine => {
-      const wineBtn = document.createElement("button");
-      wineBtn.className = "pill dd-pairs-pill";
-      wineBtn.textContent = wine.name;
-      wineBtn.onclick = () => go("pairing-explain", { wineId: wine.id, dishId: dish.id });
-      pillRow.appendChild(wineBtn);
-    });
-    titleGroup.appendChild(pillRow);
-  } else {
-    const noneLabel = document.createElement("span");
-    noneLabel.className = "dd-product-brand";
-    noneLabel.textContent = "No pairing set yet";
-    titleGroup.appendChild(noneLabel);
-  }
-  detailsRow.appendChild(titleGroup);
-  if (typeof dish.price === "number") {
-    const priceEl = document.createElement("span");
-    priceEl.className = "dd-product-price";
-    priceEl.textContent = `$${dish.price}`;
-    detailsRow.appendChild(priceEl);
-  }
-  container.appendChild(detailsRow);
 
   app.appendChild(container);
 }
