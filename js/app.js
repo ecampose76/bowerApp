@@ -2083,68 +2083,66 @@ function splitIngredients(text) {
   return groups;
 }
 
+function capitalizeFirst(s) {
+  if (!s) return s;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 function renderIngredientGroups(groups) {
-  let globalIndex = 0;
   const iconSvg = `<svg class="ingredient-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3.25"/></svg>`;
   function renderItem(item) {
-    const isHero = globalIndex === 0;
-    globalIndex++;
-    return `<li class="${isHero ? "ingredient-hero" : ""}"><span class="ingredient-icon-wrap">${iconSvg}</span><span class="ingredient-text">${item}</span></li>`;
+    return `<li><span class="ingredient-icon-wrap">${iconSvg}</span><span class="ingredient-text">${capitalizeFirst(item)}</span></li>`;
   }
   return groups.map(g => {
     const itemsHtml = g.items.map(renderItem).join("");
     if (g.label) {
-      return `<li class="ingredient-group"><span class="ingredient-group-label">${g.label}</span><ul class="ingredient-sublist">${itemsHtml}</ul></li>`;
+      return `<li class="ingredient-group"><span class="ingredient-group-label">${capitalizeFirst(g.label)}</span><ul class="ingredient-sublist">${itemsHtml}</ul></li>`;
     }
     return itemsHtml;
   }).join("");
 }
 
-function splitIntoSteps(text) {
-  if (!text) return [];
-  return text.split(/\.\s+(?=[A-Z])/).map(s => s.trim().replace(/\.$/, "")).filter(Boolean).map(s => s + ".");
-}
-
 function renderDishFlipStepsCard(dish) {
   const ingredientItems = splitIngredients(dish.ingredients);
-  const steps = splitIntoSteps(dish.chefPrep);
   const flipcard = document.createElement("div");
-  flipcard.className = "dish-flipcard dish-flipcard-tall";
+  flipcard.className = "dish-flipcard dish-flipcard-fixed";
   const inner = document.createElement("div");
   inner.className = "dish-flip-inner dish-info-inner";
 
-  function allergensHTML() {
-    if (!dish.allergensInRecipe || !dish.allergensInRecipe.length) return "";
-    const tags = dish.allergensInRecipe.map(a =>
-      `<span class="chip in-recipe">${a.charAt(0).toUpperCase() + a.slice(1)}</span>`
+  function allergenTagsHTML(list) {
+    return list.map(a =>
+      `<span class="chip in-recipe">${capitalizeFirst(a)}</span>`
     ).join("");
-    return `
-      <div class="dish-info-hr"></div>
-      <p class="dish-info-heading">Allergens</p>
-      <div class="dd-nav">${tags}</div>
-    `;
   }
 
   function faceHTML(idx) {
     if (idx === 0) {
       return `
-        <p class="dish-flip-tag">1/2 &middot; tap to flip</p>
+        <p class="dish-flip-tag">1/3 &middot; tap to flip</p>
         <p class="dish-info-heading">Ingredients</p>
-        <ul class="ingredient-list">${renderIngredientGroups(ingredientItems)}</ul>
-        ${allergensHTML()}
+        <ul class="ingredient-list ingredient-list-grid">${renderIngredientGroups(ingredientItems)}</ul>
       `;
     }
+    if (idx === 1) {
+      const story = dish.chefPrepStory || dish.chefPrep;
+      return `
+        <p class="dish-flip-tag">2/3 &middot; tap to flip</p>
+        <p class="dish-info-heading">How it's made</p>
+        <p class="dish-story-text">${story}</p>
+      `;
+    }
+    const hasInRecipe = dish.allergensInRecipe && dish.allergensInRecipe.length;
+    const hasRemovable = dish.allergensRemovable && dish.allergensRemovable.length;
     return `
-      <p class="dish-flip-tag">2/2 &middot; tap to flip</p>
-      <p class="dish-info-heading">How to make</p>
-      <ol class="dish-steps-list">
-        ${steps.map((step, i) => `
-          <li class="dish-step">
-            <span class="dish-step-num">${i + 1}</span>
-            <span class="dish-step-text">${step}</span>
-          </li>
-        `).join("")}
-      </ol>
+      <p class="dish-flip-tag">3/3 &middot; tap to flip</p>
+      <p class="dish-info-heading">Allergens</p>
+      ${hasInRecipe
+        ? `<div class="dd-nav">${allergenTagsHTML(dish.allergensInRecipe)}</div>`
+        : `<p class="chefprep-text">No known allergens in this recipe.</p>`}
+      ${hasRemovable ? `
+        <p class="dish-info-heading" style="margin-top:20px;">Can be made without</p>
+        <div class="dd-nav">${allergenTagsHTML(dish.allergensRemovable)}</div>
+      ` : ""}
     `;
   }
 
@@ -2154,7 +2152,7 @@ function renderDishFlipStepsCard(dish) {
   flipcard.onclick = () => {
     flipcard.classList.add("flipping");
     setTimeout(() => {
-      faceIndex = (faceIndex + 1) % 2;
+      faceIndex = (faceIndex + 1) % 3;
       inner.innerHTML = faceHTML(faceIndex);
       flipcard.classList.remove("flipping");
     }, 200);
@@ -2261,26 +2259,6 @@ function renderDishDetail(dishId) {
     factText.style.cssText = "margin-bottom:14px; line-height:1.55; color:var(--shoyu-500);";
     factText.textContent = dish.funFact;
     container.appendChild(factText);
-  }
-
-  // ---- "Can be removed" nuance only — the in-recipe list is already
-  //      shown inside the flip card's Ingredients face now, so it isn't repeated here ----
-  if (dish.allergensRemovable && dish.allergensRemovable.length) {
-    const removableLabel = document.createElement("p");
-    removableLabel.className = "allergen-group-label";
-    removableLabel.style.marginTop = "18px";
-    removableLabel.textContent = "Can be made without";
-    container.appendChild(removableLabel);
-
-    const removableRow = document.createElement("div");
-    removableRow.className = "allergen-row";
-    dish.allergensRemovable.forEach(a => {
-      const chip = document.createElement("span");
-      chip.className = "chip removable";
-      chip.textContent = a.charAt(0).toUpperCase() + a.slice(1);
-      removableRow.appendChild(chip);
-    });
-    container.appendChild(removableRow);
   }
 
   // ---- Pairs With: label + all paired wines as pills in one continuous row ----
