@@ -278,12 +278,28 @@ button, input {
 }
 
 /* Search input */
+.search-filter-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .search-input {
-  width: 100%; background: var(--washi-200); border: none;
+  flex: 1; min-width: 0; background: var(--washi-200); border: none;
   padding: 12px 18px; font-size: 14.5px; font-family: var(--font-body); font-weight: 500; color: var(--shoyu-700);
-  margin-bottom: 14px;
+  margin-bottom: 0;
 }
 .search-input::placeholder { color: var(--shoyu-300); }
+
+.allergen-filter-btn {
+  flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
+  background: var(--washi-200); border: none; color: var(--shoyu-700);
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  position: relative;
+}
+.allergen-filter-btn svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 1.5; fill: none; }
+.allergen-filter-btn.active { background: var(--charcoal); color: var(--cream-on-charcoal); }
+.allergen-filter-badge {
+  display: none; align-items: center; justify-content: center;
+  position: absolute; top: -3px; right: -3px; min-width: 16px; height: 16px; padding: 0 3px;
+  border-radius: 999px; background: var(--bronze-500); color: var(--ink-on-rust);
+  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+}
 
 /* List rows — rounded white tiles with a colored icon badge, matching
    the reference's list screens (colored avatar circle, bold name,
@@ -538,8 +554,9 @@ button, input {
    accordion) and product-style cards, matching the reference layout. */
 .menu-section-pills {
   display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px;
-  margin-bottom: 16px;
+  margin-bottom: 16px; scrollbar-width: none;
 }
+.menu-section-pills::-webkit-scrollbar { display: none; }
 .menu-section-pill {
   font-family: var(--font-display); font-size: 12px; font-weight: 700;
   padding: 9px 16px; white-space: nowrap; flex-shrink: 0; cursor: pointer;
@@ -1062,14 +1079,14 @@ button, input {
 /* ============================================================
    Press feedback — mechanical, not glossy: steep ease-out, short.
    ============================================================ */
-.home-option, .home-hero-card, .home-banner-card, .home-circle-item, .home-account-btn, .list-row, .menu-section-pill, .menu-card, .menu-card-btn, .pill, .nav-chip, .footer-btn, .speed-toggle,
+.home-option, .home-hero-card, .home-banner-card, .home-circle-item, .home-account-btn, .list-row, .menu-section-pill, .menu-card, .menu-card-btn, .allergen-filter-btn, .pill, .nav-chip, .footer-btn, .speed-toggle,
 .wotd-strip, .wotd-main, .wotd-shuffle, .theme-toggle, .back-btn, .section-toggle,
 .match-tile, .allergen-filter-chip, .testme-reset, .confidence-btn, .mc-btn, .somm-btn,
 .flipcard, .dish-flipcard, .testme-card, .imposter-tile,
 .learning-card, .quiz-opt, .btn-start, .video-frame, .wcard, .knockout-hint-btn {
   transition: transform var(--press-duration) ease-out, background var(--press-duration) ease-out, border-color var(--press-duration) ease-out;
 }
-.home-option:active, .home-hero-card:active, .home-banner-card:active, .home-circle-item:active, .home-account-btn:active, .list-row:active, .menu-section-pill:active, .menu-card:active, .menu-card-btn:active, .pill:active, .nav-chip:active,
+.home-option:active, .home-hero-card:active, .home-banner-card:active, .home-circle-item:active, .home-account-btn:active, .list-row:active, .menu-section-pill:active, .menu-card:active, .menu-card-btn:active, .allergen-filter-btn:active, .pill:active, .nav-chip:active,
 .footer-btn:not(:disabled):active, .speed-toggle:active, .wotd-strip:active,
 .wotd-main:active, .wotd-shuffle:active, .theme-toggle:active, .back-btn:active, .section-toggle:active,
 .match-tile:not(.matched):not(.picked):active, .allergen-filter-chip:active,
@@ -1084,7 +1101,7 @@ button, input {
 /* ============================================================
    Focus visibility — hard neon/rust ring, never soft.
    ============================================================ */
-.home-option:focus-visible, .home-hero-card:focus-visible, .home-banner-card:focus-visible, .home-circle-item:focus-visible, .home-account-btn:focus-visible, .list-row:focus-visible, .menu-section-pill:focus-visible, .menu-card:focus-visible, .menu-card-btn:focus-visible, .pill:focus-visible,
+.home-option:focus-visible, .home-hero-card:focus-visible, .home-banner-card:focus-visible, .home-circle-item:focus-visible, .home-account-btn:focus-visible, .list-row:focus-visible, .menu-section-pill:focus-visible, .menu-card:focus-visible, .menu-card-btn:focus-visible, .allergen-filter-btn:focus-visible, .pill:focus-visible,
 .nav-chip:focus-visible, .footer-btn:focus-visible, .speed-toggle:focus-visible,
 .wotd-strip:focus-visible, .wotd-main:focus-visible, .wotd-shuffle:focus-visible, .theme-toggle:focus-visible,
 .back-btn:focus-visible, .section-toggle:focus-visible, .match-tile:focus-visible,
@@ -1102,7 +1119,7 @@ button, input {
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   .flip-inner, .dish-flip-inner, .confetti, .match-tile,
-  .home-option, .home-hero-card, .home-banner-card, .home-circle-item, .home-account-btn, .list-row, .menu-section-pill, .menu-card, .menu-card-btn, .pill, .nav-chip, .footer-btn, .speed-toggle,
+  .home-option, .home-hero-card, .home-banner-card, .home-circle-item, .home-account-btn, .list-row, .menu-section-pill, .menu-card, .menu-card-btn, .allergen-filter-btn, .pill, .nav-chip, .footer-btn, .speed-toggle,
   .wotd-strip, .wotd-shuffle, .theme-toggle, .back-btn, .section-toggle,
   .allergen-filter-chip, .testme-reset, .confidence-btn, .mc-btn, .somm-btn,
   .flipcard, .dish-flipcard, .testme-card, .imposter-tile,

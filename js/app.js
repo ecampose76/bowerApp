@@ -1054,19 +1054,27 @@ function renderPairWineFoodList() {
 function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter) {
   header(headerTitle);
   const wrap = document.createElement("div");
+
+  const searchRow = document.createElement("div");
+  searchRow.className = "search-filter-row";
   const input = document.createElement("input");
   input.className = "search-input";
   input.placeholder = searchPlaceholder;
-  wrap.appendChild(input);
+  searchRow.appendChild(input);
 
   let excludedAllergens = [];
   if (showAllergenFilter) {
     const allAllergens = [...new Set(DISHES.flatMap(d => d.allergensInRecipe || []))].sort();
     let filtersOpen = false;
 
-    const filterToggle = document.createElement("button");
-    filterToggle.className = "section-label section-toggle allergen-toggle";
-    wrap.appendChild(filterToggle);
+    const filterBtn = document.createElement("button");
+    filterBtn.className = "allergen-filter-btn";
+    filterBtn.setAttribute("aria-label", "Filter by allergen");
+    filterBtn.innerHTML = `
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 1.5 15 14H1L8 1.5z"/><path d="M8 6.2v3.4"/><circle cx="8" cy="11.6" r="0.6" fill="currentColor" stroke="none"/></svg>
+      <span class="allergen-filter-badge"></span>
+    `;
+    searchRow.appendChild(filterBtn);
 
     const filterRow = document.createElement("div");
     filterRow.className = "allergen-row";
@@ -1083,24 +1091,29 @@ function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter) {
           excludedAllergens.push(a);
           chip.classList.add("filter-active");
         }
-        updateToggleLabel();
+        updateFilterBtn();
         draw(input.value);
       };
       filterRow.appendChild(chip);
     });
-    wrap.appendChild(filterRow);
 
-    function updateToggleLabel() {
+    function updateFilterBtn() {
       const count = excludedAllergens.length;
-      const label = count ? `Hide dishes containing &middot; ${count} selected` : "Hide dishes containing";
-      filterToggle.innerHTML = `<span>${label}</span><span class="section-chevron">${filtersOpen ? "\u25BE" : "\u25B8"}</span>`;
+      const badge = filterBtn.querySelector(".allergen-filter-badge");
+      badge.textContent = count || "";
+      badge.style.display = count ? "flex" : "none";
+      filterBtn.classList.toggle("active", filtersOpen);
     }
-    filterToggle.onclick = () => {
+    filterBtn.onclick = () => {
       filtersOpen = !filtersOpen;
       filterRow.style.display = filtersOpen ? "flex" : "none";
-      updateToggleLabel();
+      updateFilterBtn();
     };
-    updateToggleLabel();
+    updateFilterBtn();
+    wrap.appendChild(searchRow);
+    wrap.appendChild(filterRow);
+  } else {
+    wrap.appendChild(searchRow);
   }
 
   let activeSection = "All";
