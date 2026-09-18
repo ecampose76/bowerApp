@@ -2159,7 +2159,7 @@ function renderDishFlipStepsCard(dish) {
         ? `<div class="dd-nav">${allergenTagsHTML(dish.allergensInRecipe)}</div>`
         : `<p class="chefprep-text">No known allergens in this recipe.</p>`}
       ${hasRemovable ? `
-        <p class="dish-info-heading" style="margin-top:14px;">Can be made without</p>
+        <p class="dish-info-heading" style="margin-top:8px;">Can be made without</p>
         <div class="dd-nav">${allergenTagsHTML(dish.allergensRemovable)}</div>
       ` : ""}
       ${pairsWithHTML()}

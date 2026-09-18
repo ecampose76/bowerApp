@@ -338,11 +338,11 @@ button, input {
    spacing, and type scale, with Bower's own colors/fonts substituted
    in place of the reference's raw values. */
 .dd-hero {
-  position: relative; height: 310px;
+  position: relative; height: 210px;
   width: calc(100% + 32px); margin: -16px -16px 0;
   border-radius: 0 0 28px 28px; overflow: hidden;
   display: flex; flex-direction: column; justify-content: flex-end;
-  padding: 0 20px 28px; background-size: cover; background-position: center;
+  padding: 0 20px 24px; background-size: cover; background-position: center;
 }
 .dd-hero-back {
   position: absolute; top: 16px; left: 16px; z-index: 2;
@@ -362,14 +362,14 @@ button, input {
   margin: 0; text-shadow: 0 2px 16px rgba(0,0,0,0.25);
 }
 
-.dd-dropline-block { margin: 28px 0 20px; }
+.dd-dropline-block { margin: 20px 0 16px; }
 .dd-dropline-label {
   font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
   text-transform: uppercase; letter-spacing: 1.2px; color: var(--shoyu-500);
   margin: 0 0 8px;
 }
 .dd-dropline-text {
-  font-family: var(--font-body); font-size: 17px; font-weight: 500; font-style: italic;
+  font-family: var(--font-body); font-size: 15px; font-weight: 500; font-style: italic;
   color: var(--shoyu-700); line-height: 1.4; margin: 0;
 }
 
@@ -590,9 +590,9 @@ button, input {
   padding: 5px 11px; border-radius: 999px;
   box-shadow: 0 4px 10px -6px rgba(43,51,36,0.25);
 }
-.dish-flipcard-fixed { height: 360px; }
+.dish-flipcard-fixed { height: 324px; }
 .dish-flip-inner {
-  width: 100%; height: 100%; padding: 18px 18px; border: none; border-radius: 18px;
+  width: 100%; height: 100%; padding: 14px 18px; border: none; border-radius: 18px;
   overflow: hidden; display: flex; flex-direction: column;
   background: var(--washi-200); box-shadow: 0 14px 30px -12px rgba(43,51,36,0.4);
   transition: transform 0.2s ease-in-out;
@@ -604,11 +604,11 @@ button, input {
 }
 .dish-flip-title { font-size: 20px; font-weight: 600; font-style: italic; color: var(--shoyu-700); margin: 0 0 14px; display: flex; align-items: center; gap: 7px; font-family: var(--font-display); letter-spacing: 0; }
 
-.dish-info-hr { height: 1px; background: linear-gradient(90deg, var(--bronze-500), transparent 60%); opacity: 0.35; margin: 14px 0; }
+.dish-info-hr { height: 1px; background: linear-gradient(90deg, var(--bronze-500), transparent 60%); opacity: 0.35; margin: 8px 0; }
 .dish-info-heading {
   font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
   text-transform: uppercase; letter-spacing: 1.2px; color: var(--shoyu-700);
-  margin: 0 0 14px; padding-bottom: 9px; position: relative; flex-shrink: 0;
+  margin: 0 0 10px; padding-bottom: 6px; position: relative; flex-shrink: 0;
 }
 .dish-info-heading::after {
   content: ""; position: absolute; left: 0; bottom: 0; width: 20px; height: 2px;
