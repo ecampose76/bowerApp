@@ -353,9 +353,14 @@ button, input {
 .dd-hero.ph-plum { background-color: var(--plum); }
 .dd-hero-overlay { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
 .dd-hero-title {
-  font-family: var(--font-display); color: var(--terracotta-ink);
-  font-size: 34px; line-height: 1.08; font-weight: 700; letter-spacing: -0.3px;
-  margin: 0;
+  font-family: var(--font-display); color: #FFA07A;
+  font-size: 34px; line-height: 1.55; font-weight: 700; letter-spacing: -0.3px;
+  margin: 0; display: inline;
+  background: rgba(35,46,31,0.88);
+  padding: 3px 10px;
+  border-radius: 8px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 .dd-dropline-block { margin: 20px 0 16px; }
@@ -379,7 +384,10 @@ button, input {
   color: var(--shoyu-700); margin: 24px 0 12px;
 }
 
-.dd-pairs-pill { align-self: flex-start; font-size: 11px; line-height: 1.3; white-space: normal; text-align: left; }
+.dd-pairs-pill {
+  align-self: flex-start; font-size: 11px; line-height: 1.3; white-space: normal; text-align: left;
+  background: var(--washi-100); border: 1px solid var(--washi-300);
+}
 
 .hero-name {
   font-family: var(--font-display); font-size: 26px; font-weight: 700;
