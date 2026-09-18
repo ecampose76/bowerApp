@@ -2093,47 +2093,22 @@ function renderIngredientGroups(groups) {
   }).join("");
 }
 
-function renderDishFlipCard(dish, onFaceChange) {
+function renderDishTwoColumnCard(dish) {
   const ingredientItems = splitIngredients(dish.ingredients);
-  const flipcard = document.createElement("div");
-  flipcard.className = "dish-flipcard";
-  const inner = document.createElement("div");
-  inner.className = "dish-flip-inner";
-
-  function faceHTML(idx) {
-    if (idx === 0) {
-      return `
-        <p class="dish-flip-tag">1/2 &middot; tap to flip</p>
-        <p class="dish-flip-title">&#129367; Ingredients</p>
-        <ul class="ingredient-list">${renderIngredientGroups(ingredientItems)}</ul>
-      `;
-    }
-    return `
-      <p class="dish-flip-tag">2/2 &middot; tap to flip</p>
-      <p class="dish-flip-title">&#128293; Chef prep</p>
+  const card = document.createElement("div");
+  card.className = "dish-info-card";
+  card.innerHTML = `
+    <div class="dish-info-col">
+      <p class="dish-info-heading">Ingredients</p>
+      <ul class="ingredient-list">${renderIngredientGroups(ingredientItems)}</ul>
+    </div>
+    <div class="dish-info-divider"></div>
+    <div class="dish-info-col">
+      <p class="dish-info-heading">How to make</p>
       <p class="chefprep-text">${dish.chefPrep}</p>
-    `;
-  }
-
-  inner.innerHTML = faceHTML(0);
-  flipcard.appendChild(inner);
-  let faceIndex = 0;
-
-  function goToFace(nextIndex) {
-    if (nextIndex === faceIndex) return;
-    flipcard.classList.add("flipping");
-    setTimeout(() => {
-      faceIndex = nextIndex;
-      inner.className = "dish-flip-inner" + (faceIndex === 1 ? " chefprep" : "");
-      inner.innerHTML = faceHTML(faceIndex);
-      flipcard.classList.remove("flipping");
-      if (onFaceChange) onFaceChange(faceIndex);
-    }, 200);
-  }
-
-  flipcard.onclick = () => goToFace((faceIndex + 1) % 2);
-  flipcard.setFace = goToFace;
-  return flipcard;
+    </div>
+  `;
+  return card;
 }
 
 function renderRawCutFlipCard(dish) {
@@ -2229,7 +2204,7 @@ function renderDishDetail(dishId) {
   //      title already names which side you're on, so no separate
   //      external tab row repeating "Ingredients"/"Preparation") ----
   if (dish.ingredients && dish.chefPrep) {
-    container.appendChild(renderDishFlipCard(dish));
+    container.appendChild(renderDishTwoColumnCard(dish));
   } else if (dish.whatItIs && dish.goodToKnow) {
     container.appendChild(renderRawCutFlipCard(dish));
   }
