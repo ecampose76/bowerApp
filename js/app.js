@@ -2098,18 +2098,37 @@ function splitIntoSteps(text) {
   return text.split(/\.\s+(?=[A-Z])/).map(s => s.trim().replace(/\.$/, "")).filter(Boolean).map(s => s + ".");
 }
 
-function renderDishStepsCard(dish) {
+function renderDishFlipStepsCard(dish) {
   const ingredientItems = splitIngredients(dish.ingredients);
   const steps = splitIntoSteps(dish.chefPrep);
-  const card = document.createElement("div");
-  card.className = "dish-info-card";
-  card.innerHTML = `
-    <div class="dish-info-section">
-      <p class="dish-info-heading">Ingredients</p>
-      <ul class="ingredient-list">${renderIngredientGroups(ingredientItems)}</ul>
-    </div>
-    <div class="dish-info-hr"></div>
-    <div class="dish-info-section">
+  const flipcard = document.createElement("div");
+  flipcard.className = "dish-flipcard dish-flipcard-tall";
+  const inner = document.createElement("div");
+  inner.className = "dish-flip-inner dish-info-inner";
+
+  function allergensHTML() {
+    if (!dish.allergensInRecipe || !dish.allergensInRecipe.length) return "";
+    const tags = dish.allergensInRecipe.map(a =>
+      `<span class="chip in-recipe">${a.charAt(0).toUpperCase() + a.slice(1)}</span>`
+    ).join("");
+    return `
+      <div class="dish-info-hr"></div>
+      <p class="dish-info-heading">Allergens</p>
+      <div class="dd-nav">${tags}</div>
+    `;
+  }
+
+  function faceHTML(idx) {
+    if (idx === 0) {
+      return `
+        <p class="dish-flip-tag">1/2 &middot; tap to flip</p>
+        <p class="dish-info-heading">Ingredients</p>
+        <ul class="ingredient-list">${renderIngredientGroups(ingredientItems)}</ul>
+        ${allergensHTML()}
+      `;
+    }
+    return `
+      <p class="dish-flip-tag">2/2 &middot; tap to flip</p>
       <p class="dish-info-heading">How to make</p>
       <ol class="dish-steps-list">
         ${steps.map((step, i) => `
@@ -2119,9 +2138,21 @@ function renderDishStepsCard(dish) {
           </li>
         `).join("")}
       </ol>
-    </div>
-  `;
-  return card;
+    `;
+  }
+
+  inner.innerHTML = faceHTML(0);
+  flipcard.appendChild(inner);
+  let faceIndex = 0;
+  flipcard.onclick = () => {
+    flipcard.classList.add("flipping");
+    setTimeout(() => {
+      faceIndex = (faceIndex + 1) % 2;
+      inner.innerHTML = faceHTML(faceIndex);
+      flipcard.classList.remove("flipping");
+    }, 200);
+  };
+  return flipcard;
 }
 
 function renderRawCutFlipCard(dish) {
@@ -2195,29 +2226,10 @@ function renderDishDetail(dishId) {
     container.appendChild(pronLine);
   }
 
-  // ---- Allergens: heading above, small noticeable pills below ----
-  if (dish.allergensInRecipe && dish.allergensInRecipe.length) {
-    const allergenHeading = document.createElement("p");
-    allergenHeading.className = "dd-item-count";
-    allergenHeading.textContent = "Allergens";
-    container.appendChild(allergenHeading);
-
-    const nav = document.createElement("div");
-    nav.className = "dd-nav";
-    dish.allergensInRecipe.forEach(a => {
-      const item = document.createElement("span");
-      item.className = "chip in-recipe";
-      item.textContent = a.charAt(0).toUpperCase() + a.slice(1);
-      nav.appendChild(item);
-    });
-    container.appendChild(nav);
-  }
-
-  // ---- Flip card (tap to cycle Ingredients / Chef prep — its own face
-  //      title already names which side you're on, so no separate
-  //      external tab row repeating "Ingredients"/"Preparation") ----
+  // ---- Flip card: Ingredients + Allergens on face 1, How to Make
+  //      steps on face 2, tap to flip between them ----
   if (dish.ingredients && dish.chefPrep) {
-    container.appendChild(renderDishStepsCard(dish));
+    container.appendChild(renderDishFlipStepsCard(dish));
   } else if (dish.whatItIs && dish.goodToKnow) {
     container.appendChild(renderRawCutFlipCard(dish));
   }
@@ -2235,7 +2247,7 @@ function renderDishDetail(dishId) {
   }
 
   // ---- "Can be removed" nuance only — the in-recipe list is already
-  //      shown in the nav row above, so it isn't repeated here ----
+  //      shown inside the flip card's Ingredients face now, so it isn't repeated here ----
   if (dish.allergensRemovable && dish.allergensRemovable.length) {
     const removableLabel = document.createElement("p");
     removableLabel.className = "allergen-group-label";
@@ -2254,19 +2266,24 @@ function renderDishDetail(dishId) {
     container.appendChild(removableRow);
   }
 
-  // ---- Pairs With: bigger label + wine name as an actual pill button ----
-  const firstWine = dish.pairedWineIds.length ? findWine(dish.pairedWineIds[0]) : null;
+  // ---- Pairs With: label + all paired wines as pills in one continuous row ----
+  const pairedWines = dish.pairedWineIds.map(id => findWine(id)).filter(Boolean);
   const detailsRow = document.createElement("div");
   detailsRow.className = "dd-details-row";
   const titleGroup = document.createElement("div");
   titleGroup.className = "dd-title-group";
   titleGroup.innerHTML = `<h2 class="dd-product-title">Pairs With</h2>`;
-  if (firstWine) {
-    const wineBtn = document.createElement("button");
-    wineBtn.className = "pill dd-pairs-pill";
-    wineBtn.textContent = firstWine.name;
-    wineBtn.onclick = () => go("pairing-explain", { wineId: firstWine.id, dishId: dish.id });
-    titleGroup.appendChild(wineBtn);
+  if (pairedWines.length) {
+    const pillRow = document.createElement("div");
+    pillRow.className = "pill-row";
+    pairedWines.forEach(wine => {
+      const wineBtn = document.createElement("button");
+      wineBtn.className = "pill dd-pairs-pill";
+      wineBtn.textContent = wine.name;
+      wineBtn.onclick = () => go("pairing-explain", { wineId: wine.id, dishId: dish.id });
+      pillRow.appendChild(wineBtn);
+    });
+    titleGroup.appendChild(pillRow);
   } else {
     const noneLabel = document.createElement("span");
     noneLabel.className = "dd-product-brand";
@@ -2281,26 +2298,6 @@ function renderDishDetail(dishId) {
     detailsRow.appendChild(priceEl);
   }
   container.appendChild(detailsRow);
-
-  if (dish.pairedWineIds.length > 1) {
-    const morePillsLabel = document.createElement("p");
-    morePillsLabel.className = "detail-h3";
-    morePillsLabel.style.marginTop = "16px";
-    morePillsLabel.textContent = "Also pairs with";
-    container.appendChild(morePillsLabel);
-    const morePills = document.createElement("div");
-    morePills.className = "pill-row";
-    dish.pairedWineIds.slice(1).forEach(wineId => {
-      const wine = findWine(wineId);
-      if (!wine) return;
-      const pill = document.createElement("button");
-      pill.className = "pill";
-      pill.textContent = wine.name;
-      pill.onclick = () => go("pairing-explain", { wineId: wine.id, dishId: dish.id });
-      morePills.appendChild(pill);
-    });
-    container.appendChild(morePills);
-  }
 
   app.appendChild(container);
 }

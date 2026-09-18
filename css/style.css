@@ -593,11 +593,13 @@ button, input {
 .menu-card.static { cursor: default; }
 
 .dish-flipcard { height: var(--flipcard-height); margin: 4px 0 8px; cursor: pointer; }
+.dish-flipcard-tall { height: auto; }
 .dish-flip-inner {
   width: 100%; height: 100%; padding: 18px; border: 2px solid var(--washi-300); border-top: 4px solid var(--bronze-500);
   overflow-y: auto; display: flex; flex-direction: column;
   background: var(--sumi-700); transition: transform 0.2s ease-in-out;
 }
+.dish-flipcard-tall .dish-flip-inner { height: auto; overflow-y: visible; }
 .dish-flip-inner.chefprep { border-top-color: var(--shoyu-300); }
 .dish-flipcard.flipping .dish-flip-inner { transform: rotateY(90deg); }
 .dish-flip-tag {
@@ -606,11 +608,6 @@ button, input {
 }
 .dish-flip-title { font-size: 20px; font-weight: 600; font-style: italic; color: var(--shoyu-700); margin: 0 0 14px; display: flex; align-items: center; gap: 7px; font-family: var(--font-display); letter-spacing: 0; }
 
-.dish-info-card {
-  display: flex; flex-direction: column; margin: 4px 0 8px;
-  padding: 20px 16px; border: 2px solid var(--washi-300); border-top: 4px solid var(--bronze-500);
-  background: var(--sumi-700);
-}
 .dish-info-hr { height: 1px; background: var(--washi-300); margin: 20px 0; }
 .dish-info-heading {
   font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
