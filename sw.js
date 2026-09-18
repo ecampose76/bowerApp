@@ -1,4 +1,4 @@
-const CACHE_NAME = "bower-v3";
+const CACHE_NAME = "bower-v4";
 const ASSETS = [
   "./",
   "./index.html",
@@ -11,6 +11,7 @@ const ASSETS = [
   "./js/app.js",
   "./manifest.json",
   "./images/food-hero.jpg",
+  "./images/heirloom-tomato-tart.jpg",
   "./images/wine-circle.jpg",
   "./images/bar-circle.jpg",
   "./images/coffee-circle.jpg",
