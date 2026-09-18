@@ -607,12 +607,11 @@ button, input {
 .dish-flip-title { font-size: 20px; font-weight: 600; font-style: italic; color: var(--shoyu-700); margin: 0 0 14px; display: flex; align-items: center; gap: 7px; font-family: var(--font-display); letter-spacing: 0; }
 
 .dish-info-card {
-  display: flex; gap: 18px; margin: 4px 0 8px;
+  display: flex; flex-direction: column; margin: 4px 0 8px;
   padding: 20px 16px; border: 2px solid var(--washi-300); border-top: 4px solid var(--bronze-500);
   background: var(--sumi-700);
 }
-.dish-info-col { flex: 1; min-width: 0; }
-.dish-info-divider { width: 1px; background: var(--washi-300); flex-shrink: 0; align-self: stretch; }
+.dish-info-hr { height: 1px; background: var(--washi-300); margin: 20px 0; }
 .dish-info-heading {
   font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
   text-transform: uppercase; letter-spacing: 1.2px; color: var(--shoyu-700);
@@ -622,6 +621,20 @@ button, input {
   content: ""; position: absolute; left: 0; bottom: 0; width: 20px; height: 2px;
   background: var(--bronze-500);
 }
+.dish-steps-list { list-style: none; margin: 0; padding: 0; counter-reset: none; }
+.dish-step {
+  display: flex; align-items: flex-start; gap: 12px;
+  margin-bottom: 16px;
+}
+.dish-step:last-child { margin-bottom: 0; }
+.dish-step-num {
+  flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--washi-300); color: var(--shoyu-700);
+  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 1px;
+}
+.dish-step-text { font-size: 13px; color: var(--shoyu-500); line-height: 1.55; }
 .ingredient-list { margin: 0; padding: 0; list-style: none; }
 .ingredient-list li {
   font-size: 13px; color: var(--shoyu-500); line-height: 1.5;

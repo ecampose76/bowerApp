@@ -2093,19 +2093,32 @@ function renderIngredientGroups(groups) {
   }).join("");
 }
 
-function renderDishTwoColumnCard(dish) {
+function splitIntoSteps(text) {
+  if (!text) return [];
+  return text.split(/\.\s+(?=[A-Z])/).map(s => s.trim().replace(/\.$/, "")).filter(Boolean).map(s => s + ".");
+}
+
+function renderDishStepsCard(dish) {
   const ingredientItems = splitIngredients(dish.ingredients);
+  const steps = splitIntoSteps(dish.chefPrep);
   const card = document.createElement("div");
   card.className = "dish-info-card";
   card.innerHTML = `
-    <div class="dish-info-col">
+    <div class="dish-info-section">
       <p class="dish-info-heading">Ingredients</p>
       <ul class="ingredient-list">${renderIngredientGroups(ingredientItems)}</ul>
     </div>
-    <div class="dish-info-divider"></div>
-    <div class="dish-info-col">
+    <div class="dish-info-hr"></div>
+    <div class="dish-info-section">
       <p class="dish-info-heading">How to make</p>
-      <p class="chefprep-text">${dish.chefPrep}</p>
+      <ol class="dish-steps-list">
+        ${steps.map((step, i) => `
+          <li class="dish-step">
+            <span class="dish-step-num">${i + 1}</span>
+            <span class="dish-step-text">${step}</span>
+          </li>
+        `).join("")}
+      </ol>
     </div>
   `;
   return card;
@@ -2204,7 +2217,7 @@ function renderDishDetail(dishId) {
   //      title already names which side you're on, so no separate
   //      external tab row repeating "Ingredients"/"Preparation") ----
   if (dish.ingredients && dish.chefPrep) {
-    container.appendChild(renderDishTwoColumnCard(dish));
+    container.appendChild(renderDishStepsCard(dish));
   } else if (dish.whatItIs && dish.goodToKnow) {
     container.appendChild(renderRawCutFlipCard(dish));
   }
