@@ -361,9 +361,16 @@ button, input {
   font-size: 34px; line-height: 1.08; font-weight: 700; letter-spacing: -0.3px;
   margin: 0; text-shadow: 0 2px 16px rgba(0,0,0,0.25);
 }
-.dd-hero-subtitle {
-  font-family: var(--font-body); color: rgba(255,255,255,0.88);
-  font-size: 13px; font-weight: 400; font-style: italic; line-height: 1.4; margin: 0;
+
+.dd-dropline-block { margin: 28px 0 20px; }
+.dd-dropline-label {
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1.2px; color: var(--shoyu-500);
+  margin: 0 0 8px;
+}
+.dd-dropline-text {
+  font-family: var(--font-body); font-size: 17px; font-weight: 500; font-style: italic;
+  color: var(--shoyu-700); line-height: 1.4; margin: 0;
 }
 
 .dd-nav {

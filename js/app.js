@@ -2198,18 +2198,17 @@ function renderDishDetail(dishId) {
   const container = document.createElement("div");
 
   // ---- Hero: rounded-bottom banner, back button overlaid top-left,
-  //      name + dropline overlaid at the bottom ----
+  //      name overlaid at the bottom (dropline now lives below, not
+  //      on the photo) ----
   const colorIdx = SECTION_ORDER.indexOf(dish.section) % 3;
   const colorClass = ["ph-terracotta", "ph-moss", "ph-plum"][colorIdx];
   const hero = document.createElement("div");
   hero.className = "dd-hero " + (dish.image ? "" : colorClass);
   if (dish.image) hero.style.backgroundImage = `url('${dish.image}')`;
-  const dropText = dish.dropLine ? `\u201C${dish.dropLine}\u201D` : (dish.description || "");
   hero.innerHTML = `
     <button class="back-btn dd-hero-back" aria-label="Back">&#8592;</button>
     <div class="dd-hero-overlay">
       <h1 class="dd-hero-title">${dish.name}</h1>
-      ${dropText ? `<p class="dd-hero-subtitle">${dropText}</p>` : ""}
     </div>
   `;
   hero.querySelector(".dd-hero-back").onclick = goBack;
@@ -2224,6 +2223,17 @@ function renderDishDetail(dishId) {
       dish.translation ? dish.translation : ""
     ].filter(Boolean).join(" &middot; ");
     container.appendChild(pronLine);
+  }
+
+  const dropText = dish.dropLine ? `\u201C${dish.dropLine}\u201D` : (dish.description || "");
+  if (dropText) {
+    const dropWrap = document.createElement("div");
+    dropWrap.className = "dd-dropline-block";
+    dropWrap.innerHTML = `
+      <p class="dd-dropline-label">Drop-line:</p>
+      <p class="dd-dropline-text">${dropText}</p>
+    `;
+    container.appendChild(dropWrap);
   }
 
   // ---- Flip card: Ingredients + Allergens on face 1, How to Make
