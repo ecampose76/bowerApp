@@ -338,7 +338,7 @@ button, input {
    spacing, and type scale, with Bower's own colors/fonts substituted
    in place of the reference's raw values. */
 .dd-hero {
-  position: relative; height: 260px;
+  position: relative; height: 230px;
   width: calc(100% + 32px); margin: -16px -16px 0;
   border-radius: 0 0 28px 28px; overflow: hidden;
   display: flex; flex-direction: column; justify-content: flex-end;
@@ -353,7 +353,7 @@ button, input {
 .dd-hero.ph-plum { background-color: var(--plum); }
 .dd-hero-overlay { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
 .dd-hero-title {
-  font-family: var(--font-display); color: var(--charcoal);
+  font-family: var(--font-display); color: var(--terracotta-ink);
   font-size: 34px; line-height: 1.08; font-weight: 700; letter-spacing: -0.3px;
   margin: 0;
 }
