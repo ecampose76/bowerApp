@@ -1144,8 +1144,11 @@ function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter) {
     filtered.forEach(d => {
       const card = document.createElement("div");
       card.className = "menu-card";
+      const thumbHTML = d.image
+        ? `<div class="menu-card-thumb" style="background-image:url('${d.image}')"></div>`
+        : `<div class="menu-card-thumb"><span>${getSectionIcon(d.section)}</span></div>`;
       card.innerHTML = `
-        <div class="menu-card-thumb"><span>${getSectionIcon(d.section)}</span></div>
+        ${thumbHTML}
         <div class="menu-card-info">
           <p class="menu-card-name">${d.name}</p>
           <p class="menu-card-price">$${d.price}</p>
@@ -2180,7 +2183,8 @@ function renderDishDetail(dishId) {
   const colorIdx = SECTION_ORDER.indexOf(dish.section) % 3;
   const colorClass = ["ph-terracotta", "ph-moss", "ph-plum"][colorIdx];
   const hero = document.createElement("div");
-  hero.className = "dd-hero " + colorClass;
+  hero.className = "dd-hero " + (dish.image ? "" : colorClass);
+  if (dish.image) hero.style.backgroundImage = `url('${dish.image}')`;
   const dropText = dish.dropLine ? `\u201C${dish.dropLine}\u201D` : (dish.description || "");
   hero.innerHTML = `
     <button class="back-btn dd-hero-back" aria-label="Back">&#8592;</button>

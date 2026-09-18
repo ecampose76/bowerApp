@@ -564,7 +564,7 @@ button, input {
 .menu-card-thumb {
   width: 104px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center; font-size: 34px;
-  background: var(--terracotta);
+  background: var(--terracotta); background-size: cover; background-position: center;
 }
 .menu-card:nth-of-type(3n+2) .menu-card-thumb { background: var(--moss); }
 .menu-card:nth-of-type(3n+3) .menu-card-thumb { background: var(--plum); }
