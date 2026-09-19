@@ -98,16 +98,19 @@ function guestFit(wine) {
   return "A flexible, food-friendly pour for most of the menu.";
 }
 
+function briefReason(text) {
+  if (!text) return "";
+  if (text.length <= 100) return text;
+  const cut = text.slice(0, 100);
+  const lastSpace = cut.lastIndexOf(" ");
+  return cut.slice(0, lastSpace > 60 ? lastSpace : 100) + "&hellip;";
+}
+
 function buildFaceHTML(wine, similar, idx) {
   if (idx === 0) {
-    const pairPills = wine.pairingDishIds.map(dishId => {
-      const dish = findDish(dishId);
-      return dish ? `<button type="button" class="wface-pair-pill" data-dish-id="${dish.id}">${dish.name}</button>` : "";
-    }).join("");
     return `
-      <p class="flip-label">1/5</p>
-      <p class="face-title-sm">Pairs With &amp; Sell It</p>
-      ${pairPills ? `<div class="wface-pair-row">${pairPills}</div>` : ""}
+      <p class="flip-label">1/4</p>
+      <p class="face-title-sm">Sell It</p>
       <p class="face-h3-sm"><span class="ic">&#128172;</span> Guest description</p>
       <p class="face-desc-sm">${wine.guestDescription}</p>
       <div class="arsenal-block-sm">
@@ -117,43 +120,42 @@ function buildFaceHTML(wine, similar, idx) {
     `;
   } else if (idx === 1) {
     return `
-      <p class="flip-label">2/5</p>
-      <p class="face-title-sm">Why It Works</p>
-      ${wine.sellingPoints.map(p => `<div class="point-row-sm"><span class="ic">&#10003;</span><span>${p}</span></div>`).join("")}
-    `;
-  } else if (idx === 2) {
-    return `
-      <p class="flip-label">3/5</p>
+      <p class="flip-label">2/4</p>
       <p class="face-title-sm">Flavor &amp; Structure</p>
       <div class="flavor-grid-sm">${wine.flavorTags.map(t => `<div class="flavor-item-sm"><div class="icon">${getFlavorIcon(t)}</div><p>${t}</p></div>`).join("")}</div>
       ${structureBars(wine.structure)}
-      ${similar ? `<p class="back-line-sm"><b>Similar pour</b>${similar.name}</p>` : ""}
     `;
-  } else if (idx === 3) {
+  } else if (idx === 2) {
+    const pairsHTML = wine.pairingDishIds.map(dishId => {
+      const dish = findDish(dishId);
+      if (!dish) return "";
+      const reason = briefReason(PAIRING_REASONS[`${wine.id}|${dishId}`]);
+      return `
+        <div class="wpair-block">
+          <button type="button" class="wpair-dish-name" data-dish-id="${dish.id}">${dish.name}</button>
+          ${reason ? `<p class="wpair-reason">${reason}</p>` : ""}
+        </div>
+      `;
+    }).join("");
     return `
-      <p class="flip-label">4/5</p>
-      <p class="face-title-sm">The Story</p>
-      <p class="face-h3-sm"><span class="ic">&#127866;</span> Winemaking note</p>
-      <p class="face-desc-sm">${wine.winemakingNote}</p>
-      <p class="face-h3-sm"><span class="ic">&#128214;</span> Short story</p>
-      <p class="face-desc-sm">${wine.shortStory}</p>
+      <p class="flip-label">3/4</p>
+      <p class="face-title-sm">Pairs Well With</p>
+      ${pairsHTML}
+      ${similar ? `<p class="back-line-sm"><b>Similar pour</b>${similar.name}</p>` : ""}
     `;
   } else {
     return `
-      <p class="flip-label">5/5</p>
-      <p class="face-title-sm">Extras</p>
+      <p class="flip-label">4/4</p>
+      <p class="face-title-sm">The Story</p>
+      <p class="face-desc-sm">${wine.shortStory}</p>
       <div class="fact-block-sm"><p>${wine.funFact}</p></div>
       <div class="fact-block-sm"><p>${wine.funFact2}</p></div>
-      <p class="face-h3-sm"><span class="ic">&#128278;</span> The moment</p>
-      <p class="face-desc-sm">${wine.moment}</p>
-      <p class="face-h3-sm"><span class="ic">&#128142;</span> The memory</p>
-      <p class="face-desc-sm">${wine.memory}</p>
     `;
   }
 }
 
 function wireFaceInteractions(inner) {
-  inner.querySelectorAll(".wface-pair-pill").forEach(btn => {
+  inner.querySelectorAll(".wface-pair-pill, .wpair-dish-name").forEach(btn => {
     btn.onclick = (e) => {
       e.stopPropagation();
       go("dish-detail", { dishId: btn.dataset.dishId });
@@ -175,7 +177,7 @@ function renderFlipCard(wine) {
   flipcard.onclick = () => {
     flipcard.classList.add("flipping");
     setTimeout(() => {
-      faceIndex = (faceIndex + 1) % 5;
+      faceIndex = (faceIndex + 1) % 4;
       inner.className = "flip-inner face-" + (faceIndex % 3);
       inner.innerHTML = buildFaceHTML(wine, similar, faceIndex);
       wireFaceInteractions(inner);
@@ -217,15 +219,30 @@ const WSET_BANDS = {
   alcohol: ["Low", "Medium(-)", "Medium", "Medium(+)", "High"],
   body: ["Light", "Medium(-)", "Medium", "Medium(+)", "Full"]
 };
+const SHORT_BANDS = ["Low", "Med-", "Med", "Med+", "High"];
 
 function structureBars(structure) {
   const order = ["sweetness", "acidity", "tannin", "alcohol", "body"];
   return order.map((key) => {
     const val = structure[key];
     if (key === "tannin" && val === 0) return "";
-    const band = WSET_BANDS[key][val - 1] || WSET_BANDS[key][0];
-    const width = val * 20;
-    return `<div class="bar-block"><div class="bar-track"><div class="bar-fill" style="width:${width}%;"></div></div><p>${band} ${key === "sweetness" ? "" : key === "body" ? "Body" : key.charAt(0).toUpperCase() + key.slice(1)}</p></div>`;
+    const pct = (val - 1) * 25;
+    if (key === "sweetness") {
+      return `
+        <div class="wbar-spectrum">
+          <div class="wbar-spectrum-track"><div class="wbar-dot" style="left:${pct}%;"></div></div>
+          <div class="wbar-spectrum-labels"><span>Dry</span><span>Sweet</span></div>
+        </div>
+      `;
+    }
+    const label = key === "body" ? "Body" : key.charAt(0).toUpperCase() + key.slice(1);
+    return `
+      <div class="wbar-row">
+        <span class="wbar-row-label">${label}</span>
+        <div class="wbar-row-track"><div class="wbar-dot" style="left:${pct}%;"></div></div>
+        <span class="wbar-row-value">${SHORT_BANDS[val - 1] || SHORT_BANDS[0]}</span>
+      </div>
+    `;
   }).join("");
 }
 
