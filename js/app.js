@@ -788,95 +788,141 @@ function renderSearchableWineList(onSelect, placeholder, wineSource) {
   return wrap;
 }
 
+function buildWineListCard(w) {
+  const card = document.createElement("div");
+  card.className = "menu-card";
+  const priceLabel = typeof w.price === "number" ? `$${w.price}` : "";
+  card.innerHTML = `
+    <div class="menu-card-thumb style-${w.style}"><span>&#127863;</span></div>
+    <div class="menu-card-info">
+      <div class="menu-card-top">
+        <p class="menu-card-name">${w.name}</p>
+        <p class="wine-card-variety">${w.grape || ""}</p>
+      </div>
+      <div class="wine-card-bottom-row">
+        <p class="menu-card-price">${priceLabel}</p>
+        <span class="wine-card-source-tag">${w._source === "bottle" ? "Bottle" : "Glass"}</span>
+      </div>
+    </div>
+    <button class="menu-card-btn" aria-label="View ${w.name}"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10"/></svg></button>
+  `;
+  card.onclick = () => {
+    if (w._source === "bottle") go("bottle-card", { wineId: w.id });
+    else go("study-card", { wineId: w.id });
+  };
+  return card;
+}
+
 function renderWineTypeChooser() {
   header("Wine");
 
-  const wotd = wineOfTheDay();
-  let currentWotd = wotd;
-  let wotdSpinning = false;
-  const wotdStrip = document.createElement("div");
-  wotdStrip.className = "wotd-strip";
-  wotdStrip.innerHTML = `
-    <div class="wotd-main">
-      <p class="wotd-label">Wine of the day</p>
-      <p class="wotd-name">${wotd.name}</p>
-    </div>
-    <button class="wotd-shuffle" aria-label="Shuffle to a random wine">Shuffle</button>
+  const intro = document.createElement("div");
+  intro.className = "wine-intro";
+  intro.innerHTML = `
+    <p class="wine-intro-title">The Wine Program</p>
+    <p class="wine-intro-text">Old World structure meets a few New World standouts &mdash; a list built around honest character and classic pairings. Explore by the glass or the bottle.</p>
   `;
-  const wotdNameEl = wotdStrip.querySelector(".wotd-name");
-  const wotdMainEl = wotdStrip.querySelector(".wotd-main");
-  const wotdShuffleBtn = wotdStrip.querySelector(".wotd-shuffle");
+  app.appendChild(intro);
 
-  wotdMainEl.onclick = () => {
-    if (wotdSpinning) return;
-    const route = currentWotd.id.startsWith("bw") ? "bottle-card" : "study-card";
-    go(route, { wineId: currentWotd.id });
+  const searchRow = document.createElement("div");
+  searchRow.className = "search-filter-row";
+  const input = document.createElement("input");
+  input.className = "search-input";
+  input.placeholder = "Search the wine list";
+  searchRow.appendChild(input);
+
+  const sortBtn = document.createElement("button");
+  sortBtn.className = "allergen-filter-btn";
+  sortBtn.setAttribute("aria-label", "Sort and filter");
+  sortBtn.innerHTML = `<svg viewBox="0 0 16 16" fill="none"><path d="M2.5 4.5h11M4.5 8h7M6.5 11.5h3"/></svg>`;
+  searchRow.appendChild(sortBtn);
+  app.appendChild(searchRow);
+
+  let panelOpen = false;
+  let activeSegment = "all";
+  let activeSort = "name";
+  let activeStyle = "All";
+
+  const panel = document.createElement("div");
+  panel.className = "wine-sort-panel";
+  panel.style.display = "none";
+  panel.innerHTML = `
+    <p class="dish-info-heading" style="margin-top:0;">Show</p>
+    <div class="menu-section-pills wine-panel-pills" id="segment-pills">
+      <button class="menu-section-pill active" data-seg="all">All</button>
+      <button class="menu-section-pill" data-seg="glass">By The Glass</button>
+      <button class="menu-section-pill" data-seg="bottle">By The Bottle</button>
+    </div>
+    <p class="dish-info-heading">Sort by</p>
+    <div class="menu-section-pills wine-panel-pills" id="sort-pills">
+      <button class="menu-section-pill active" data-sort="name">Name</button>
+      <button class="menu-section-pill" data-sort="price-asc">Price: Low to High</button>
+      <button class="menu-section-pill" data-sort="price-desc">Price: High to Low</button>
+    </div>
+  `;
+  app.appendChild(panel);
+
+  panel.querySelectorAll("[data-seg]").forEach(btn => {
+    btn.onclick = () => {
+      activeSegment = btn.dataset.seg;
+      panel.querySelectorAll("[data-seg]").forEach(b => b.classList.toggle("active", b === btn));
+      draw(input.value);
+    };
+  });
+  panel.querySelectorAll("[data-sort]").forEach(btn => {
+    btn.onclick = () => {
+      activeSort = btn.dataset.sort;
+      panel.querySelectorAll("[data-sort]").forEach(b => b.classList.toggle("active", b === btn));
+      draw(input.value);
+    };
+  });
+  sortBtn.onclick = () => {
+    panelOpen = !panelOpen;
+    panel.style.display = panelOpen ? "block" : "none";
+    sortBtn.classList.toggle("active", panelOpen);
   };
 
-  wotdShuffleBtn.onclick = (e) => {
-    e.stopPropagation();
-    if (wotdSpinning) return;
+  let activeStylePills;
+  const pillsHolder = document.createElement("div");
+  app.appendChild(pillsHolder);
 
-    const next = randomWine(currentWotd.id);
-    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion) {
-      currentWotd = next;
-      wotdNameEl.textContent = currentWotd.name;
+  const listWrap = document.createElement("div");
+  listWrap.className = "menu-card-list";
+  app.appendChild(listWrap);
+
+  const allWines = [
+    ...WINES.map(w => ({ ...w, _source: "glass" })),
+    ...BOTTLE_WINES.map(w => ({ ...w, _source: "bottle" }))
+  ];
+
+  function drawPills() {
+    pillsHolder.innerHTML = "";
+    const styleNames = ["All", ...STYLE_ORDER.map(s => STYLE_LABELS[s])];
+    pillsHolder.appendChild(buildFilterPills(styleNames, activeStyle, (val) => {
+      activeStyle = val;
+      draw(input.value);
+    }));
+  }
+
+  function draw(filter) {
+    drawPills();
+    listWrap.innerHTML = "";
+    let filtered = allWines.filter(w => w.name.toLowerCase().includes(filter.toLowerCase()));
+    if (activeStyle !== "All") filtered = filtered.filter(w => STYLE_LABELS[w.style] === activeStyle);
+    if (activeSegment !== "all") filtered = filtered.filter(w => w._source === activeSegment);
+    filtered = filtered.slice();
+    if (activeSort === "name") filtered.sort((a, b) => a.name.localeCompare(b.name));
+    else if (activeSort === "price-asc") filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
+    else if (activeSort === "price-desc") filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
+
+    if (!filtered.length) {
+      listWrap.innerHTML = `<p class="empty-note">No wines match that search.</p>`;
       return;
     }
-
-    wotdSpinning = true;
-    wotdShuffleBtn.disabled = true;
-    const pool = wotdPool();
-    const totalDuration = 2000;
-    const startTime = performance.now();
-    let lastTick = -Infinity;
-
-    function playReelTick(durationMs) {
-      wotdNameEl.classList.remove("reel-tick");
-      void wotdNameEl.offsetWidth; // force reflow so the animation restarts on every tick
-      wotdNameEl.style.animationDuration = durationMs + "ms";
-      wotdNameEl.classList.add("reel-tick");
-    }
-
-    function tick(now) {
-      const elapsed = now - startTime;
-      if (elapsed >= totalDuration) {
-        currentWotd = next;
-        wotdNameEl.textContent = currentWotd.name;
-        playReelTick(220);
-        wotdShuffleBtn.disabled = false;
-        wotdSpinning = false;
-        return;
-      }
-      const progress = elapsed / totalDuration;
-      const interval = 90 + Math.pow(progress, 2.4) * 340;
-      if (now - lastTick >= interval) {
-        lastTick = now;
-        wotdNameEl.textContent = pool[Math.floor(Math.random() * pool.length)].name;
-        playReelTick(Math.min(interval, 260));
-      }
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  };
-  app.appendChild(wotdStrip);
-
-  const options = document.createElement("div");
-  options.className = "wine-square-grid";
-  options.innerHTML = `
-    <div class="wine-square-card" data-go="glass">
-      <span class="wine-square-icon">&#127863;</span>
-      <p class="wine-square-title">By The Glass</p>
-    </div>
-    <div class="wine-square-card" data-go="bottle">
-      <span class="wine-square-icon">&#127870;</span>
-      <p class="wine-square-title">By The Bottle</p>
-    </div>
-  `;
-  options.querySelector('[data-go="glass"]').onclick = () => go("study-list");
-  options.querySelector('[data-go="bottle"]').onclick = () => go("wine-bottle-list");
-  app.appendChild(options);
+    filtered.forEach(w => listWrap.appendChild(buildWineListCard(w)));
+  }
+  draw("");
+  input.oninput = () => draw(input.value);
 }
 
 function groupByBottleCategory(wines) {
