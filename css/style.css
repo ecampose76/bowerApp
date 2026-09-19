@@ -553,8 +553,8 @@ button, input {
 /* Food menu — section filter pills (single-select, replaces the old
    accordion) and product-style cards, matching the reference layout. */
 .menu-section-pills {
-  display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px;
-  margin-bottom: 16px; scrollbar-width: none;
+  display: flex; gap: 8px; overflow-x: auto; padding: 2px 16px 6px;
+  margin: 0 -16px 16px; scrollbar-width: none;
 }
 .menu-section-pills::-webkit-scrollbar { display: none; }
 .menu-section-pill {
