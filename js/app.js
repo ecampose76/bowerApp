@@ -100,45 +100,65 @@ function guestFit(wine) {
 
 function buildFaceHTML(wine, similar, idx) {
   if (idx === 0) {
+    const pairPills = wine.pairingDishIds.map(dishId => {
+      const dish = findDish(dishId);
+      return dish ? `<button type="button" class="wface-pair-pill" data-dish-id="${dish.id}">${dish.name}</button>` : "";
+    }).join("");
     return `
-      <p class="flip-label">1/3</p>
-      <p class="face-title">Sell it</p>
-      <p class="face-h3"><span class="ic">&#128172;</span> Guest description</p>
-      <p class="face-desc">${wine.guestDescription}</p>
-      <p class="face-h3"><span class="ic">&#10003;</span> Three selling points</p>
-      ${wine.sellingPoints.map(p => `<div class="point-row"><span class="ic">&#10003;</span><span>${p}</span></div>`).join("")}
-      <div class="arsenal-block">
+      <p class="flip-label">1/5</p>
+      <p class="face-title-sm">Pairs With &amp; Sell It</p>
+      ${pairPills ? `<div class="wface-pair-row">${pairPills}</div>` : ""}
+      <p class="face-h3-sm"><span class="ic">&#128172;</span> Guest description</p>
+      <p class="face-desc-sm">${wine.guestDescription}</p>
+      <div class="arsenal-block-sm">
         <p class="arsenal-label">Table-side line</p>
-        <p class="arsenal-text">${wine.arsenal}</p>
+        <p class="arsenal-text-sm">${wine.arsenal}</p>
       </div>
     `;
   } else if (idx === 1) {
     return `
-      <p class="flip-label">2/3</p>
-      <p class="face-title">Understand it</p>
-      <p class="face-h3"><span class="ic">&#127866;</span> Winemaking note</p>
-      <p class="face-desc" style="margin-bottom:14px;">${wine.winemakingNote}</p>
-      <p class="face-h3"><span class="ic">&#127815;</span> Flavor profile</p>
-      <div class="flavor-grid">${wine.flavorTags.map(t => `<div class="flavor-item"><div class="icon">${getFlavorIcon(t)}</div><p>${t}</p></div>`).join("")}</div>
-      <p class="face-h3"><span class="ic">&#128202;</span> Structure</p>
+      <p class="flip-label">2/5</p>
+      <p class="face-title-sm">Why It Works</p>
+      ${wine.sellingPoints.map(p => `<div class="point-row-sm"><span class="ic">&#10003;</span><span>${p}</span></div>`).join("")}
+    `;
+  } else if (idx === 2) {
+    return `
+      <p class="flip-label">3/5</p>
+      <p class="face-title-sm">Flavor &amp; Structure</p>
+      <div class="flavor-grid-sm">${wine.flavorTags.map(t => `<div class="flavor-item-sm"><div class="icon">${getFlavorIcon(t)}</div><p>${t}</p></div>`).join("")}</div>
       ${structureBars(wine.structure)}
-      ${similar ? `<p class="back-line" style="margin-top:8px;"><b>Similar pour</b>${similar.name}</p>` : ""}
+      ${similar ? `<p class="back-line-sm"><b>Similar pour</b>${similar.name}</p>` : ""}
+    `;
+  } else if (idx === 3) {
+    return `
+      <p class="flip-label">4/5</p>
+      <p class="face-title-sm">The Story</p>
+      <p class="face-h3-sm"><span class="ic">&#127866;</span> Winemaking note</p>
+      <p class="face-desc-sm">${wine.winemakingNote}</p>
+      <p class="face-h3-sm"><span class="ic">&#128214;</span> Short story</p>
+      <p class="face-desc-sm">${wine.shortStory}</p>
     `;
   } else {
     return `
-      <p class="flip-label">3/3</p>
-      <p class="face-title">Sommelier knowledge</p>
-      <p class="face-h3"><span class="ic">&#10024;</span> Fun facts</p>
-      <div class="fact-block"><p>${wine.funFact}</p></div>
-      <div class="fact-block"><p>${wine.funFact2}</p></div>
-      <p class="face-h3"><span class="ic">&#128214;</span> Short story</p>
-      <p class="face-desc" style="margin-bottom:14px;">${wine.shortStory}</p>
-      <p class="face-h3"><span class="ic">&#128278;</span> The moment</p>
-      <p class="face-desc">${wine.moment}</p>
-      <p class="face-h3"><span class="ic">&#128142;</span> The memory</p>
-      <p class="face-desc">${wine.memory}</p>
+      <p class="flip-label">5/5</p>
+      <p class="face-title-sm">Extras</p>
+      <div class="fact-block-sm"><p>${wine.funFact}</p></div>
+      <div class="fact-block-sm"><p>${wine.funFact2}</p></div>
+      <p class="face-h3-sm"><span class="ic">&#128278;</span> The moment</p>
+      <p class="face-desc-sm">${wine.moment}</p>
+      <p class="face-h3-sm"><span class="ic">&#128142;</span> The memory</p>
+      <p class="face-desc-sm">${wine.memory}</p>
     `;
   }
+}
+
+function wireFaceInteractions(inner) {
+  inner.querySelectorAll(".wface-pair-pill").forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      go("dish-detail", { dishId: btn.dataset.dishId });
+    };
+  });
 }
 
 function renderFlipCard(wine) {
@@ -148,15 +168,17 @@ function renderFlipCard(wine) {
   const inner = document.createElement("div");
   inner.className = "flip-inner face-0";
   inner.innerHTML = buildFaceHTML(wine, similar, 0);
+  wireFaceInteractions(inner);
   flipcard.appendChild(inner);
 
   let faceIndex = 0;
   flipcard.onclick = () => {
     flipcard.classList.add("flipping");
     setTimeout(() => {
-      faceIndex = (faceIndex + 1) % 3;
-      inner.className = "flip-inner face-" + faceIndex;
+      faceIndex = (faceIndex + 1) % 5;
+      inner.className = "flip-inner face-" + (faceIndex % 3);
       inner.innerHTML = buildFaceHTML(wine, similar, faceIndex);
+      wireFaceInteractions(inner);
       flipcard.classList.remove("flipping");
     }, 200);
   };
@@ -977,33 +999,7 @@ function renderBottleCard(wineId) {
   const idx = BOTTLE_WINES.findIndex(w => w.id === wine.id);
 
   header("By The Bottle");
-  app.appendChild(renderNavChips(wine.id, (id) => go("bottle-card", { wineId: id }, false), BOTTLE_WINES));
   app.appendChild(renderWineCardBody(wine));
-
-  const footerNav = document.createElement("div");
-  footerNav.className = "card-footer-nav";
-
-  const backBtn = document.createElement("button");
-  backBtn.className = "footer-btn";
-  backBtn.textContent = "\u2190 Back";
-  backBtn.disabled = idx === 0;
-  backBtn.onclick = () => go("bottle-card", { wineId: BOTTLE_WINES[idx - 1].id }, false);
-
-  const homeBtn = document.createElement("button");
-  homeBtn.className = "footer-btn footer-btn-home";
-  homeBtn.textContent = "Home";
-  homeBtn.onclick = () => go("home", {});
-
-  const nextBtn = document.createElement("button");
-  nextBtn.className = "footer-btn";
-  nextBtn.textContent = "Next \u2192";
-  nextBtn.disabled = idx === BOTTLE_WINES.length - 1;
-  nextBtn.onclick = () => go("bottle-card", { wineId: BOTTLE_WINES[idx + 1].id }, false);
-
-  footerNav.appendChild(backBtn);
-  footerNav.appendChild(homeBtn);
-  footerNav.appendChild(nextBtn);
-  app.appendChild(footerNav);
 
   let touchStartX = null;
   app.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; }, { once: true });
@@ -1039,33 +1035,7 @@ function renderHrwCard(wineId) {
   const idx = HRW_WINES.findIndex(w => w.id === wine.id);
 
   header("HRW Wine Selections");
-  app.appendChild(renderNavChips(wine.id, (id) => go("hrw-card", { wineId: id }, false), HRW_WINES));
   app.appendChild(renderWineCardBody(wine));
-
-  const footerNav = document.createElement("div");
-  footerNav.className = "card-footer-nav";
-
-  const backBtn = document.createElement("button");
-  backBtn.className = "footer-btn";
-  backBtn.textContent = "\u2190 Back";
-  backBtn.disabled = idx === 0;
-  backBtn.onclick = () => go("hrw-card", { wineId: HRW_WINES[idx - 1].id }, false);
-
-  const homeBtn = document.createElement("button");
-  homeBtn.className = "footer-btn footer-btn-home";
-  homeBtn.textContent = "Home";
-  homeBtn.onclick = () => go("home", {});
-
-  const nextBtn = document.createElement("button");
-  nextBtn.className = "footer-btn";
-  nextBtn.textContent = "Next \u2192";
-  nextBtn.disabled = idx === HRW_WINES.length - 1;
-  nextBtn.onclick = () => go("hrw-card", { wineId: HRW_WINES[idx + 1].id }, false);
-
-  footerNav.appendChild(backBtn);
-  footerNav.appendChild(homeBtn);
-  footerNav.appendChild(nextBtn);
-  app.appendChild(footerNav);
 
   let touchStartX = null;
   app.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; }, { once: true });
@@ -1839,20 +1809,6 @@ function renderCocktailDetail(cocktailId) {
   app.appendChild(container);
 }
 
-function renderNavChips(activeWineId, onSelect, wineSource) {
-  const source = wineSource || WINES;
-  const wrap = document.createElement("div");
-  wrap.className = "nav-chips";
-  source.forEach(w => {
-    const chip = document.createElement("button");
-    chip.className = "nav-chip" + (w.id === activeWineId ? " active" : "");
-    chip.textContent = w.name.split(" ").slice(0, 2).join(" ");
-    chip.onclick = () => onSelect(w.id);
-    wrap.appendChild(chip);
-  });
-  return wrap;
-}
-
 function renderHeroHeader(wine) {
   const frag = document.createElement("div");
 
@@ -1895,24 +1851,6 @@ function renderHeroHeader(wine) {
 function renderWineCardBody(wine) {
   const container = document.createElement("div");
   container.appendChild(renderHeroHeader(wine));
-
-  const pairsLabel = document.createElement("p");
-  pairsLabel.className = "pairs-label";
-  pairsLabel.innerHTML = `<span class="ic">&#127860;</span>Pairs with`;
-  container.appendChild(pairsLabel);
-
-  const pillRow = document.createElement("div");
-  pillRow.className = "pill-row";
-  wine.pairingDishIds.forEach(dishId => {
-    const dish = findDish(dishId);
-    if (!dish) return;
-    const pill = document.createElement("button");
-    pill.className = "pill";
-    pill.textContent = dish.name;
-    pill.onclick = () => go("dish-detail", { dishId: dish.id });
-    pillRow.appendChild(pill);
-  });
-  container.appendChild(pillRow);
   container.appendChild(renderFlipCard(wine));
 
   return container;
@@ -1923,33 +1861,7 @@ function renderStudyCard(wineId) {
   const idx = WINES.findIndex(w => w.id === wine.id);
 
   header("By The Glass");
-  app.appendChild(renderNavChips(wine.id, (id) => go("study-card", { wineId: id }, false)));
   app.appendChild(renderWineCardBody(wine));
-
-  const footerNav = document.createElement("div");
-  footerNav.className = "card-footer-nav";
-
-  const backBtn = document.createElement("button");
-  backBtn.className = "footer-btn";
-  backBtn.textContent = "\u2190 Back";
-  backBtn.disabled = idx === 0;
-  backBtn.onclick = () => go("study-card", { wineId: WINES[idx - 1].id }, false);
-
-  const homeBtn = document.createElement("button");
-  homeBtn.className = "footer-btn footer-btn-home";
-  homeBtn.textContent = "Home";
-  homeBtn.onclick = () => go("home", {});
-
-  const nextBtn = document.createElement("button");
-  nextBtn.className = "footer-btn";
-  nextBtn.textContent = "Next \u2192";
-  nextBtn.disabled = idx === WINES.length - 1;
-  nextBtn.onclick = () => go("study-card", { wineId: WINES[idx + 1].id }, false);
-
-  footerNav.appendChild(backBtn);
-  footerNav.appendChild(homeBtn);
-  footerNav.appendChild(nextBtn);
-  app.appendChild(footerNav);
 
   let touchStartX = null;
   app.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; }, { once: true });
