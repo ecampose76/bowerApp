@@ -863,29 +863,19 @@ function renderWineTypeChooser() {
   app.appendChild(wotdStrip);
 
   const options = document.createElement("div");
-  options.className = "home-options";
+  options.className = "wine-square-grid";
   options.innerHTML = `
-    <div class="home-option" data-go="glass">
-      <div class="home-icon-circle">&#127863;</div>
-      <div class="home-option-text"><p>By The Glass</p><span>Learn the full BTG list</span></div>
+    <div class="wine-square-card" data-go="glass">
+      <span class="wine-square-icon">&#127863;</span>
+      <p class="wine-square-title">By The Glass</p>
     </div>
-    <div class="home-option" data-go="bottle">
-      <div class="home-icon-circle">&#127866;</div>
-      <div class="home-option-text"><p>By The Bottle</p><span>The full bottle list</span></div>
-    </div>
-    <div class="home-option" data-go="pairwf">
-      <div class="home-icon-circle">&#127815;</div>
-      <div class="home-option-text"><p>Pair Wine with Food</p><span>Start from the bottle</span></div>
-    </div>
-    <div class="home-option" data-go="pairfw">
-      <div class="home-icon-circle">&#127860;</div>
-      <div class="home-option-text"><p>Pair Food with Wine</p><span>Start from the dish</span></div>
+    <div class="wine-square-card" data-go="bottle">
+      <span class="wine-square-icon">&#127870;</span>
+      <p class="wine-square-title">By The Bottle</p>
     </div>
   `;
   options.querySelector('[data-go="glass"]').onclick = () => go("study-list");
   options.querySelector('[data-go="bottle"]').onclick = () => go("wine-bottle-list");
-  options.querySelector('[data-go="pairwf"]').onclick = () => go("pairwf-list");
-  options.querySelector('[data-go="pairfw"]').onclick = () => go("pairfw-list");
   app.appendChild(options);
 }
 
