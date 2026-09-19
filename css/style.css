@@ -542,6 +542,10 @@ button, input {
   font-family: var(--font-mono); font-size: 10px; color: var(--shoyu-500);
   text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 5px;
 }
+.allergen-filter-label {
+  font-family: var(--font-mono); font-size: 10px; color: var(--shoyu-500);
+  text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 8px;
+}
 .allergen-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .chip {
   font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px;

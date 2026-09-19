@@ -1076,6 +1076,11 @@ function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter) {
     `;
     searchRow.appendChild(filterBtn);
 
+    const filterLabel = document.createElement("p");
+    filterLabel.className = "allergen-filter-label";
+    filterLabel.textContent = "Hide dishes containing:";
+    filterLabel.style.display = "none";
+
     const filterRow = document.createElement("div");
     filterRow.className = "allergen-row";
     filterRow.style.display = "none";
@@ -1106,11 +1111,13 @@ function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter) {
     }
     filterBtn.onclick = () => {
       filtersOpen = !filtersOpen;
+      filterLabel.style.display = filtersOpen ? "block" : "none";
       filterRow.style.display = filtersOpen ? "flex" : "none";
       updateFilterBtn();
     };
     updateFilterBtn();
     wrap.appendChild(searchRow);
+    wrap.appendChild(filterLabel);
     wrap.appendChild(filterRow);
   } else {
     wrap.appendChild(searchRow);
