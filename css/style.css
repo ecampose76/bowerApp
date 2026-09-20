@@ -457,15 +457,13 @@ button, input {
   position: relative;
 }
 .flip-inner {
-  width: 100%; height: 100%; padding: 16px 18px; border: none;
+  width: 100%; height: 100%; padding: 16px 18px; border: none; border-radius: 18px;
   overflow: hidden; display: flex; flex-direction: column;
   transition: transform 0.2s ease-in-out; transform: rotateY(0deg);
-  background: var(--terracotta); position: relative;
+  background: var(--washi-200); box-shadow: 0 14px 30px -12px rgba(43,51,36,0.4);
+  color: var(--shoyu-700); --ink-soft: var(--shoyu-500); position: relative;
 }
 .flipcard.flipping .flip-inner { transform: rotateY(90deg); }
-.flip-inner.face-0 { background: var(--terracotta); color: var(--terracotta-ink); --ink-soft: var(--terracotta-ink-soft); }
-.flip-inner.face-1 { background: var(--moss); color: var(--moss-ink); --ink-soft: var(--moss-ink-soft); }
-.flip-inner.face-2 { background: var(--charcoal); color: var(--cream-on-charcoal); --ink-soft: var(--cream-on-charcoal-soft); }
 
 .flip-label {
   font-family: var(--font-display); font-size: 10px; font-weight: 700;
@@ -498,10 +496,8 @@ button, input {
 .point-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 9px; font-size: 14px; font-weight: 500; }
 .point-row .ic { font-size: 14px; flex-shrink: 0; }
 .fact-block { background: none; border: none; border-top: 1px solid rgba(0,0,0,0.12); padding: 10px 0 0; margin-bottom: 10px; }
-.flip-inner.face-2 .fact-block { border-top-color: rgba(255,255,255,0.18); }
 .fact-block p { font-size: 14px; margin: 0; line-height: 1.5; color: inherit; font-weight: 500; }
 .fact-block-sm { background: none; border: none; border-top: 1px solid rgba(0,0,0,0.12); padding: 8px 0 0; margin-bottom: 8px; }
-.flip-inner.face-2 .fact-block-sm { border-top-color: rgba(255,255,255,0.18); }
 .fact-block-sm p { font-size: 13px; margin: 0; line-height: 1.35; color: inherit; font-weight: 500; }
 
 .flavor-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; background: none; }
@@ -518,7 +514,6 @@ button, input {
    own ink tone drives the fill automatically. */
 .bar-block { margin-bottom: 8px; }
 .bar-track { position: relative; height: 6px; background: rgba(0,0,0,0.1); overflow: hidden; margin: 5px 0; }
-.flip-inner.face-2 .bar-track { background: rgba(255,255,255,0.15); }
 .bar-fill { height: 100%; background: currentColor; }
 .bar-track::after { content: none; }
 .bar-block p { font-family: var(--font-display); font-size: 10px; font-weight: 600; color: var(--ink-soft); margin: 3px 0 0; }
@@ -528,14 +523,14 @@ button, input {
 .wstat-label { font-family: var(--font-display); font-size: 14px; font-weight: 700; }
 .wstat-badge {
   font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: var(--shoyu-700);
-  background: rgba(255,255,255,0.85); padding: 1px 8px; border-radius: 999px;
+  background: var(--washi-100); padding: 1px 8px; border-radius: 999px;
 }
 .wstat-badge b { font-size: 12px; font-weight: 700; }
 .wstat-track {
-  height: 6px; border-radius: 999px; background: rgba(255,255,255,0.28); overflow: hidden;
+  height: 6px; border-radius: 999px; background: var(--washi-300); overflow: hidden;
   margin-bottom: 1px;
 }
-.wstat-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--washi-100), var(--bronze-700)); }
+.wstat-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--bronze-500), var(--bronze-700)); }
 .wstat-ends {
   display: flex; justify-content: space-between;
   font-family: var(--font-body); font-size: 10.5px; font-weight: 500; color: inherit; opacity: 0.75;
@@ -556,13 +551,11 @@ button, input {
 .arsenal-block {
   background: var(--charcoal); border: none; padding: 14px 16px; margin-top: 16px;
 }
-.flip-inner.face-2 .arsenal-block { background: rgba(255,255,255,0.12); }
 .arsenal-label { font-family: var(--font-display); font-size: 10px; font-weight: 700; color: var(--shoyu-300); margin: 0 0 4px; text-transform: uppercase; letter-spacing: 0.4px; }
 .arsenal-text { font-size: 14px; color: var(--cream-on-charcoal); margin: 0; line-height: 1.4; font-weight: 500; }
 .arsenal-block-sm {
   background: var(--charcoal); border: none; padding: 10px 12px; margin-top: 8px;
 }
-.flip-inner.face-2 .arsenal-block-sm { background: rgba(255,255,255,0.12); }
 .arsenal-text-sm { font-size: 13px; color: var(--cream-on-charcoal); margin: 0; line-height: 1.3; font-weight: 500; }
 
 .structure-inline { display: flex; align-items: center; gap: 5px; margin-top: 10px; }
