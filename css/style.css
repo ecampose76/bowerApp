@@ -468,7 +468,7 @@ button, input {
 .flip-inner.face-2 { background: var(--charcoal); color: var(--cream-on-charcoal); --ink-soft: var(--cream-on-charcoal-soft); }
 
 .flip-label {
-  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  font-family: var(--font-display); font-size: 10px; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.8px; margin: 0 0 4px; color: var(--ink-soft);
 }
 .face-title {
@@ -476,7 +476,7 @@ button, input {
   margin: 0 0 16px; letter-spacing: 0.7px;
 }
 .face-title-sm {
-  font-family: var(--font-display); font-size: 17px; font-weight: 700;
+  font-family: var(--font-display); font-size: 18px; font-weight: 700;
   margin: 0 0 6px; letter-spacing: 0.4px;
 }
 .face-h3 {
@@ -487,12 +487,12 @@ button, input {
 .face-h3:first-of-type { margin-top: 0; }
 .face-h3 .ic { font-size: 16px; }
 .face-h3-sm {
-  font-family: var(--font-display); font-size: 11px; font-weight: 600;
-  margin: 10px 0 5px; color: var(--ink-soft);
+  font-family: var(--font-display); font-size: 14px; font-weight: 700;
+  margin: 10px 0 4px; color: var(--ink-soft);
   display: flex; align-items: center; gap: 5px;
 }
 .face-h3-sm:first-of-type { margin-top: 0; }
-.face-h3-sm .ic { font-size: 13px; }
+.face-h3-sm .ic { font-size: 14px; }
 .face-desc { font-size: 14px; line-height: 1.55; margin: 0 0 4px; font-weight: 500; }
 .face-desc-sm { font-size: 13px; line-height: 1.4; margin: 0 0 3px; font-weight: 500; }
 .point-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 9px; font-size: 14px; font-weight: 500; }
@@ -525,7 +525,7 @@ button, input {
 
 .wstat-row { margin-bottom: 5px; }
 .wstat-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
-.wstat-label { font-family: var(--font-display); font-size: 13px; font-weight: 700; }
+.wstat-label { font-family: var(--font-display); font-size: 14px; font-weight: 700; }
 .wstat-badge {
   font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: var(--shoyu-700);
   background: rgba(255,255,255,0.85); padding: 1px 8px; border-radius: 999px;
@@ -535,12 +535,7 @@ button, input {
   height: 6px; border-radius: 999px; background: rgba(255,255,255,0.28); overflow: hidden;
   margin-bottom: 1px;
 }
-.wstat-fill { height: 100%; border-radius: 999px; }
-.wstat-fill.wstat-yellow { background: linear-gradient(90deg, #FDE68A, #F0B429); }
-.wstat-fill.wstat-green { background: linear-gradient(90deg, #C3ECB6, #5FAE64); }
-.wstat-fill.wstat-pink { background: linear-gradient(90deg, #FBC7D6, #E85A78); }
-.wstat-fill.wstat-orange { background: linear-gradient(90deg, #FFD6A0, #EC8A3D); }
-.wstat-fill.wstat-blue { background: linear-gradient(90deg, #BFE0F5, #4E93CC); }
+.wstat-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--washi-100), var(--bronze-700)); }
 .wstat-ends {
   display: flex; justify-content: space-between;
   font-family: var(--font-body); font-size: 10.5px; font-weight: 500; color: inherit; opacity: 0.75;
@@ -548,16 +543,15 @@ button, input {
 
 .wpair-block { margin-bottom: 9px; }
 .wpair-dish-name {
-  display: block; font-family: var(--font-display); font-size: 12.5px; font-weight: 700;
-  background: none; border: none; padding: 0; margin: 0 0 2px; color: inherit;
-  cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+  display: block; font-family: var(--font-display); font-size: 14px; font-weight: 700;
+  margin: 0 0 2px; color: inherit;
 }
 .wpair-reason { font-size: 13px; line-height: 1.35; margin: 0; opacity: 0.9; }
 
 .back-line { font-size: 15px; color: var(--shoyu-500); margin: 0 0 14px; line-height: 1.55; }
 .back-line b { color: var(--bronze-200); display: block; font-family: var(--font-display); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
 .back-line-sm { font-size: 13px; color: inherit; opacity: 0.85; margin: 6px 0 0; line-height: 1.35; }
-.back-line-sm b { color: var(--ink-soft); display: block; font-family: var(--font-display); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px; }
+.back-line-sm b { color: var(--ink-soft); display: block; font-family: var(--font-display); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px; }
 .story-text { font-size: 15px; color: var(--shoyu-500); line-height: 1.65; margin: 0; }
 .arsenal-block {
   background: var(--charcoal); border: none; padding: 14px 16px; margin-top: 16px;

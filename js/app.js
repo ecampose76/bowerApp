@@ -129,10 +129,10 @@ function buildFaceHTML(wine, similar, idx) {
     const pairsHTML = wine.pairingDishIds.map(dishId => {
       const dish = findDish(dishId);
       if (!dish) return "";
-      const reason = briefReason(PAIRING_REASONS[`${wine.id}|${dishId}`]);
+      const reason = briefReason((wine.pairingReasons && wine.pairingReasons[dishId]) || PAIRING_REASONS[`${wine.id}|${dishId}`]);
       return `
         <div class="wpair-block">
-          <button type="button" class="wpair-dish-name" data-dish-id="${dish.id}">${dish.name}</button>
+          <p class="wpair-dish-name">${dish.name}</p>
           ${reason ? `<p class="wpair-reason">${reason}</p>` : ""}
         </div>
       `;
@@ -155,7 +155,7 @@ function buildFaceHTML(wine, similar, idx) {
 }
 
 function wireFaceInteractions(inner) {
-  inner.querySelectorAll(".wface-pair-pill, .wpair-dish-name").forEach(btn => {
+  inner.querySelectorAll(".wface-pair-pill").forEach(btn => {
     btn.onclick = (e) => {
       e.stopPropagation();
       go("dish-detail", { dishId: btn.dataset.dishId });
@@ -221,11 +221,11 @@ const WSET_BANDS = {
 };
 
 const STRUCTURE_META = {
-  sweetness: { label: "Sweetness", low: "Dry", high: "Sweet", cls: "wstat-yellow" },
-  acidity: { label: "Acidity", low: "Low", high: "High", cls: "wstat-green" },
-  tannin: { label: "Tannins", low: "Smooth", high: "Tannic", cls: "wstat-pink" },
-  alcohol: { label: "Alcohol", low: "Low", high: "High", cls: "wstat-orange" },
-  body: { label: "Body", low: "Light-bodied", high: "Full-bodied", cls: "wstat-blue" }
+  sweetness: { label: "Sweetness", low: "Dry", high: "Sweet" },
+  acidity: { label: "Acidity", low: "Low", high: "High" },
+  tannin: { label: "Tannins", low: "Smooth", high: "Tannic" },
+  alcohol: { label: "Alcohol", low: "Low", high: "High" },
+  body: { label: "Body", low: "Light-bodied", high: "Full-bodied" }
 };
 
 function structureBars(structure) {
@@ -242,7 +242,7 @@ function structureBars(structure) {
           <span class="wstat-label">${meta.label}</span>
           <span class="wstat-badge"><b>${score}</b>/10</span>
         </div>
-        <div class="wstat-track"><div class="wstat-fill ${meta.cls}" style="width:${pct}%;"></div></div>
+        <div class="wstat-track"><div class="wstat-fill" style="width:${pct}%;"></div></div>
         <div class="wstat-ends"><span>${meta.low}</span><span>${meta.high}</span></div>
       </div>
     `;

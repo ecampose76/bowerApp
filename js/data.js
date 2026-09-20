@@ -32,6 +32,11 @@ const WINES = [
     moment: "The first pour of the night, or anyone who wants real Champagne pedigree without a Grande Marque price tag.",
     memory: "Chalky, citrus-bright, and the house that started it all.",
     pairingDishIds: ["d-scallop-crudo", "d-oyster-mignonette", "d-crudite-royale"],
+    pairingReasons: {
+      "d-scallop-crudo": "Bright acid and citrus echo the yuzu, cutting through the scallop's natural sweetness.",
+      "d-oyster-mignonette": "Chalky minerality is the classic oyster match, mirroring the brine.",
+      "d-crudite-royale": "Crisp acid and a light body keep pace with raw vegetables without overpowering them."
+    },
     arsenal: "It's literally the oldest Champagne house in existence &mdash; that's a great opening line for a guest who wants to know why it's worth ordering.",
     funFact: "Ruinart was founded in 1729, making it the first officially established Champagne house on record.",
     funFact2: "Much of Ruinart's aging cellar sits in Gallo-Roman chalk quarries beneath Reims, carved out nearly two thousand years ago.",
