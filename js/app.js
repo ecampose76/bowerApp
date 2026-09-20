@@ -219,28 +219,31 @@ const WSET_BANDS = {
   alcohol: ["Low", "Medium(-)", "Medium", "Medium(+)", "High"],
   body: ["Light", "Medium(-)", "Medium", "Medium(+)", "Full"]
 };
-const SHORT_BANDS = ["Low", "Med-", "Med", "Med+", "High"];
+
+const STRUCTURE_META = {
+  sweetness: { label: "Sweetness", low: "Dry", high: "Sweet", cls: "wstat-yellow" },
+  acidity: { label: "Acidity", low: "Low", high: "High", cls: "wstat-green" },
+  tannin: { label: "Tannins", low: "Smooth", high: "Tannic", cls: "wstat-pink" },
+  alcohol: { label: "Alcohol", low: "Low", high: "High", cls: "wstat-orange" },
+  body: { label: "Body", low: "Light-bodied", high: "Full-bodied", cls: "wstat-blue" }
+};
 
 function structureBars(structure) {
   const order = ["sweetness", "acidity", "tannin", "alcohol", "body"];
   return order.map((key) => {
     const val = structure[key];
     if (key === "tannin" && val === 0) return "";
-    const pct = (val - 1) * 25;
-    if (key === "sweetness") {
-      return `
-        <div class="wbar-spectrum">
-          <div class="wbar-spectrum-track"><div class="wbar-dot" style="left:${pct}%;"></div></div>
-          <div class="wbar-spectrum-labels"><span>Dry</span><span>Sweet</span></div>
-        </div>
-      `;
-    }
-    const label = key === "body" ? "Body" : key.charAt(0).toUpperCase() + key.slice(1);
+    const meta = STRUCTURE_META[key];
+    const score = val * 2;
+    const pct = val * 20;
     return `
-      <div class="wbar-row">
-        <span class="wbar-row-label">${label}</span>
-        <div class="wbar-row-track"><div class="wbar-dot" style="left:${pct}%;"></div></div>
-        <span class="wbar-row-value">${SHORT_BANDS[val - 1] || SHORT_BANDS[0]}</span>
+      <div class="wstat-row">
+        <div class="wstat-top">
+          <span class="wstat-label">${meta.label}</span>
+          <span class="wstat-badge"><b>${score}</b>/10</span>
+        </div>
+        <div class="wstat-track"><div class="wstat-fill ${meta.cls}" style="width:${pct}%;"></div></div>
+        <div class="wstat-ends"><span>${meta.low}</span><span>${meta.high}</span></div>
       </div>
     `;
   }).join("");
