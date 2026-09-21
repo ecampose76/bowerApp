@@ -767,16 +767,17 @@ button, input {
 }
 
 .bar-choice-card {
-  background: var(--washi-200); cursor: pointer; padding: 18px 20px;
+  background: var(--washi-200); cursor: pointer; overflow: hidden;
   box-shadow: 0 6px 14px -8px rgba(43,51,36,0.18);
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  display: flex; align-items: stretch; justify-content: space-between; gap: 0;
+  min-height: 104px;
 }
 .bar-choice-title {
   font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--shoyu-700);
-  margin: 0;
+  margin: 0; padding: 18px 20px; display: flex; align-items: center;
 }
 .bar-choice-image {
-  width: 96px; height: 72px; flex-shrink: 0; border-radius: 10px;
+  width: 120px; flex-shrink: 0;
   background: var(--washi-300);
 }
 
