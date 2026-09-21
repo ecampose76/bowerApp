@@ -737,6 +737,8 @@ button, input {
   padding: 3px 0;
 }
 .chefprep-text { font-size: 13px; color: var(--shoyu-500); line-height: 1.6; margin: 0; }
+.point-row-sm { display: flex; align-items: flex-start; gap: 7px; font-size: 13px; font-weight: 500; line-height: 1.35; color: var(--shoyu-500); }
+.point-row-sm span:first-child { flex-shrink: 0; color: var(--bronze-200); }
 
 /* Cocktail follow-up questions */
 .followup-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }

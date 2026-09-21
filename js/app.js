@@ -1651,12 +1651,12 @@ function renderBarLiquorList() {
   );
 }
 
-const LIQUOR_STRUCTURE_BANDS = {
-  sweetness: ["Bone Dry", "Dry", "Medium", "Sweet", "Very Sweet"],
-  smoke: ["None", "Faint", "Light", "Noticeable", "Heavy"],
-  spice: ["Mellow", "Light", "Medium", "Peppery", "Fiery"],
-  body: ["Light", "Medium(-)", "Medium", "Medium(+)", "Full"],
-  finish: ["Short", "Medium(-)", "Medium", "Medium(+)", "Long"]
+const LIQUOR_STRUCTURE_META = {
+  sweetness: { label: "Sweetness", low: "Bone Dry", high: "Very Sweet" },
+  smoke: { label: "Smoke", low: "None", high: "Heavy" },
+  spice: { label: "Spice", low: "Mellow", high: "Fiery" },
+  body: { label: "Body", low: "Light", high: "Full" },
+  finish: { label: "Finish", low: "Short", high: "Long" }
 };
 
 function liquorStructureBars(structure) {
@@ -1664,45 +1664,60 @@ function liquorStructureBars(structure) {
   return order.map((key) => {
     const val = structure[key];
     if (!val) return "";
-    const band = LIQUOR_STRUCTURE_BANDS[key][val - 1] || LIQUOR_STRUCTURE_BANDS[key][0];
-    const width = val * 20;
-    return `<div class="bar-block"><div class="bar-track"><div class="bar-fill" style="width:${width}%;"></div></div><p>${band} ${key.charAt(0).toUpperCase() + key.slice(1)}</p></div>`;
+    const meta = LIQUOR_STRUCTURE_META[key];
+    const score = val * 2;
+    const pct = val * 20;
+    return `
+      <div class="wstat-row">
+        <div class="wstat-top">
+          <span class="wstat-label">${meta.label}</span>
+          <span class="wstat-badge"><b>${score}</b>/10</span>
+        </div>
+        <div class="wstat-track"><div class="wstat-fill" style="width:${pct}%;"></div></div>
+        <div class="wstat-ends"><span>${meta.low}</span><span>${meta.high}</span></div>
+      </div>
+    `;
   }).join("");
 }
 
 function buildLiquorFaceHTML(l, idx) {
-  const hasSellContent = l.guestDescription || (l.sellingPoints && l.sellingPoints.length) || l.arsenal;
-  const hasUnderstandContent = l.distillingNote || (l.flavorTags && l.flavorTags.length) || l.structure;
-  const hasKnowledgeContent = l.funFact || l.funFact2 || l.shortStory || l.moment || l.memory;
-
   if (idx === 0) {
-    if (!hasSellContent) return `<p class="flip-label">1/3</p><p class="face-title">Sell it</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
+    if (!l.guestDescription && !l.arsenal) return `<p class="flip-label">1/4</p><p class="face-title-sm">Sell It</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
     return `
-      <p class="flip-label">1/3</p>
-      <p class="face-title">Sell it</p>
-      ${l.guestDescription ? `<p class="face-h3"><span class="ic">&#128172;</span> Guest description</p><p class="face-desc">${l.guestDescription}</p>` : ""}
-      ${l.sellingPoints && l.sellingPoints.length ? `<p class="face-h3"><span class="ic">&#10003;</span> Selling points</p>${l.sellingPoints.map(p => `<div class="point-row"><span class="ic">&#10003;</span><span>${p}</span></div>`).join("")}` : ""}
-      ${l.arsenal ? `<div class="arsenal-block"><p class="arsenal-label">Table-side line</p><p class="arsenal-text">${l.arsenal}</p></div>` : ""}
+      <p class="flip-label">1/4</p>
+      <p class="face-title-sm">Sell It</p>
+      ${l.guestDescription ? `<p class="face-h3-sm">Guest description</p><p class="face-desc-sm">${l.guestDescription}</p>` : ""}
+      ${l.arsenal ? `<div class="arsenal-block-sm"><p class="arsenal-label">Table-side line</p><p class="arsenal-text-sm">${l.arsenal}</p></div>` : ""}
     `;
   } else if (idx === 1) {
-    if (!hasUnderstandContent) return `<p class="flip-label">2/3</p><p class="face-title">Understand it</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
+    if (!(l.flavorTags && l.flavorTags.length) && !l.structure) return `<p class="flip-label">2/4</p><p class="face-title-sm">Flavor &amp; Structure</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
     return `
-      <p class="flip-label">2/3</p>
-      <p class="face-title">Understand it</p>
-      ${l.mashBill ? `<p class="face-h3"><span class="ic">&#127806;</span> Mash bill</p><p class="face-desc" style="margin-bottom:14px;">${l.mashBill}</p>` : ""}
-      ${l.distillingNote ? `<p class="face-h3"><span class="ic">&#127866;</span> Distilling note</p><p class="face-desc" style="margin-bottom:14px;">${l.distillingNote}</p>` : ""}
-      ${l.flavorTags && l.flavorTags.length ? `<p class="face-h3"><span class="ic">&#127815;</span> Flavor profile</p><div class="flavor-grid">${l.flavorTags.map(t => `<div class="flavor-item"><div class="icon">${getFlavorIcon(t)}</div><p>${t}</p></div>`).join("")}</div>` : ""}
-      ${l.structure ? `<p class="face-h3"><span class="ic">&#128202;</span> Structure</p>${liquorStructureBars(l.structure)}` : ""}
+      <p class="flip-label">2/4</p>
+      <p class="face-title-sm">Flavor &amp; Structure</p>
+      ${l.flavorTags && l.flavorTags.length ? `<div class="flavor-grid-sm">${l.flavorTags.map(t => `<div class="flavor-item-sm"><div class="icon">${getFlavorIcon(t)}</div><p>${t}</p></div>`).join("")}</div>` : ""}
+      ${l.structure ? liquorStructureBars(l.structure) : ""}
+    `;
+  } else if (idx === 2) {
+    const hasAge = l.ageStatement && l.ageStatement.trim().toUpperCase() !== "N/A";
+    const hasKnow = l.mashBill || hasAge || typeof l.abv === "number" || l.distillingNote || (l.sellingPoints && l.sellingPoints.length);
+    if (!hasKnow) return `<p class="flip-label">3/4</p><p class="face-title-sm">Good to Know</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
+    return `
+      <p class="flip-label">3/4</p>
+      <p class="face-title-sm" style="margin-bottom:5px;">Good to Know</p>
+      ${l.mashBill ? `<p class="chefprep-text" style="line-height:1.35;"><b>Mash bill:</b> ${l.mashBill}</p>` : ""}
+      ${hasAge ? `<p class="chefprep-text" style="margin-top:4px; line-height:1.35;"><b>Age:</b> ${l.ageStatement}</p>` : ""}
+      ${typeof l.abv === "number" ? `<p class="chefprep-text" style="margin-top:4px; line-height:1.35;"><b>ABV:</b> ${l.abv}%</p>` : ""}
+      ${l.distillingNote ? `<p class="chefprep-text" style="margin-top:4px; line-height:1.35;"><b>Distilling note:</b> ${l.distillingNote}</p>` : ""}
+      ${l.sellingPoints && l.sellingPoints.length ? l.sellingPoints.map(p => `<div class="point-row-sm" style="margin-bottom:5px;"><span>&mdash;</span><span>${p}</span></div>`).join("") : ""}
     `;
   } else {
-    if (!hasKnowledgeContent) return `<p class="flip-label">3/3</p><p class="face-title">Sommelier knowledge</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
+    if (!l.shortStory && !l.funFact && !l.funFact2) return `<p class="flip-label">4/4</p><p class="face-title-sm">The Story</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
     return `
-      <p class="flip-label">3/3</p>
-      <p class="face-title">Sommelier knowledge</p>
-      ${l.funFact || l.funFact2 ? `<p class="face-h3"><span class="ic">&#10024;</span> Fun facts</p>${l.funFact ? `<div class="fact-block"><p>${l.funFact}</p></div>` : ""}${l.funFact2 ? `<div class="fact-block"><p>${l.funFact2}</p></div>` : ""}` : ""}
-      ${l.shortStory ? `<p class="face-h3"><span class="ic">&#128214;</span> Short story</p><p class="face-desc" style="margin-bottom:14px;">${l.shortStory}</p>` : ""}
-      ${l.moment ? `<p class="face-h3"><span class="ic">&#128278;</span> The moment</p><p class="face-desc">${l.moment}</p>` : ""}
-      ${l.memory ? `<p class="face-h3"><span class="ic">&#128142;</span> The memory</p><p class="face-desc">${l.memory}</p>` : ""}
+      <p class="flip-label">4/4</p>
+      <p class="face-title-sm">The Story</p>
+      ${l.shortStory ? `<p class="face-desc-sm">${l.shortStory}</p>` : ""}
+      ${l.funFact ? `<div class="fact-block-sm"><p>${l.funFact}</p></div>` : ""}
+      ${l.funFact2 ? `<div class="fact-block-sm"><p>${l.funFact2}</p></div>` : ""}
     `;
   }
 }
@@ -1719,8 +1734,8 @@ function renderLiquorFlipCard(l) {
   flipcard.onclick = () => {
     flipcard.classList.add("flipping");
     setTimeout(() => {
-      faceIndex = (faceIndex + 1) % 3;
-      inner.className = "flip-inner face-" + faceIndex;
+      faceIndex = (faceIndex + 1) % 4;
+      inner.className = "flip-inner face-" + (faceIndex % 3);
       inner.innerHTML = buildLiquorFaceHTML(l, faceIndex);
       flipcard.classList.remove("flipping");
     }, 200);
@@ -1831,37 +1846,9 @@ function renderLiquorCard(liquorId) {
     container.appendChild(priceTag);
   }
 
-  // Phase B: sourced content (facts, flavor, structure, story). Items not
-  // yet enriched fall back to an honest empty state per face, same
-  // discipline as Dessert Wines elsewhere in the app -- nothing invented.
   container.appendChild(renderLiquorFlipCard(l));
 
   app.appendChild(container);
-
-  const footerNav = document.createElement("div");
-  footerNav.className = "card-footer-nav";
-
-  const backBtn = document.createElement("button");
-  backBtn.className = "footer-btn";
-  backBtn.textContent = "\u2190 Back";
-  backBtn.disabled = idx === 0;
-  backBtn.onclick = () => go("liquor-card", { liquorId: LIQUOR[idx - 1].id }, false);
-
-  const homeBtn = document.createElement("button");
-  homeBtn.className = "footer-btn footer-btn-home";
-  homeBtn.textContent = "Home";
-  homeBtn.onclick = () => go("home", {});
-
-  const nextBtn = document.createElement("button");
-  nextBtn.className = "footer-btn";
-  nextBtn.textContent = "Next \u2192";
-  nextBtn.disabled = idx === LIQUOR.length - 1;
-  nextBtn.onclick = () => go("liquor-card", { liquorId: LIQUOR[idx + 1].id }, false);
-
-  footerNav.appendChild(backBtn);
-  footerNav.appendChild(homeBtn);
-  footerNav.appendChild(nextBtn);
-  app.appendChild(footerNav);
 
   let touchStartX = null;
   app.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; }, { once: true });
