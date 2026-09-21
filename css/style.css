@@ -754,6 +754,16 @@ button, input {
 
 /* Wine of the day — sits at the top of the Wine section now, a
    horizontal strip above the By-the-Glass/Bottle/Pairing options. */
+.wine-square-grid { display: flex; flex-direction: column; gap: 14px; margin: 0; }
+.wine-square-card {
+  background: var(--washi-200); cursor: pointer; padding: 22px 20px;
+  box-shadow: 0 6px 14px -8px rgba(43,51,36,0.18);
+}
+.wine-square-title {
+  font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--shoyu-700);
+  margin: 0;
+}
+
 .wotd-strip {
   display: flex; align-items: center; gap: 14px;
   background: var(--terracotta); border: none;
@@ -1144,14 +1154,14 @@ button, input {
 /* ============================================================
    Press feedback — mechanical, not glossy: steep ease-out, short.
    ============================================================ */
-.home-option, .home-hero-card, .home-banner-card, .home-circle-item, .home-account-btn, .list-row, .menu-section-pill, .menu-card, .menu-card-btn, .allergen-filter-btn, .pill, .footer-btn, .speed-toggle,
+.home-option, .home-hero-card, .home-banner-card, .home-circle-item, .home-account-btn, .list-row, .menu-section-pill, .menu-card, .menu-card-btn, .allergen-filter-btn, .wine-square-card, .pill, .footer-btn, .speed-toggle,
 .wotd-strip, .wotd-main, .wotd-shuffle, .theme-toggle, .back-btn, .section-toggle,
 .match-tile, .allergen-filter-chip, .testme-reset, .confidence-btn, .mc-btn, .somm-btn,
 .flipcard, .dish-flipcard, .testme-card, .imposter-tile,
 .learning-card, .quiz-opt, .btn-start, .video-frame, .wcard, .knockout-hint-btn {
   transition: transform var(--press-duration) ease-out, background var(--press-duration) ease-out, border-color var(--press-duration) ease-out;
 }
-.home-option:active, .home-hero-card:active, .home-banner-card:active, .home-circle-item:active, .home-account-btn:active, .list-row:active, .menu-section-pill:active, .menu-card:active, .menu-card-btn:active, .allergen-filter-btn:active, .pill:active,
+.home-option:active, .home-hero-card:active, .home-banner-card:active, .home-circle-item:active, .home-account-btn:active, .list-row:active, .menu-section-pill:active, .menu-card:active, .menu-card-btn:active, .allergen-filter-btn:active, .wine-square-card:active, .pill:active,
 .footer-btn:not(:disabled):active, .speed-toggle:active, .wotd-strip:active,
 .wotd-main:active, .wotd-shuffle:active, .theme-toggle:active, .back-btn:active, .section-toggle:active,
 .match-tile:not(.matched):not(.picked):active, .allergen-filter-chip:active,
@@ -1166,7 +1176,7 @@ button, input {
 /* ============================================================
    Focus visibility — hard neon/rust ring, never soft.
    ============================================================ */
-.home-option:focus-visible, .home-hero-card:focus-visible, .home-banner-card:focus-visible, .home-circle-item:focus-visible, .home-account-btn:focus-visible, .list-row:focus-visible, .menu-section-pill:focus-visible, .menu-card:focus-visible, .menu-card-btn:focus-visible, .allergen-filter-btn:focus-visible, .pill:focus-visible,
+.home-option:focus-visible, .home-hero-card:focus-visible, .home-banner-card:focus-visible, .home-circle-item:focus-visible, .home-account-btn:focus-visible, .list-row:focus-visible, .menu-section-pill:focus-visible, .menu-card:focus-visible, .menu-card-btn:focus-visible, .allergen-filter-btn:focus-visible, .wine-square-card:focus-visible, .pill:focus-visible,
 .footer-btn:focus-visible, .speed-toggle:focus-visible,
 .wotd-strip:focus-visible, .wotd-main:focus-visible, .wotd-shuffle:focus-visible, .theme-toggle:focus-visible,
 .back-btn:focus-visible, .section-toggle:focus-visible, .match-tile:focus-visible,
@@ -1184,7 +1194,7 @@ button, input {
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   .flip-inner, .dish-flip-inner, .confetti, .match-tile,
-  .home-option, .home-hero-card, .home-banner-card, .home-circle-item, .home-account-btn, .list-row, .menu-section-pill, .menu-card, .menu-card-btn, .allergen-filter-btn, .pill, .footer-btn, .speed-toggle,
+  .home-option, .home-hero-card, .home-banner-card, .home-circle-item, .home-account-btn, .list-row, .menu-section-pill, .menu-card, .menu-card-btn, .allergen-filter-btn, .wine-square-card, .pill, .footer-btn, .speed-toggle,
   .wotd-strip, .wotd-shuffle, .theme-toggle, .back-btn, .section-toggle,
   .allergen-filter-chip, .testme-reset, .confidence-btn, .mc-btn, .somm-btn,
   .flipcard, .dish-flipcard, .testme-card, .imposter-tile,

@@ -316,6 +316,8 @@ function render() {
   else if (current.view === "allergy-sort") renderAllergyIntro();
   else if (current.view === "allergy-sort-run") renderAllergySortRun();
   else if (current.view === "cocktail-type") renderCocktailTypeChooser();
+  else if (current.view === "bar-cocktail-list") renderBarCocktailList();
+  else if (current.view === "bar-liquor-list") renderBarLiquorList();
   else if (current.view === "cocktail-list") renderCocktailList();
   else if (current.view === "classic-cocktail-list") renderClassicCocktailList();
   else if (current.view === "mocktail-list") renderMocktailList();
@@ -1490,13 +1492,11 @@ function buildBarListCard(item) {
   const card = document.createElement("div");
   card.className = "menu-card";
   const priceLabel = typeof item.price === "number" ? `$${item.price}` : "";
-  const varietyLabel = item._type === "Liquor" ? (item.subcategory || item.category) : (item.spirit || "");
-  const icon = item._type === "Liquor"
-    ? (SPIRIT_ICON_MAP[item.category] || "\u{1F943}")
-    : item._type === "Mocktail" ? "\u{1F379}"
-    : (SPIRIT_ICON_MAP[item.spirit] || "\u{1F378}");
+  const isLiquor = typeof item.abv === "number";
+  const varietyLabel = isLiquor ? (item.subcategory || item.category) : (item.spirit || "");
+  const tag = isLiquor ? "Liquor" : item._type;
   card.innerHTML = `
-    <div class="menu-card-thumb style-${(item.category || item._type).toLowerCase().replace(/[^a-z]/g, "")}"><span>${icon}</span></div>
+    <div class="menu-card-thumb style-${(item.category || item._type).toLowerCase().replace(/[^a-z]/g, "")}"></div>
     <div class="menu-card-info">
       <div class="menu-card-top">
         <p class="menu-card-name">${item.name}</p>
@@ -1504,13 +1504,13 @@ function buildBarListCard(item) {
       </div>
       <div class="wine-card-bottom-row">
         <p class="menu-card-price">${priceLabel}</p>
-        <span class="wine-card-source-tag">${item._type}</span>
+        <span class="wine-card-source-tag">${tag}</span>
       </div>
     </div>
     <button class="menu-card-btn" aria-label="View ${item.name}"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10"/></svg></button>
   `;
   card.onclick = () => {
-    if (item._type === "Liquor") go("liquor-card", { liquorId: item.id });
+    if (isLiquor) go("liquor-card", { liquorId: item.id });
     else go("cocktail-detail", { cocktailId: item.id });
   };
   return card;
@@ -1519,19 +1519,34 @@ function buildBarListCard(item) {
 function renderCocktailTypeChooser() {
   header("Bar");
 
+  const options = document.createElement("div");
+  options.className = "wine-square-grid";
+  options.innerHTML = `
+    <div class="wine-square-card" data-go="cocktails">
+      <p class="wine-square-title">Cocktails</p>
+    </div>
+    <div class="wine-square-card" data-go="liquor">
+      <p class="wine-square-title">Liquor</p>
+    </div>
+  `;
+  options.querySelector('[data-go="cocktails"]').onclick = () => go("bar-cocktail-list");
+  options.querySelector('[data-go="liquor"]').onclick = () => go("bar-liquor-list");
+  app.appendChild(options);
+}
+
+function renderBarSortSearchShell(headerTitle, introTitle, introText, searchPlaceholder, typeOptions, buildItems, buildCard, emptyText) {
+  header(headerTitle);
+
   const intro = document.createElement("div");
   intro.className = "wine-intro";
-  intro.innerHTML = `
-    <p class="wine-intro-title">The Bar Program</p>
-    <p class="wine-intro-text">House cocktails built around the same garden thinking as the kitchen, classic recipes done properly, and a back bar worth knowing by name.</p>
-  `;
+  intro.innerHTML = `<p class="wine-intro-title">${introTitle}</p><p class="wine-intro-text">${introText}</p>`;
   app.appendChild(intro);
 
   const searchRow = document.createElement("div");
   searchRow.className = "search-filter-row";
   const input = document.createElement("input");
   input.className = "search-input";
-  input.placeholder = "Search the bar";
+  input.placeholder = searchPlaceholder;
   searchRow.appendChild(input);
 
   let panelOpen = false;
@@ -1548,7 +1563,7 @@ function renderCocktailTypeChooser() {
   panel.style.display = "none";
   panel.innerHTML = `
     <p class="dish-info-heading" style="margin-top:0;">Sort by</p>
-    <div class="menu-section-pills wine-panel-pills" id="bar-sort-pills">
+    <div class="menu-section-pills wine-panel-pills">
       <button class="menu-section-pill active" data-sort="name">Name</button>
       <button class="menu-section-pill" data-sort="price-asc">Price: Low to High</button>
       <button class="menu-section-pill" data-sort="price-desc">Price: High to Low</button>
@@ -1576,16 +1591,11 @@ function renderCocktailTypeChooser() {
   listWrap.className = "menu-card-list";
   app.appendChild(listWrap);
 
-  const allItems = [
-    ...COCKTAILS.map(c => ({ ...c, _type: "House" })),
-    ...CLASSIC_COCKTAILS.map(c => ({ ...c, _type: "Classic" })),
-    ...MOCKTAILS.map(c => ({ ...c, _type: "Mocktail" })),
-    ...LIQUOR.map(l => ({ ...l, _type: "Liquor" }))
-  ];
+  const allItems = buildItems();
 
   function drawPills() {
     pillsHolder.innerHTML = "";
-    pillsHolder.appendChild(buildFilterPills(["All", "House", "Classic", "Mocktail", "Liquor"], activeType, (val) => {
+    pillsHolder.appendChild(buildFilterPills(typeOptions, activeType, (val) => {
       activeType = val;
       draw(input.value);
     }));
@@ -1602,13 +1612,43 @@ function renderCocktailTypeChooser() {
     else if (activeSort === "price-desc") filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
 
     if (!filtered.length) {
-      listWrap.innerHTML = `<p class="empty-note">Nothing on the bar matches that search.</p>`;
+      listWrap.innerHTML = `<p class="empty-note">${emptyText}</p>`;
       return;
     }
-    filtered.forEach(i => listWrap.appendChild(buildBarListCard(i)));
+    filtered.forEach(i => listWrap.appendChild(buildCard(i)));
   }
   draw("");
   input.oninput = () => draw(input.value);
+}
+
+function renderBarCocktailList() {
+  renderBarSortSearchShell(
+    "Cocktails",
+    "House & Classic Cocktails",
+    "House cocktails built around the same garden thinking as the kitchen, classic recipes done properly, and a few non-alcoholic options with the same care.",
+    "Search cocktails",
+    ["All", "House", "Classic", "Mocktail"],
+    () => [
+      ...COCKTAILS.map(c => ({ ...c, _type: "House" })),
+      ...CLASSIC_COCKTAILS.map(c => ({ ...c, _type: "Classic" })),
+      ...MOCKTAILS.map(c => ({ ...c, _type: "Mocktail" }))
+    ],
+    buildBarListCard,
+    "No cocktails match that search."
+  );
+}
+
+function renderBarLiquorList() {
+  renderBarSortSearchShell(
+    "Liquor",
+    "The Back Bar",
+    "Every bottle worth knowing by name, organized by spirit.",
+    "Search the back bar",
+    ["All", ...SPIRIT_ORDER],
+    () => LIQUOR.map(l => ({ ...l, _type: l.category })),
+    buildBarListCard,
+    "No bottles match that search."
+  );
 }
 
 const LIQUOR_STRUCTURE_BANDS = {
@@ -1977,42 +2017,56 @@ function renderCocktailDetail(cocktailId) {
   ).join("");
   container.appendChild(flavorGrid);
 
-  const flipcard = document.createElement("div");
-  flipcard.className = "dish-flipcard";
-  const inner = document.createElement("div");
-  inner.className = "dish-flip-inner";
+  const iconSvg = `<svg class="ingredient-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3.25"/></svg>`;
+  function ingredientRows(items) {
+    return `<ul class="ingredient-list">${items.map(i =>
+      `<li><span class="ingredient-icon-wrap">${iconSvg}</span><span class="ingredient-text">${i}</span></li>`
+    ).join("")}</ul>`;
+  }
+
+  const faceCount = cocktail.prep ? 3 : (cocktail.funFact || cocktail.bestFor) ? 3 : 2;
 
   function faceHTML(idx) {
     if (idx === 0) {
       return `
-        <p class="dish-flip-tag">1/2 &middot; tap to flip</p>
-        <p class="dish-flip-title">&#129380; Ingredients</p>
-        ${cocktail.followUp && cocktail.followUp.length ? `
-          <p class="detail-h3" style="margin-top:0; color:var(--washi-100);"><span>&#128172;</span> Ask the guest</p>
-          <div class="followup-list">${cocktail.followUp.map(q => `<div class="followup-chip">${q}</div>`).join("")}</div>
-        ` : ""}
-        <ul class="ingredient-list">${cocktail.ingredients.map(i => `<li>${i}</li>`).join("")}</ul>
-        <p class="chefprep-text" style="margin-top:auto;"><b style="color:#D9B98A;">Garnish:</b> ${cocktail.garnish}</p>
+        <p class="dish-flip-tag">1/${faceCount} &middot; tap to flip</p>
+        <p class="dish-flip-title">Ingredients</p>
+        ${ingredientRows(cocktail.ingredients)}
+        <p class="chefprep-text" style="margin-top:auto;"><b>Garnish:</b> ${cocktail.garnish}</p>
+      `;
+    }
+    if (idx === 1) {
+      return `
+        <p class="dish-flip-tag">2/${faceCount} &middot; tap to flip</p>
+        <p class="dish-flip-title">Build</p>
+        <p class="chefprep-text">${cocktail.directions}</p>
+        ${cocktail.prep && faceCount === 2 ? `<p class="chefprep-text" style="margin-top:10px;"><b>House prep:</b> ${cocktail.prep}</p>` : ""}
       `;
     }
     return `
-      <p class="dish-flip-tag">2/2 &middot; tap to flip</p>
-      <p class="dish-flip-title">&#127864; Build</p>
-      <p class="chefprep-text">${cocktail.directions}</p>
-      ${cocktail.prep ? `<p class="chefprep-text" style="margin-top:8px;"><b style="color:#D9B98A;">House prep:</b> ${cocktail.prep}</p>` : ""}
-      ${cocktail.funFact ? `<p class="chefprep-text" style="margin-top:8px;"><b style="color:#D9B98A;">Fun fact:</b> ${cocktail.funFact}</p>` : ""}
-      ${cocktail.bestFor ? `<p class="chefprep-text" style="margin-top:8px;"><b style="color:#D9B98A;">Great for:</b> ${cocktail.bestFor}</p>` : ""}
+      <p class="dish-flip-tag">3/${faceCount} &middot; tap to flip</p>
+      <p class="dish-flip-title" style="margin-bottom:5px; font-size:18px;">Good to Know</p>
+      ${cocktail.prep ? `<p class="chefprep-text" style="line-height:1.4;"><b>House prep:</b> ${cocktail.prep}</p>` : ""}
+      ${cocktail.funFact ? `<p class="chefprep-text" style="margin-top:4px; line-height:1.35;"><b>Fun fact:</b> ${cocktail.funFact}</p>` : ""}
+      ${cocktail.bestFor ? `<p class="chefprep-text" style="margin-top:4px; line-height:1.35;"><b>Great for:</b> ${cocktail.bestFor}</p>` : ""}
+      ${cocktail.followUp && cocktail.followUp.length ? `
+        <p class="chefprep-text" style="margin-top:4px; line-height:1.35;"><b>Ask the guest:</b></p>
+        <div class="followup-list">${cocktail.followUp.map(q => `<div class="followup-chip">${q}</div>`).join("")}</div>
+      ` : ""}
     `;
   }
 
+  const flipcard = document.createElement("div");
+  flipcard.className = "dish-flipcard dish-flipcard-fixed";
+  const inner = document.createElement("div");
+  inner.className = "dish-flip-inner dish-info-inner";
   inner.innerHTML = faceHTML(0);
   flipcard.appendChild(inner);
   let faceIndex = 0;
   flipcard.onclick = () => {
     flipcard.classList.add("flipping");
     setTimeout(() => {
-      faceIndex = (faceIndex + 1) % 2;
-      inner.className = "dish-flip-inner" + (faceIndex === 1 ? " chefprep" : "");
+      faceIndex = (faceIndex + 1) % faceCount;
       inner.innerHTML = faceHTML(faceIndex);
       flipcard.classList.remove("flipping");
     }, 200);
