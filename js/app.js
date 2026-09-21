@@ -1522,11 +1522,13 @@ function renderCocktailTypeChooser() {
   const options = document.createElement("div");
   options.className = "wine-square-grid";
   options.innerHTML = `
-    <div class="wine-square-card" data-go="cocktails">
-      <p class="wine-square-title">Cocktails</p>
+    <div class="bar-choice-card" data-go="cocktails">
+      <p class="bar-choice-title">Cocktails</p>
+      <div class="bar-choice-image"></div>
     </div>
-    <div class="wine-square-card" data-go="liquor">
-      <p class="wine-square-title">Liquor</p>
+    <div class="bar-choice-card reverse" data-go="liquor">
+      <div class="bar-choice-image"></div>
+      <p class="bar-choice-title">Liquor</p>
     </div>
   `;
   options.querySelector('[data-go="cocktails"]').onclick = () => go("bar-cocktail-list");
