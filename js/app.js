@@ -1298,24 +1298,122 @@ function renderCoffeeFlipCard(c) {
 
 function findCoffee(id) { return COFFEE_SIPHON.find(c => c.id === id); }
 
+function buildCoffeeListCard(item) {
+  const card = document.createElement("div");
+  card.className = "menu-card";
+  const priceLabel = typeof item.price === "number" ? `$${item.price}` : "";
+  const varietyLabel = item._type === "Siphon" ? (item.region || "") : "";
+  const icon = item._type === "Siphon" ? "\u{1F3FA}" : "\u2615";
+  card.innerHTML = `
+    <div class="menu-card-thumb"><span>${icon}</span></div>
+    <div class="menu-card-info">
+      <div class="menu-card-top">
+        <p class="menu-card-name">${item.name}</p>
+        ${varietyLabel ? `<p class="wine-card-variety">${varietyLabel}</p>` : ""}
+      </div>
+      <div class="wine-card-bottom-row">
+        <p class="menu-card-price">${priceLabel}</p>
+        <span class="wine-card-source-tag">${item._type}</span>
+      </div>
+    </div>
+    ${item._type === "Siphon" ? `<button class="menu-card-btn" aria-label="View ${item.name}"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10"/></svg></button>` : ""}
+  `;
+  if (item._type === "Siphon") card.onclick = () => go("coffee-siphon-card", { coffeeId: item.id });
+  else card.classList.add("static");
+  return card;
+}
+
 function renderCoffeeTypeChooser() {
   header("Coffee");
 
-  const options = document.createElement("div");
-  options.className = "home-options";
-  options.innerHTML = `
-    <div class="home-option" data-go="cup">
-      <div class="home-icon-circle">&#9749;</div>
-      <div class="home-option-text"><p>Coffee by the Cup</p><span>Château Belleville, our house assemblage</span></div>
-    </div>
-    <div class="home-option" data-go="siphon">
-      <div class="home-icon-circle">&#127871;</div>
-      <div class="home-option-text"><p>Tableside Siphon</p><span>Rotating single-origin, brewed at the table</span></div>
+  const intro = document.createElement("div");
+  intro.className = "wine-intro";
+  intro.innerHTML = `
+    <p class="wine-intro-title">The Coffee Program</p>
+    <p class="wine-intro-text">Château Belleville by the cup for a fast, familiar pour, or a rotating single-origin brewed tableside by siphon for something slower.</p>
+  `;
+  app.appendChild(intro);
+
+  const searchRow = document.createElement("div");
+  searchRow.className = "search-filter-row";
+  const input = document.createElement("input");
+  input.className = "search-input";
+  input.placeholder = "Search coffee";
+  searchRow.appendChild(input);
+
+  let panelOpen = false;
+  let activeSort = "name";
+  const sortBtn = document.createElement("button");
+  sortBtn.className = "allergen-filter-btn";
+  sortBtn.setAttribute("aria-label", "Sort");
+  sortBtn.innerHTML = `<svg viewBox="0 0 16 16" fill="none"><path d="M2.5 4.5h11M4.5 8h7M6.5 11.5h3"/></svg>`;
+  searchRow.appendChild(sortBtn);
+  app.appendChild(searchRow);
+
+  const panel = document.createElement("div");
+  panel.className = "wine-sort-panel";
+  panel.style.display = "none";
+  panel.innerHTML = `
+    <p class="dish-info-heading" style="margin-top:0;">Sort by</p>
+    <div class="menu-section-pills wine-panel-pills" id="coffee-sort-pills">
+      <button class="menu-section-pill active" data-sort="name">Name</button>
+      <button class="menu-section-pill" data-sort="price-asc">Price: Low to High</button>
+      <button class="menu-section-pill" data-sort="price-desc">Price: High to Low</button>
     </div>
   `;
-  options.querySelector('[data-go="cup"]').onclick = () => go("coffee-cup-list");
-  options.querySelector('[data-go="siphon"]').onclick = () => go("coffee-siphon-list");
-  app.appendChild(options);
+  app.appendChild(panel);
+  panel.querySelectorAll("[data-sort]").forEach(btn => {
+    btn.onclick = () => {
+      activeSort = btn.dataset.sort;
+      panel.querySelectorAll("[data-sort]").forEach(b => b.classList.toggle("active", b === btn));
+      draw(input.value);
+    };
+  });
+  sortBtn.onclick = () => {
+    panelOpen = !panelOpen;
+    panel.style.display = panelOpen ? "block" : "none";
+    sortBtn.classList.toggle("active", panelOpen);
+  };
+
+  let activeType = "All";
+  const pillsHolder = document.createElement("div");
+  app.appendChild(pillsHolder);
+
+  const listWrap = document.createElement("div");
+  listWrap.className = "menu-card-list";
+  app.appendChild(listWrap);
+
+  const allItems = [
+    ...COFFEE_BY_THE_CUP.map(c => ({ ...c, _type: "Cup" })),
+    ...COFFEE_SIPHON.map(c => ({ ...c, _type: "Siphon" }))
+  ];
+
+  function drawPills() {
+    pillsHolder.innerHTML = "";
+    pillsHolder.appendChild(buildFilterPills(["All", "Cup", "Siphon"], activeType, (val) => {
+      activeType = val;
+      draw(input.value);
+    }));
+  }
+
+  function draw(filter) {
+    drawPills();
+    listWrap.innerHTML = "";
+    let filtered = allItems.filter(i => i.name.toLowerCase().includes(filter.toLowerCase()));
+    if (activeType !== "All") filtered = filtered.filter(i => i._type === activeType);
+    filtered = filtered.slice();
+    if (activeSort === "name") filtered.sort((a, b) => a.name.localeCompare(b.name));
+    else if (activeSort === "price-asc") filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
+    else if (activeSort === "price-desc") filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
+
+    if (!filtered.length) {
+      listWrap.innerHTML = `<p class="empty-note">No coffee matches that search.</p>`;
+      return;
+    }
+    filtered.forEach(i => listWrap.appendChild(buildCoffeeListCard(i)));
+  }
+  draw("");
+  input.oninput = () => draw(input.value);
 }
 
 function renderCoffeeCupList() {
@@ -1388,34 +1486,129 @@ function renderCoffeeSiphonDetail(coffeeId) {
   app.appendChild(renderCoffeeFlipCard(coffee));
 }
 
+function buildBarListCard(item) {
+  const card = document.createElement("div");
+  card.className = "menu-card";
+  const priceLabel = typeof item.price === "number" ? `$${item.price}` : "";
+  const varietyLabel = item._type === "Liquor" ? (item.subcategory || item.category) : (item.spirit || "");
+  const icon = item._type === "Liquor"
+    ? (SPIRIT_ICON_MAP[item.category] || "\u{1F943}")
+    : item._type === "Mocktail" ? "\u{1F379}"
+    : (SPIRIT_ICON_MAP[item.spirit] || "\u{1F378}");
+  card.innerHTML = `
+    <div class="menu-card-thumb style-${(item.category || item._type).toLowerCase().replace(/[^a-z]/g, "")}"><span>${icon}</span></div>
+    <div class="menu-card-info">
+      <div class="menu-card-top">
+        <p class="menu-card-name">${item.name}</p>
+        ${varietyLabel ? `<p class="wine-card-variety">${varietyLabel}</p>` : ""}
+      </div>
+      <div class="wine-card-bottom-row">
+        <p class="menu-card-price">${priceLabel}</p>
+        <span class="wine-card-source-tag">${item._type}</span>
+      </div>
+    </div>
+    <button class="menu-card-btn" aria-label="View ${item.name}"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10"/></svg></button>
+  `;
+  card.onclick = () => {
+    if (item._type === "Liquor") go("liquor-card", { liquorId: item.id });
+    else go("cocktail-detail", { cocktailId: item.id });
+  };
+  return card;
+}
+
 function renderCocktailTypeChooser() {
   header("Bar");
 
-  const options = document.createElement("div");
-  options.className = "home-options";
-  options.innerHTML = `
-    <div class="home-option" data-go="house">
-      <div class="home-icon-circle">&#127864;</div>
-      <div class="home-option-text"><p>House Cocktails</p><span>Prime 131's own recipe book</span></div>
-    </div>
-    <div class="home-option" data-go="classic">
-      <div class="home-icon-circle">&#127865;</div>
-      <div class="home-option-text"><p>Classic Cocktails</p><span>Timeless recipes, by base spirit</span></div>
-    </div>
-    <div class="home-option" data-go="mocktail">
-      <div class="home-icon-circle">&#127817;</div>
-      <div class="home-option-text"><p>Mocktails</p><span>Non-alcoholic, same garden thinking</span></div>
-    </div>
-    <div class="home-option" data-go="liquor">
-      <div class="home-icon-circle">&#127866;</div>
-      <div class="home-option-text"><p>Liquor</p><span>The back bar, by category</span></div>
+  const intro = document.createElement("div");
+  intro.className = "wine-intro";
+  intro.innerHTML = `
+    <p class="wine-intro-title">The Bar Program</p>
+    <p class="wine-intro-text">House cocktails built around the same garden thinking as the kitchen, classic recipes done properly, and a back bar worth knowing by name.</p>
+  `;
+  app.appendChild(intro);
+
+  const searchRow = document.createElement("div");
+  searchRow.className = "search-filter-row";
+  const input = document.createElement("input");
+  input.className = "search-input";
+  input.placeholder = "Search the bar";
+  searchRow.appendChild(input);
+
+  let panelOpen = false;
+  let activeSort = "name";
+  const sortBtn = document.createElement("button");
+  sortBtn.className = "allergen-filter-btn";
+  sortBtn.setAttribute("aria-label", "Sort");
+  sortBtn.innerHTML = `<svg viewBox="0 0 16 16" fill="none"><path d="M2.5 4.5h11M4.5 8h7M6.5 11.5h3"/></svg>`;
+  searchRow.appendChild(sortBtn);
+  app.appendChild(searchRow);
+
+  const panel = document.createElement("div");
+  panel.className = "wine-sort-panel";
+  panel.style.display = "none";
+  panel.innerHTML = `
+    <p class="dish-info-heading" style="margin-top:0;">Sort by</p>
+    <div class="menu-section-pills wine-panel-pills" id="bar-sort-pills">
+      <button class="menu-section-pill active" data-sort="name">Name</button>
+      <button class="menu-section-pill" data-sort="price-asc">Price: Low to High</button>
+      <button class="menu-section-pill" data-sort="price-desc">Price: High to Low</button>
     </div>
   `;
-  options.querySelector('[data-go="house"]').onclick = () => go("cocktail-list");
-  options.querySelector('[data-go="classic"]').onclick = () => go("classic-cocktail-list");
-  options.querySelector('[data-go="mocktail"]').onclick = () => go("mocktail-list");
-  options.querySelector('[data-go="liquor"]').onclick = () => go("liquor-list");
-  app.appendChild(options);
+  app.appendChild(panel);
+  panel.querySelectorAll("[data-sort]").forEach(btn => {
+    btn.onclick = () => {
+      activeSort = btn.dataset.sort;
+      panel.querySelectorAll("[data-sort]").forEach(b => b.classList.toggle("active", b === btn));
+      draw(input.value);
+    };
+  });
+  sortBtn.onclick = () => {
+    panelOpen = !panelOpen;
+    panel.style.display = panelOpen ? "block" : "none";
+    sortBtn.classList.toggle("active", panelOpen);
+  };
+
+  let activeType = "All";
+  const pillsHolder = document.createElement("div");
+  app.appendChild(pillsHolder);
+
+  const listWrap = document.createElement("div");
+  listWrap.className = "menu-card-list";
+  app.appendChild(listWrap);
+
+  const allItems = [
+    ...COCKTAILS.map(c => ({ ...c, _type: "House" })),
+    ...CLASSIC_COCKTAILS.map(c => ({ ...c, _type: "Classic" })),
+    ...MOCKTAILS.map(c => ({ ...c, _type: "Mocktail" })),
+    ...LIQUOR.map(l => ({ ...l, _type: "Liquor" }))
+  ];
+
+  function drawPills() {
+    pillsHolder.innerHTML = "";
+    pillsHolder.appendChild(buildFilterPills(["All", "House", "Classic", "Mocktail", "Liquor"], activeType, (val) => {
+      activeType = val;
+      draw(input.value);
+    }));
+  }
+
+  function draw(filter) {
+    drawPills();
+    listWrap.innerHTML = "";
+    let filtered = allItems.filter(i => i.name.toLowerCase().includes(filter.toLowerCase()));
+    if (activeType !== "All") filtered = filtered.filter(i => i._type === activeType);
+    filtered = filtered.slice();
+    if (activeSort === "name") filtered.sort((a, b) => a.name.localeCompare(b.name));
+    else if (activeSort === "price-asc") filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
+    else if (activeSort === "price-desc") filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
+
+    if (!filtered.length) {
+      listWrap.innerHTML = `<p class="empty-note">Nothing on the bar matches that search.</p>`;
+      return;
+    }
+    filtered.forEach(i => listWrap.appendChild(buildBarListCard(i)));
+  }
+  draw("");
+  input.oninput = () => draw(input.value);
 }
 
 const LIQUOR_STRUCTURE_BANDS = {
