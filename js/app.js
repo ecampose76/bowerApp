@@ -1523,16 +1523,30 @@ function buildBarListCard(item) {
 function renderCocktailTypeChooser() {
   header("Bar");
 
+  const intro = document.createElement("div");
+  intro.className = "wine-intro";
+  intro.innerHTML = `
+    <p class="wine-intro-title">The Bar Program</p>
+    <p class="wine-intro-text">House cocktails, classic recipes done properly, and a back bar worth knowing by name.</p>
+  `;
+  app.appendChild(intro);
+
   const options = document.createElement("div");
   options.className = "wine-square-grid";
   options.innerHTML = `
     <div class="bar-choice-card" data-go="cocktails">
-      <p class="bar-choice-title">Cocktails</p>
+      <div class="bar-choice-text">
+        <p class="bar-choice-title">Cocktails</p>
+        <p class="bar-choice-desc">House builds, classic recipes, and a few non-alcoholic options.</p>
+      </div>
       <div class="bar-choice-image" style="background-image:url('images/bar-cocktails.jpg')"></div>
     </div>
     <div class="bar-choice-card reverse" data-go="liquor">
       <div class="bar-choice-image" style="background-image:url('images/bar-liquor.jpg')"></div>
-      <p class="bar-choice-title">Liquor</p>
+      <div class="bar-choice-text">
+        <p class="bar-choice-title">Liquor</p>
+        <p class="bar-choice-desc">Every bottle on the back bar, organized by spirit.</p>
+      </div>
     </div>
   `;
   options.querySelector('[data-go="cocktails"]').onclick = () => go("bar-cocktail-list");
