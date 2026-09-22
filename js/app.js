@@ -1524,10 +1524,10 @@ function renderCocktailTypeChooser() {
   options.innerHTML = `
     <div class="bar-choice-card" data-go="cocktails">
       <p class="bar-choice-title">Cocktails</p>
-      <div class="bar-choice-image"></div>
+      <div class="bar-choice-image" style="background-image:url('images/bar-cocktails.jpg')"></div>
     </div>
     <div class="bar-choice-card reverse" data-go="liquor">
-      <div class="bar-choice-image"></div>
+      <div class="bar-choice-image" style="background-image:url('images/bar-liquor.jpg')"></div>
       <p class="bar-choice-title">Liquor</p>
     </div>
   `;

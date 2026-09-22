@@ -1,4 +1,4 @@
-const CACHE_NAME = "bower-v4";
+const CACHE_NAME = "bower-v5";
 const ASSETS = [
   "./",
   "./index.html",
@@ -15,6 +15,8 @@ const ASSETS = [
   "./images/wine-circle.jpg",
   "./images/bar-circle.jpg",
   "./images/coffee-circle.jpg",
+  "./images/bar-cocktails.jpg",
+  "./images/bar-liquor.jpg",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-512-maskable.png",

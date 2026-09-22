@@ -778,7 +778,7 @@ button, input {
 }
 .bar-choice-image {
   width: 120px; flex-shrink: 0;
-  background: var(--washi-300);
+  background: var(--washi-300); background-size: cover; background-position: center;
 }
 
 .wotd-strip {
