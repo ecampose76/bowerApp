@@ -1495,8 +1495,12 @@ function buildBarListCard(item) {
   const isLiquor = typeof item.abv === "number";
   const varietyLabel = isLiquor ? (item.subcategory || item.category) : (item.spirit || "");
   const tag = isLiquor ? "Liquor" : item._type;
+  const icon = isLiquor
+    ? (SPIRIT_ICON_MAP[item.category] || "\u{1F943}")
+    : item._type === "Mocktail" ? "\u{1F34B}"
+    : (SPIRIT_ICON_MAP[item.spirit] || "\u{1F378}");
   card.innerHTML = `
-    <div class="menu-card-thumb style-${(item.category || item._type).toLowerCase().replace(/[^a-z]/g, "")}"></div>
+    <div class="menu-card-thumb style-${(item.category || item._type).toLowerCase().replace(/[^a-z]/g, "")}"><span>${icon}</span></div>
     <div class="menu-card-info">
       <div class="menu-card-top">
         <p class="menu-card-name">${item.name}</p>
