@@ -18,6 +18,15 @@ function goBack() {
   history.back();
 }
 
+// Cache-bust dish photos with the app build so a redeployed image
+// (same filename, new bytes) isn't served stale from GitHub Pages'
+// CDN or the browser's HTTP cache. Bump APP_VERSION when art changes.
+function assetUrl(path) {
+  if (!path) return path;
+  const v = typeof APP_VERSION !== "undefined" ? APP_VERSION : "1";
+  return path + (path.includes("?") ? "&" : "?") + "v=" + v;
+}
+
 window.addEventListener("popstate", (e) => {
   if (e.state) {
     current = e.state;
@@ -1213,7 +1222,7 @@ function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter, intr
       const card = document.createElement("div");
       card.className = "menu-card";
       const thumbHTML = d.image
-        ? `<div class="menu-card-thumb menu-card-thumb--lazy" data-src="${d.image}"></div>`
+        ? `<div class="menu-card-thumb menu-card-thumb--lazy" data-src="${assetUrl(d.image)}"></div>`
         : `<div class="menu-card-thumb"><span>${getSectionIcon(d.section)}</span></div>`;
       card.innerHTML = `
         ${thumbHTML}
@@ -2530,7 +2539,7 @@ function renderDishDetail(dishId) {
   const colorClass = ["ph-terracotta", "ph-moss", "ph-plum"][colorIdx];
   const hero = document.createElement("div");
   hero.className = "dd-hero " + (dish.image ? "" : colorClass);
-  if (dish.image) hero.style.backgroundImage = `url('${dish.image}')`;
+  if (dish.image) hero.style.backgroundImage = `url('${assetUrl(dish.image)}')`;
   hero.innerHTML = `
     <button class="back-btn dd-hero-back" aria-label="Back">&#8592;</button>
     <div class="dd-hero-overlay">

@@ -1,4 +1,4 @@
-const CACHE_NAME = "bower-v5";
+const CACHE_NAME = "bower-v6";
 const ASSETS = [
   "./",
   "./index.html",
