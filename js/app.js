@@ -1190,7 +1190,10 @@ function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter, intr
   listWrap.className = "menu-card-list";
   wrap.appendChild(listWrap);
 
+  let thumbObserver = null;
+
   function draw(filter) {
+    if (thumbObserver) thumbObserver.disconnect();
     listWrap.innerHTML = "";
     let filtered = DISHES.filter(d => d.name.toLowerCase().includes(filter.toLowerCase()));
     if (excludedAllergens.length) {
@@ -1210,7 +1213,7 @@ function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter, intr
       const card = document.createElement("div");
       card.className = "menu-card";
       const thumbHTML = d.image
-        ? `<div class="menu-card-thumb" style="background-image:url('${d.image}')"></div>`
+        ? `<div class="menu-card-thumb menu-card-thumb--lazy" data-src="${d.image}"></div>`
         : `<div class="menu-card-thumb"><span>${getSectionIcon(d.section)}</span></div>`;
       card.innerHTML = `
         ${thumbHTML}
@@ -1223,6 +1226,32 @@ function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter, intr
       card.onclick = () => go("dish-detail", { dishId: d.id });
       listWrap.appendChild(card);
     });
+
+    const lazyThumbs = listWrap.querySelectorAll(".menu-card-thumb--lazy");
+    if ("IntersectionObserver" in window) {
+      thumbObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target;
+          const src = el.dataset.src;
+          observer.unobserve(el);
+          if (!src) return;
+          const preload = new Image();
+          preload.onload = () => {
+            el.style.backgroundImage = `url('${src}')`;
+            el.classList.add("is-loaded");
+          };
+          preload.src = src;
+          delete el.dataset.src;
+        });
+      }, { rootMargin: "200px 0px" });
+      lazyThumbs.forEach(el => thumbObserver.observe(el));
+    } else {
+      lazyThumbs.forEach(el => {
+        el.style.backgroundImage = `url('${el.dataset.src}')`;
+        el.classList.add("is-loaded");
+      });
+    }
   }
   draw("");
   input.oninput = () => draw(input.value);
