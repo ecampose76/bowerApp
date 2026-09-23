@@ -15,7 +15,7 @@ const BRAND = {
 };
 
 // Bumped alongside sw.js's CACHE_NAME on every deploy.
-const APP_VERSION = "v2";
+const APP_VERSION = "v3";
 
 // Which home cards this deployment shows. (Currently informational —
 // app.js still renders all five directly, same as Prime131.)

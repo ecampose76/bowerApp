@@ -1,14 +1,14 @@
-const CACHE_NAME = "bower-v6";
+const CACHE_NAME = "bower-v7";
 const ASSETS = [
   "./",
   "./index.html",
-  "./css/style.css",
-  "./js/data.js",
-  "./js/config.js",
-  "./js/no-auth.js",
-  "./js/knockout-engine.js",
-  "./js/allergy-sort-engine.js",
-  "./js/app.js",
+  "./css/style.css?v=v3",
+  "./js/data.js?v=v3",
+  "./js/config.js?v=v3",
+  "./js/no-auth.js?v=v3",
+  "./js/knockout-engine.js?v=v3",
+  "./js/allergy-sort-engine.js?v=v3",
+  "./js/app.js?v=v3",
   "./manifest.json",
   "./images/food-hero.jpg",
   "./images/heirloom-tomato-tart.jpg",
