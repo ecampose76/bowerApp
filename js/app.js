@@ -739,6 +739,13 @@ function renderHome() {
   const bannerCard = document.createElement("div");
   bannerCard.className = "home-banner-card";
   bannerCard.innerHTML = `
+    <div class="home-banner-icon">
+      <svg viewBox="0 0 32 32">
+        <rect x="4" y="4" width="24" height="24" stroke-width="1.2"/>
+        <rect x="11" y="11" width="10" height="10" stroke-width="1.2"/>
+        <path d="M4 4 11 11M28 4 21 11M28 28 21 21M4 28 11 21" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </div>
     <div class="home-banner-text">
       <p class="home-banner-title">Test your palate.<br>Sharpen your craft.</p>
       <p class="home-banner-link">Game Room &rsaquo;</p>
