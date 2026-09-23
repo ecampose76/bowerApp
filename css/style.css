@@ -654,20 +654,20 @@ button, input {
 .menu-card-thumb {
   width: 104px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center; font-size: 34px;
-  background: var(--terracotta); background-size: cover; background-position: center;
+  background-color: var(--terracotta); background-size: cover; background-position: center;
 }
 .menu-card-thumb--lazy {
   background-color: var(--washi-200); background-image: none;
   opacity: 0; transition: opacity 200ms ease-out;
 }
 .menu-card-thumb--lazy.is-loaded { opacity: 1; }
-.menu-card:nth-of-type(3n+2) .menu-card-thumb { background: var(--moss); }
-.menu-card:nth-of-type(3n+3) .menu-card-thumb { background: var(--plum); }
-.menu-card-thumb.style-sparkling { background: #D9C9A0; }
-.menu-card-thumb.style-white { background: var(--washi-100); }
-.menu-card-thumb.style-rosé { background: var(--neon); }
-.menu-card-thumb.style-red { background: var(--bronze-600); }
-.menu-card-thumb.style-dessert { background: var(--wasabi-500); }
+.menu-card:nth-of-type(3n+2) .menu-card-thumb { background-color: var(--moss); }
+.menu-card:nth-of-type(3n+3) .menu-card-thumb { background-color: var(--plum); }
+.menu-card-thumb.style-sparkling { background-color: #D9C9A0; }
+.menu-card-thumb.style-white { background-color: var(--washi-100); }
+.menu-card-thumb.style-rosé { background-color: var(--neon); }
+.menu-card-thumb.style-red { background-color: var(--bronze-600); }
+.menu-card-thumb.style-dessert { background-color: var(--wasabi-500); }
 .menu-card-info { flex: 1; min-width: 0; padding: 10px 44px 10px 10px; display: flex; flex-direction: column; justify-content: space-between; }
 .menu-card-name {
   font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--shoyu-700);
