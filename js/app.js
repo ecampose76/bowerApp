@@ -871,7 +871,7 @@ function renderWineTypeChooser() {
   intro.className = "wine-intro";
   intro.innerHTML = `
     <p class="wine-intro-title">The Wine Program</p>
-    <p class="wine-intro-text">Old World structure meets a few New World standouts &mdash; a list built around honest character and classic pairings. Explore by the glass or the bottle.</p>
+    <p class="wine-intro-text">A list built on structure over spectacle &mdash; Old World restraint, with a few honest departures worth the detour. By the glass to open the table, by the bottle to stay.</p>
   `;
   app.appendChild(intro);
 
@@ -1086,9 +1086,19 @@ function renderPairWineFoodList() {
   ));
 }
 
-function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter) {
+function renderDishList(headerTitle, searchPlaceholder, showAllergenFilter, introTitle, introText) {
   header(headerTitle);
   const wrap = document.createElement("div");
+
+  if (introTitle && introText) {
+    const intro = document.createElement("div");
+    intro.className = "wine-intro";
+    intro.innerHTML = `
+      <p class="wine-intro-title">${introTitle}</p>
+      <p class="wine-intro-text">${introText}</p>
+    `;
+    app.appendChild(intro);
+  }
 
   const searchRow = document.createElement("div");
   searchRow.className = "search-filter-row";
@@ -1224,7 +1234,11 @@ function renderPairFoodWineList() {
 }
 
 function renderMenuList() {
-  renderDishList("Food menu", "Search the menu", true);
+  renderDishList(
+    "Food menu", "Search the menu", true,
+    "The Kitchen",
+    "Vegetables lead, not garnish. Seasonal produce from the garden carries the menu from open to dessert, with sustainable fish and Texas meats in support &mdash; nothing on the plate that isn't earning its place."
+  );
 }
 
 const COFFEE_STRUCTURE_META = {
@@ -1355,7 +1369,7 @@ function renderCoffeeTypeChooser() {
   intro.className = "wine-intro";
   intro.innerHTML = `
     <p class="wine-intro-title">The Coffee Program</p>
-    <p class="wine-intro-text">Château Belleville by the cup for a fast, familiar pour, or a rotating single-origin brewed tableside by siphon for something slower.</p>
+    <p class="wine-intro-text">Château Belleville by the cup, for a fast and familiar pour &mdash; or a rotating single-origin, brewed tableside by siphon, for a guest with time to spend.</p>
   `;
   app.appendChild(intro);
 
@@ -1532,7 +1546,7 @@ function renderCocktailTypeChooser() {
   intro.className = "wine-intro";
   intro.innerHTML = `
     <p class="wine-intro-title">The Bar Program</p>
-    <p class="wine-intro-text">House cocktails, classic recipes done properly, and a back bar worth knowing by name.</p>
+    <p class="wine-intro-text">Aperitif-leaning and garden-forward, in step with the kitchen. Classics done properly, a few originals worth learning by name, and a back bar built for precision over volume.</p>
   `;
   app.appendChild(intro);
 
