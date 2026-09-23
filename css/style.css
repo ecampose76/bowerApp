@@ -1388,9 +1388,3 @@ button, input {
 @media (prefers-reduced-motion: reduce) {
   .confirm-overlay, .confirm-card { animation: none; }
 }
-
-/* Single considered mark — one herb sprig, home screen only. The
-   Le Jardinier bay-leaf-on-a-clothespin idea: one object, not a pattern. */
-.home-sprig {
-  display: block; width: 34px; height: 17px; margin: 0 auto 4px;
-}

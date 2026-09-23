@@ -676,12 +676,6 @@ function renderHome() {
   topbar.innerHTML = `
     <span class="home-topbar-spacer" aria-hidden="true"></span>
     <div class="home-wordmark-block">
-      <svg class="home-sprig" viewBox="0 0 40 20" aria-hidden="true">
-        <path d="M2 18 Q14 4 38 2" fill="none" stroke="var(--herb)" stroke-width="1" stroke-linecap="round"/>
-        <path d="M10 13 Q13 8 18 9" fill="none" stroke="var(--herb)" stroke-width="1" stroke-linecap="round"/>
-        <path d="M18 9 Q21 5 26 5" fill="none" stroke="var(--herb)" stroke-width="1" stroke-linecap="round"/>
-        <path d="M26 5 Q29 2 34 2" fill="none" stroke="var(--herb)" stroke-width="1" stroke-linecap="round"/>
-      </svg>
       <p class="home-wordmark">${BRAND.fullName}</p>
     </div>
     <button type="button" class="home-account-btn" aria-label="Account">
