@@ -746,6 +746,7 @@ function renderHome() {
         <path d="M4 4 11 11M28 4 21 11M28 28 21 21M4 28 11 21" stroke-width="1.2" stroke-linecap="round"/>
       </svg>
     </div>
+    <div class="home-banner-divider"></div>
     <div class="home-banner-text">
       <p class="home-banner-title">Test your palate.<br>Sharpen your craft.</p>
       <p class="home-banner-link">Game Room &rsaquo;</p>
