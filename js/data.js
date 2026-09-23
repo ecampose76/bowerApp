@@ -1184,12 +1184,72 @@ const LIQUOR = [
 // Facts verified via search rather than assumed.
 
 const COFFEE_BY_THE_CUP = [
-  { id: "cf1", name: "Espresso", price: 6, description: "Château Belleville, Belleville Brûlerie's signature assemblage, pulled short and concentrated." },
-  { id: "cf2", name: "Macchiato", price: 7, description: "Espresso marked with a small dollop of steamed milk foam." },
-  { id: "cf3", name: "Cappuccino", price: 8, description: "Espresso with steamed milk and a deep layer of foam." },
-  { id: "cf4", name: "Café Crème", price: 9, description: "The classic French milk coffee — espresso lengthened with steamed milk, a size below a latte, the way it's served at Belleville's own Parisian café." },
-  { id: "cf5", name: "Filtre", price: 6, description: "Slow filter coffee, brewed from Belleville's Château Belleville assemblage." },
-  { id: "cf6", name: "Cold Brew", price: 9, description: "Steeped cold for 16 hours and served over ice." }
+  {
+    id: "cf1", name: "Espresso", price: 6,
+    description: "Ch\u00e2teau Belleville, Belleville Br\u00fblerie's signature assemblage, pulled short and concentrated.",
+    method: "Pulled Short",
+    flavorTags: ["Dark Chocolate", "Caramelized Sugar", "Toasted Hazelnut", "Dried Fig"],
+    structure: { fragrance: 5, acidity: 2, sweetness: 3, body: 5, aftertaste: 4 },
+    guestDescription: "The purest expression of the Ch\u00e2teau Belleville blend \u2014 high pressure and short contact time concentrate the syrupy body and caramelized sweetness, with the crema carrying most of the aroma.",
+    sellingPoints: ["The most concentrated way to taste the house blend", "Foundation for every milk drink on the list", "Ready in under 30 seconds"],
+    brewingNote: "Espresso uses high pressure to force water through finely-ground coffee in roughly 25\u201330 seconds, extracting a small, concentrated shot topped with crema \u2014 the opposite end of the spectrum from Filtre.",
+    funFact: "Crema, the reddish-brown foam on top of a well-pulled shot, is an emulsion of CO2 and oils released under pressure \u2014 it doesn't form in any other brewing method."
+  },
+  {
+    id: "cf2", name: "Macchiato", price: 7,
+    description: "Espresso marked with a small dollop of steamed milk foam.",
+    method: "Espresso, Marked",
+    flavorTags: ["Dark Chocolate", "Caramelized Sugar", "Steamed Milk", "Toasted Hazelnut"],
+    structure: { fragrance: 5, acidity: 2, sweetness: 3, body: 4, aftertaste: 4 },
+    guestDescription: "Espresso \u2018marked\u2019 (macchiato, in Italian) with just enough steamed milk foam to round the sharpest edges without diluting the shot underneath.",
+    sellingPoints: ["For guests who want espresso softened, not diluted", "A traditional Italian order, not a milk drink in disguise"],
+    brewingNote: "Just a spoonful of milk foam sits on top of a standard shot \u2014 no steamed milk is poured in, so the espresso itself stays fully concentrated.",
+    funFact: "In Italy, ordering a plain \u2018espresso\u2019 at the bar and a \u2018macchiato\u2019 are both completely normal any time of day \u2014 unlike cappuccino, which locals rarely order after 11am."
+  },
+  {
+    id: "cf3", name: "Cappuccino", price: 8,
+    description: "Espresso with steamed milk and a deep layer of foam.",
+    method: "Espresso + Steamed Milk",
+    flavorTags: ["Steamed Milk", "Caramelized Sugar", "Dark Chocolate", "Toasted Hazelnut"],
+    structure: { fragrance: 4, acidity: 1, sweetness: 4, body: 3, aftertaste: 3 },
+    guestDescription: "Espresso built with steamed milk and a thick cap of microfoam \u2014 traditionally one-third each of espresso, steamed milk, and foam.",
+    sellingPoints: ["The most familiar order on the list for most guests", "Milk's natural sugars round out the blend's sweetness"],
+    brewingNote: "Steaming aerates the milk, folding in air to build the foam while the underlying espresso stays close to full strength \u2014 the foam is what separates a cappuccino from a latte.",
+    funFact: "The name comes from the Capuchin friars, whose brown robes were said to resemble the color of espresso lightened with a little milk."
+  },
+  {
+    id: "cf4", name: "Caf\u00e9 Cr\u00e8me", price: 9,
+    description: "The classic French milk coffee \u2014 espresso lengthened with steamed milk, a size below a latte, the way it's served at Belleville's own Parisian caf\u00e9.",
+    method: "Espresso, Lengthened",
+    flavorTags: ["Steamed Milk", "Caramelized Sugar", "Toasted Hazelnut", "Dark Chocolate"],
+    structure: { fragrance: 3, acidity: 1, sweetness: 4, body: 3, aftertaste: 2 },
+    guestDescription: "The everyday order at any Parisian caf\u00e9 counter \u2014 espresso lengthened with steamed milk into something gentler and more sippable than a cappuccino, without going as large as a latte.",
+    sellingPoints: ["The most authentically French order on the menu", "A gentler, more session-able milk coffee than a latte"],
+    brewingNote: "More steamed milk goes in than a cappuccino, and it's poured rather than layered \u2014 the result is smoother and less foam-forward.",
+    funFact: "In France, this is simply called \u2018un cr\u00e8me\u2019 at the counter \u2014 no one says the full name."
+  },
+  {
+    id: "cf5", name: "Filtre", price: 6,
+    description: "Slow filter coffee, brewed from Belleville's Ch\u00e2teau Belleville assemblage.",
+    method: "Drip Filter",
+    flavorTags: ["Red Apple", "Brown Sugar", "Toasted Hazelnut", "Dried Fig"],
+    structure: { fragrance: 3, acidity: 4, sweetness: 3, body: 2, aftertaste: 3 },
+    guestDescription: "The same Ch\u00e2teau Belleville blend, brewed slowly through a paper filter instead of forced under pressure \u2014 the clearest, brightest way to taste it, with the fruit and acidity that espresso extraction tends to mute.",
+    sellingPoints: ["Shows the blend's brighter, fruitier side that espresso conceals", "The lightest-bodied option on the coffee list", "Brews in a single cup, tableside-appropriate pace"],
+    brewingNote: "Gravity, not pressure, pulls water through the grounds over several minutes \u2014 the slower, gentler extraction favors the more delicate acids and aromatics that pressure brewing tends to overshadow.",
+    funFact: "Filter and espresso are brewed from the exact same beans here \u2014 the dramatic flavor difference between the two comes entirely from the brewing method, not the coffee itself."
+  },
+  {
+    id: "cf6", name: "Cold Brew", price: 9,
+    description: "Steeped cold for 16 hours and served over ice.",
+    method: "Cold Steeped, 16 Hours",
+    flavorTags: ["Dark Chocolate", "Brown Sugar", "Dried Fig", "Toasted Hazelnut"],
+    structure: { fragrance: 2, acidity: 1, sweetness: 4, body: 4, aftertaste: 3 },
+    guestDescription: "Coarsely ground Ch\u00e2teau Belleville, steeped in cold water for sixteen hours rather than brewed hot \u2014 the slow cold extraction pulls sweetness and chocolate notes forward while leaving most of the acid behind.",
+    sellingPoints: ["Naturally low-acid, a good option for sensitive stomachs", "Smooth and sweet enough to work with no added sugar", "A cold, refreshing option on the list beyond iced espresso"],
+    brewingNote: "Cold water dissolves coffee's acidic compounds far less readily than hot water, so a long cold steep extracts sweetness and body while leaving most of the sharper acidity behind \u2014 the opposite trade-off from Filtre.",
+    funFact: "Cold brew concentrate can hold in the fridge for up to two weeks without turning bitter \u2014 hot-brewed coffee starts degrading within hours."
+  }
 ];
 
 const COFFEE_SIPHON = [
@@ -1197,25 +1257,25 @@ const COFFEE_SIPHON = [
     id: "cs1", name: "Miguel Moreno, El Filo", price: 28, region: "Santa Barbara, Honduras",
     producer: "Miguel Moreno & the Moreno family", process: "Washed, Pacas variety",
     flavorTags: ["Red Apple", "Brown Sugar", "Orange Blossom", "Toasted Almond"],
-    structure: { acidity: 4, sweetness: 4, body: 3, complexity: 5, finish: 4 },
+    structure: { fragrance: 4, acidity: 4, sweetness: 4, body: 3, aftertaste: 4 },
     guestDescription: "Brewed tableside in a siphon — an immersion method that pulls out a bolder, more textured cup than drip. From Miguel Moreno's family farm in Santa Barbara, Honduras, sourced directly by our roasting partner since 2013.",
-    sellingPoints: ["From one of the most decorated families in Honduran specialty coffee", "Direct-trade relationship dating back over a decade", "The siphon method genuinely changes the texture, not just the ceremony"],
-    originNote: "The Moreno family — patriarch Daniel and his five sons — farms several plots on the hillsides around El Cedral, grouped under the name \"El Filo\" (the ridge), a reference to their hillside position.",
-    brewingNote: "Siphon brewing uses vapor pressure and gravity rather than gravity alone — as the lower chamber heats, pressure pushes water up into the coffee, then as it cools, the brewed coffee is pulled back down through a filter, producing a fuller-bodied, cleaner cup than drip.",
+    sellingPoints: ["From one of the most decorated families in Honduran specialty coffee", "Direct-trade relationship dating back over a decade"],
+    originNote: "The Moreno family farms several plots on the hillsides around El Cedral, grouped under the name \"El Filo\" (the ridge) for their hillside position.",
+    brewingNote: "Vapor pressure pushes water up into the coffee as the lower chamber heats; as it cools, the brewed coffee is pulled back through a filter, for a fuller, cleaner cup than drip.",
     moment: "A table of two who want an actual moment at the end of the meal, not just a coffee order.",
     memory: "Brown sugar and orange blossom, brewed tableside from one of Honduras's most respected coffee families.",
     pairingDishIds: ["d-pear-frangipane", "d-fromage-plate"],
     arsenal: "Miguel Moreno placed 4th in Honduras's Cup of Excellence competition in 2007, scoring over 90 points — that's the level of farm this coffee comes from.",
-    funFact: "The Moreno family has farmed in El Cedral, Santa Barbara for generations, and several of Daniel Moreno's five sons — including Miguel and his brother Jesus — now farm individually recognized plots.",
-    funFact2: "Miguel Moreno's early interest in specialty coffee was sparked by picking up a Cup of Excellence award on a neighbor's behalf in 2005 — he was hooked before he'd even entered his own coffee in competition.",
-    shortStory: "Miguel Moreno returned to his family's village in Santa Barbara, Honduras in 2005 to help on the family farm. A neighbor's Cup of Excellence win that same year pulled him into specialty coffee, and after convincing his father Daniel to commit fully to quality production, the Moreno family built out the plots now known collectively as El Filo — a name that's become genuinely respected across Honduran specialty coffee.",
+    funFact: "The Moreno family has farmed in El Cedral, Santa Barbara for generations — several of Daniel Moreno's five sons, including Miguel and his brother Jesus, now farm individually recognized plots.",
+    funFact2: "Miguel's interest in specialty coffee was sparked in 2005, picking up a neighbor's Cup of Excellence award on their behalf before he'd entered a coffee of his own.",
+    shortStory: "Miguel Moreno returned to his family's village in Santa Barbara in 2005 to help on the farm, then convinced his father Daniel to commit fully to quality production — building out the plots now known collectively as El Filo, a name genuinely respected across Honduran specialty coffee.",
     recommendedFor: "Recommended for two guests"
   },
   {
     id: "cs2", name: "Neptaly Bautista", price: 26, region: "Honduras",
     producer: "Neptaly Bautista", process: "Natural",
     flavorTags: ["Tropical Fruit", "Honey", "Dried Mango", "Caramel"],
-    structure: { acidity: 3, sweetness: 5, body: 4, complexity: 4, finish: 4 },
+    structure: { fragrance: 5, acidity: 3, sweetness: 5, body: 4, aftertaste: 4 },
     guestDescription: "Tropical fruit and honey, brewed tableside via siphon. This was the very first coffee Belleville Brûlerie ever purchased — they've bought the grower's entire specialty harvest every year since.",
     sellingPoints: ["The first coffee our roasting partner ever bought, still purchased in full every year", "Naturally processed for a riper, more fruit-forward cup than a washed coffee", "A genuinely different profile from the Moreno lot — brighter and sweeter"],
     originNote: "Neptaly Bautista's coffee holds a specific place in Belleville Brûlerie's history as their first-ever purchase — the relationship has continued long enough that the roaster now buys the grower's full specialty-grade harvest each year rather than sourcing competitively.",

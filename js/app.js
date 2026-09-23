@@ -1220,58 +1220,75 @@ function renderMenuList() {
   renderDishList("Food menu", "Search the menu", true);
 }
 
-const COFFEE_STRUCTURE_BANDS = {
-  acidity: ["Very Low", "Low", "Medium", "Bright", "Vibrant"],
-  sweetness: ["Dry", "Subtle", "Medium", "Sweet", "Very Sweet"],
-  body: ["Light", "Light(+)", "Medium", "Full", "Very Full"],
-  complexity: ["Simple", "Straightforward", "Layered", "Complex", "Very Complex"],
-  finish: ["Short", "Medium(-)", "Medium", "Medium(+)", "Long"]
+const COFFEE_STRUCTURE_META = {
+  fragrance: { label: "Fragrance", low: "Faint", high: "Intense" },
+  acidity: { label: "Acidity", low: "Low", high: "Vibrant" },
+  sweetness: { label: "Sweetness", low: "Dry", high: "Very Sweet" },
+  body: { label: "Body", low: "Light", high: "Full" },
+  aftertaste: { label: "Aftertaste", low: "Short", high: "Long" }
 };
 
 function coffeeStructureBars(structure) {
-  const order = ["acidity", "sweetness", "body", "complexity", "finish"];
+  const order = ["fragrance", "acidity", "sweetness", "body", "aftertaste"];
   return order.map((key) => {
     const val = structure[key];
     if (!val) return "";
-    const band = COFFEE_STRUCTURE_BANDS[key][val - 1] || COFFEE_STRUCTURE_BANDS[key][0];
-    const width = val * 20;
-    return `<div class="bar-block"><div class="bar-track"><div class="bar-fill" style="width:${width}%;"></div></div><p>${band} ${key.charAt(0).toUpperCase() + key.slice(1)}</p></div>`;
+    const meta = COFFEE_STRUCTURE_META[key];
+    const score = val * 2;
+    const pct = val * 20;
+    return `
+      <div class="wstat-row">
+        <div class="wstat-top">
+          <span class="wstat-label">${meta.label}</span>
+          <span class="wstat-badge"><b>${score}</b>/10</span>
+        </div>
+        <div class="wstat-track"><div class="wstat-fill" style="width:${pct}%;"></div></div>
+        <div class="wstat-ends"><span>${meta.low}</span><span>${meta.high}</span></div>
+      </div>
+    `;
   }).join("");
 }
 
 function buildCoffeeFaceHTML(c, idx) {
-  const hasSellContent = c.guestDescription || (c.sellingPoints && c.sellingPoints.length) || c.arsenal;
-  const hasUnderstandContent = c.originNote || c.brewingNote || (c.flavorTags && c.flavorTags.length) || c.structure;
-  const hasKnowledgeContent = c.funFact || c.funFact2 || c.shortStory || c.moment || c.memory;
-
   if (idx === 0) {
-    if (!hasSellContent) return `<p class="flip-label">1/3</p><p class="face-title">Sell it</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
+    if (!c.guestDescription && !c.arsenal) return `<p class="flip-label">1/4</p><p class="face-title-sm">Sell It</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
     return `
-      <p class="flip-label">1/3</p>
-      <p class="face-title">Sell it</p>
-      ${c.guestDescription ? `<p class="face-h3"><span class="ic">&#128172;</span> Guest description</p><p class="face-desc">${c.guestDescription}</p>` : ""}
-      ${c.sellingPoints && c.sellingPoints.length ? `<p class="face-h3"><span class="ic">&#10003;</span> Selling points</p>${c.sellingPoints.map(p => `<div class="point-row"><span class="ic">&#10003;</span><span>${p}</span></div>`).join("")}` : ""}
-      ${c.arsenal ? `<div class="arsenal-block"><p class="arsenal-label">Table-side line</p><p class="arsenal-text">${c.arsenal}</p></div>` : ""}
+      <p class="flip-label">1/4</p>
+      <p class="face-title-sm">Sell It</p>
+      ${c.guestDescription ? `<p class="face-h3-sm">Guest description</p><p class="face-desc-sm">${c.guestDescription}</p>` : ""}
+      ${c.arsenal ? `<div class="arsenal-block-sm"><p class="arsenal-label">Table-side line</p><p class="arsenal-text-sm">${c.arsenal}</p></div>` : ""}
     `;
   } else if (idx === 1) {
-    if (!hasUnderstandContent) return `<p class="flip-label">2/3</p><p class="face-title">Understand it</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
+    if (!(c.flavorTags && c.flavorTags.length) && !c.structure) return `<p class="flip-label">2/4</p><p class="face-title-sm">Flavor &amp; Structure</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
     return `
-      <p class="flip-label">2/3</p>
-      <p class="face-title">Understand it</p>
-      ${c.originNote ? `<p class="face-h3"><span class="ic">&#127811;</span> Origin</p><p class="face-desc" style="margin-bottom:14px;">${c.originNote}</p>` : ""}
-      ${c.brewingNote ? `<p class="face-h3"><span class="ic">&#9749;</span> Brewing note</p><p class="face-desc" style="margin-bottom:14px;">${c.brewingNote}</p>` : ""}
-      ${c.flavorTags && c.flavorTags.length ? `<p class="face-h3"><span class="ic">&#127815;</span> Flavor profile</p><div class="flavor-grid">${c.flavorTags.map(t => `<div class="flavor-item"><div class="icon">${getFlavorIcon(t)}</div><p>${t}</p></div>`).join("")}</div>` : ""}
-      ${c.structure ? `<p class="face-h3"><span class="ic">&#128202;</span> Structure</p>${coffeeStructureBars(c.structure)}` : ""}
+      <p class="flip-label">2/4</p>
+      <p class="face-title-sm">Flavor &amp; Structure</p>
+      ${c.flavorTags && c.flavorTags.length ? `<div class="flavor-grid-sm">${c.flavorTags.map(t => `<div class="flavor-item-sm"><div class="icon">${getFlavorIcon(t)}</div><p>${t}</p></div>`).join("")}</div>` : ""}
+      ${c.structure ? coffeeStructureBars(c.structure) : ""}
+    `;
+  } else if (idx === 2) {
+    const pairedDishes = (c.pairingDishIds || []).map(id => findDish(id)).filter(Boolean);
+    const hasKnow = c.originNote || c.brewingNote || (c.sellingPoints && c.sellingPoints.length) || pairedDishes.length;
+    if (!hasKnow) return `<p class="flip-label">3/4</p><p class="face-title-sm">Good to Know</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
+    return `
+      <p class="flip-label">3/4</p>
+      <p class="face-title-sm" style="margin-bottom:5px;">Good to Know</p>
+      ${c.originNote ? `<p class="chefprep-text" style="line-height:1.3;"><b>Origin:</b> ${c.originNote}</p>` : ""}
+      ${c.brewingNote ? `<p class="chefprep-text" style="margin-top:3px; line-height:1.3;"><b>${c.originNote ? "Brewing note" : "Method"}:</b> ${c.brewingNote}</p>` : ""}
+      ${c.sellingPoints && c.sellingPoints.length ? c.sellingPoints.map(p => `<div class="point-row-sm" style="margin-bottom:3px; line-height:1.25;"><span>&mdash;</span><span>${p}</span></div>`).join("") : ""}
+      ${pairedDishes.length ? `
+        <p class="chefprep-text" style="margin-top:4px;"><b>Pairs with:</b></p>
+        <div class="pill-row" style="margin-top:4px;">${pairedDishes.map(d => `<span class="wine-card-source-tag" style="font-size:10px;">${d.name}</span>`).join(" ")}</div>
+      ` : ""}
     `;
   } else {
-    if (!hasKnowledgeContent) return `<p class="flip-label">3/3</p><p class="face-title">Barista knowledge</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
+    if (!c.shortStory && !c.funFact && !c.funFact2) return `<p class="flip-label">4/4</p><p class="face-title-sm">The Story</p><p class="empty-note" style="text-align:left;font-style:italic;">Details coming soon.</p>`;
     return `
-      <p class="flip-label">3/3</p>
-      <p class="face-title">Barista knowledge</p>
-      ${c.funFact || c.funFact2 ? `<p class="face-h3"><span class="ic">&#10024;</span> Fun facts</p>${c.funFact ? `<div class="fact-block"><p>${c.funFact}</p></div>` : ""}${c.funFact2 ? `<div class="fact-block"><p>${c.funFact2}</p></div>` : ""}` : ""}
-      ${c.shortStory ? `<p class="face-h3"><span class="ic">&#128214;</span> Short story</p><p class="face-desc" style="margin-bottom:14px;">${c.shortStory}</p>` : ""}
-      ${c.moment ? `<p class="face-h3"><span class="ic">&#128278;</span> The moment</p><p class="face-desc">${c.moment}</p>` : ""}
-      ${c.memory ? `<p class="face-h3"><span class="ic">&#128142;</span> The memory</p><p class="face-desc">${c.memory}</p>` : ""}
+      <p class="flip-label">4/4</p>
+      <p class="face-title-sm">The Story</p>
+      ${c.shortStory ? `<p class="face-desc-sm" style="line-height:1.3;">${c.shortStory}</p>` : ""}
+      ${c.funFact ? `<div class="fact-block-sm" style="padding-top:5px; margin-bottom:5px;"><p style="line-height:1.25;">${c.funFact}</p></div>` : ""}
+      ${c.funFact2 ? `<div class="fact-block-sm" style="padding-top:5px; margin-bottom:5px;"><p style="line-height:1.25;">${c.funFact2}</p></div>` : ""}
     `;
   }
 }
@@ -1288,8 +1305,8 @@ function renderCoffeeFlipCard(c) {
   flipcard.onclick = () => {
     flipcard.classList.add("flipping");
     setTimeout(() => {
-      faceIndex = (faceIndex + 1) % 3;
-      inner.className = "flip-inner face-" + faceIndex;
+      faceIndex = (faceIndex + 1) % 4;
+      inner.className = "flip-inner face-" + (faceIndex % 3);
       inner.innerHTML = buildCoffeeFaceHTML(c, faceIndex);
       flipcard.classList.remove("flipping");
     }, 200);
@@ -1298,13 +1315,13 @@ function renderCoffeeFlipCard(c) {
   return flipcard;
 }
 
-function findCoffee(id) { return COFFEE_SIPHON.find(c => c.id === id); }
+function findCoffee(id) { return COFFEE_SIPHON.find(c => c.id === id) || COFFEE_BY_THE_CUP.find(c => c.id === id); }
 
 function buildCoffeeListCard(item) {
   const card = document.createElement("div");
   card.className = "menu-card";
   const priceLabel = typeof item.price === "number" ? `$${item.price}` : "";
-  const varietyLabel = item._type === "Siphon" ? (item.region || "") : "";
+  const varietyLabel = item._type === "Siphon" ? (item.region || "") : (item.method || "");
   const icon = item._type === "Siphon" ? "\u{1F3FA}" : "\u2615";
   card.innerHTML = `
     <div class="menu-card-thumb"><span>${icon}</span></div>
@@ -1318,10 +1335,9 @@ function buildCoffeeListCard(item) {
         <span class="wine-card-source-tag">${item._type}</span>
       </div>
     </div>
-    ${item._type === "Siphon" ? `<button class="menu-card-btn" aria-label="View ${item.name}"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10"/></svg></button>` : ""}
+    <button class="menu-card-btn" aria-label="View ${item.name}"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10"/></svg></button>
   `;
-  if (item._type === "Siphon") card.onclick = () => go("coffee-siphon-card", { coffeeId: item.id });
-  else card.classList.add("static");
+  card.onclick = () => go("coffee-siphon-card", { coffeeId: item.id });
   return card;
 }
 
@@ -1452,38 +1468,20 @@ function renderCoffeeSiphonList() {
 
 function renderCoffeeSiphonDetail(coffeeId) {
   const coffee = findCoffee(coffeeId) || COFFEE_SIPHON[0];
-  header("Tableside Siphon");
+  const isSiphon = COFFEE_SIPHON.some(c => c.id === coffee.id);
+  header(isSiphon ? "Tableside Siphon" : "Coffee");
 
   const hero = document.createElement("div");
   hero.innerHTML = `
     <p class="hero-name">${coffee.name}</p>
-    <p class="hero-meta">${coffee.process}</p>
-    <p class="hero-meta">${coffee.region}</p>
-    <p class="hero-meta strong">Producer: ${coffee.producer}</p>
+    ${coffee.process ? `<p class="hero-meta">${coffee.process}</p>` : ""}
+    ${coffee.region ? `<p class="hero-meta">${coffee.region}</p>` : ""}
+    ${coffee.producer ? `<p class="hero-meta strong">Producer: ${coffee.producer}</p>` : ""}
+    ${coffee.method ? `<p class="hero-meta strong">${coffee.method}</p>` : ""}
     ${coffee.recommendedFor ? `<p class="hero-meta strong">${coffee.recommendedFor}</p>` : ""}
-    <p class="hero-price"><span class="hero-price-amount">$${coffee.price}</span><span class="hero-price-label">per service</span></p>
+    <p class="hero-price"><span class="hero-price-amount">$${coffee.price}</span><span class="hero-price-label">${isSiphon ? "per service" : "per cup"}</span></p>
   `;
   app.appendChild(hero);
-
-  if (coffee.pairingDishIds && coffee.pairingDishIds.length) {
-    const pairsLabel = document.createElement("p");
-    pairsLabel.className = "pairs-label";
-    pairsLabel.innerHTML = `<span class="ic">&#127860;</span>Pairs with`;
-    app.appendChild(pairsLabel);
-
-    const pillRow = document.createElement("div");
-    pillRow.className = "pill-row";
-    coffee.pairingDishIds.forEach(dishId => {
-      const dish = findDish(dishId);
-      if (!dish) return;
-      const pill = document.createElement("button");
-      pill.className = "pill";
-      pill.textContent = dish.name;
-      pill.onclick = () => go("dish-detail", { dishId: dish.id });
-      pillRow.appendChild(pill);
-    });
-    app.appendChild(pillRow);
-  }
 
   app.appendChild(renderCoffeeFlipCard(coffee));
 }
