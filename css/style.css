@@ -162,13 +162,23 @@ button, input {
 
 /* Home screen — modeled directly on the reference: clean top bar,
    a greeting, one large featured card, a row of circular category
-   items, and a banner card. Normal page scroll, not a fixed grid.
+   items, and a banner row. A fixed single screen, not a scrolling
+   page: #app.home-view is pinned to the viewport height below, and
+   the hero card is the one flexible block that absorbs whatever
+   space the rest of the screen doesn't use, so the layout always
+   fills exactly one screen with nothing to scroll.
    Type scale (6 sizes, deliberately): 30 display / 22 heading /
    14 body / 13 sub / 12 label / 10.5 eyebrow. Spacing on an 8px
    rhythm: 8 / 16 / 24 / 32. */
+#app.home-view {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
 .home-topbar {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 34px 20px 10px;
+  padding: 34px 20px 8px;
+  flex-shrink: 0;
 }
 .home-topbar-spacer { width: 36px; flex-shrink: 0; }
 .home-wordmark-block { flex: 1; text-align: center; }
@@ -188,7 +198,7 @@ button, input {
 .home-account-btn svg { width: 18px; height: 18px; stroke: var(--shoyu-700); stroke-width: 1.3; fill: none; }
 .home-account-btn:active { opacity: 0.6; }
 
-.home-greeting { padding: 8px 20px 16px; }
+.home-greeting { padding: 8px 20px 12px; flex-shrink: 0; }
 .home-greeting-main {
   font-family: var(--font-display); font-size: 19px; font-weight: 700; color: var(--shoyu-700);
   margin: 0; letter-spacing: 0.7px;
@@ -201,7 +211,8 @@ button, input {
 .home-hero-card {
   background: var(--terracotta) url('../images/food-hero.jpg') 70% center/cover no-repeat;
   color: var(--cream-on-charcoal);
-  margin: 0 20px 32px; padding: 24px; min-height: 190px;
+  margin: 0 20px 20px; padding: 24px; min-height: 150px;
+  flex: 1 1 auto;
   position: relative; overflow: hidden;
   border: 1px solid var(--hairline);
 }
@@ -231,14 +242,16 @@ button, input {
 
 .home-collection-label {
   display: flex; align-items: baseline; justify-content: space-between;
-  padding: 0 20px; margin-bottom: 16px;
+  padding: 0 20px; margin-bottom: 10px;
+  flex-shrink: 0;
 }
 .home-collection-label p {
   font-family: var(--font-display); font-size: 10px; font-weight: 700; color: var(--shoyu-700);
   text-transform: uppercase; letter-spacing: 0.8px; margin: 0;
 }
 .home-collection-row {
-  display: flex; gap: 14px; padding: 0 20px; margin-bottom: 32px;
+  display: flex; gap: 14px; padding: 0 20px; margin-bottom: 18px;
+  flex-shrink: 0;
 }
 .home-circle-item {
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer;
@@ -256,26 +269,43 @@ button, input {
   margin: 0; letter-spacing: 0.6px; text-transform: uppercase;
 }
 
+/* Game Room and Learning share one row instead of stacking, so adding
+   Learning cost no extra height on the home screen — each card gets
+   half the row and is otherwise the exact same card. */
+.home-banner-row {
+  display: flex; gap: 12px; padding: 0 20px 12px;
+  flex-shrink: 0;
+}
 .home-banner-card {
-  background: var(--washi-200); margin: 0 20px;
-  padding: 20px; display: flex; align-items: center; gap: 20px;
+  background: var(--washi-200); flex: 1; min-width: 0;
+  padding: 18px; display: flex; align-items: center; gap: 14px;
   border: 1px solid var(--hairline);
 }
-.home-banner-icon { width: 32px; height: 32px; flex-shrink: 0; color: var(--herb); }
+.home-banner-icon { width: 28px; height: 28px; flex-shrink: 0; color: var(--herb); }
 .home-banner-icon svg { width: 100%; height: 100%; stroke: currentColor; fill: none; }
 .home-banner-divider {
   align-self: stretch; width: 1px; flex-shrink: 0;
   background: var(--hairline);
   box-shadow: 1px 0 0 rgba(255,255,255,0.5);
 }
-.home-banner-text { flex: 1; }
+.home-banner-text { flex: 1; min-width: 0; }
 .home-banner-title {
-  font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--shoyu-700);
-  margin: 0 0 6px; line-height: 1.3; letter-spacing: 0.7px;
+  font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--shoyu-700);
+  margin: 0 0 6px; line-height: 1.3; letter-spacing: 0.5px;
 }
 .home-banner-link {
   font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--herb);
   margin: 0;
+}
+/* Narrow phones (iPhone SE-width and similar): the two-up banner row and
+   the hero's 56%-capped text column both need the extra width more than
+   they need the icon/divider or the cap, so trim those first rather than
+   let anything wrap into an extra line and push past the fixed viewport. */
+@media (max-width: 360px) {
+  .home-banner-card { padding: 14px; gap: 0; }
+  .home-banner-icon, .home-banner-divider { display: none; }
+  .home-banner-title { font-size: 12px; }
+  .home-hero-eyebrow, .home-hero-sub { max-width: 100%; }
 }
 .home-options { display: flex; flex-direction: column; gap: 10px; padding: 12px; }
 .home-option {

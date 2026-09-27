@@ -745,6 +745,9 @@ function renderHome() {
   collectionRow.querySelector('[data-go="coffee"]').onclick = () => go("coffee-type");
   app.appendChild(collectionRow);
 
+  const bannerRow = document.createElement("div");
+  bannerRow.className = "home-banner-row";
+
   const bannerCard = document.createElement("div");
   bannerCard.className = "home-banner-card";
   bannerCard.innerHTML = `
@@ -762,20 +765,33 @@ function renderHome() {
     </div>
   `;
   bannerCard.onclick = () => go("game-room");
-  app.appendChild(bannerCard);
+  bannerRow.appendChild(bannerCard);
 
+  // Learning shares this row with Game Room (same card, half the width)
+  // rather than stacking a third block below it, so the two together cost
+  // no extra vertical space on the home screen. Falls back to a lone,
+  // full-width Game Room card if no modules exist yet to link to.
   if (LEARNING_MODULES.length) {
     const learningCard = document.createElement("div");
-    learningCard.className = "learning-card";
+    learningCard.className = "home-banner-card";
     learningCard.innerHTML = `
-      <div class="list-row-text">
-        <p>Learning</p>
-        <span>${LEARNING_MODULES.length} module${LEARNING_MODULES.length === 1 ? "" : "s"} · Modules &amp; courses &rsaquo;</span>
+      <div class="home-banner-icon">
+        <svg viewBox="0 0 32 32">
+          <path d="M4 7c4-2.5 8-2.5 12 1v18c-4-3.5-8-3.5-12-1Z" stroke-width="1.2" stroke-linejoin="round"/>
+          <path d="M28 7c-4-2.5-8-2.5-12 1v18c4-3.5 8-3.5 12-1Z" stroke-width="1.2" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="home-banner-divider"></div>
+      <div class="home-banner-text">
+        <p class="home-banner-title">Know the menu.<br>Own the table.</p>
+        <p class="home-banner-link">Learning &rsaquo;</p>
       </div>
     `;
     learningCard.onclick = () => go("learning-hub");
-    app.appendChild(learningCard);
+    bannerRow.appendChild(learningCard);
   }
+
+  app.appendChild(bannerRow);
 }
 
 /* Shared card builder — full-height colored thumb, name pinned to top,
