@@ -4,6 +4,24 @@ const app = document.getElementById("app");
 document.documentElement.setAttribute("data-build", typeof APP_VERSION !== "undefined" ? APP_VERSION : "unknown");
 let current = { view: "home", params: {} };
 
+/* Mobile browsers size 100vh/100dvh to the layout viewport, which on many
+   Android browsers (and older WebViews with partial/no dvh support) is
+   taller than what's actually visible once the on-screen nav bar and any
+   browser chrome are accounted for -- the home screen's fixed, no-scroll
+   height (#app.home-view in style.css) needs the real visible height, not
+   that theoretical one, or its bottom row ends up hidden behind the chrome.
+   window.innerHeight (or visualViewport.height where available) tracks the
+   actual visible area live, so we mirror it into a CSS var and let the
+   home view's height read that in preference to the vh/dvh fallback. */
+function setAppVh() {
+  const h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+  document.documentElement.style.setProperty("--app-vh", h + "px");
+}
+setAppVh();
+window.addEventListener("resize", setAppVh);
+window.addEventListener("orientationchange", setAppVh);
+if (window.visualViewport) window.visualViewport.addEventListener("resize", setAppVh);
+
 function go(view, params = {}, pushHistory = true) {
   current = { view, params };
   if (pushHistory) {

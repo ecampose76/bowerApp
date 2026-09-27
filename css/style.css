@@ -163,16 +163,25 @@ button, input {
 /* Home screen — modeled directly on the reference: clean top bar,
    a greeting, one large featured card, a row of circular category
    items, and a banner row. A fixed single screen, not a scrolling
-   page: #app.home-view is pinned to the viewport height below, and
-   the hero card is the one flexible block that absorbs whatever
-   space the rest of the screen doesn't use, so the layout always
-   fills exactly one screen with nothing to scroll.
+   page: #app.home-view is pinned to the real visible height below
+   (--app-vh, kept live by app.js off window.innerHeight -- plain vh/dvh
+   alone size to the browser's layout viewport, which on-screen nav bars
+   and browser chrome can make taller than what's actually visible), and
+   the hero card is the one flexible block that absorbs whatever space
+   the rest of the screen doesn't use, so the layout always fills
+   exactly one screen with nothing to scroll.
    Type scale (6 sizes, deliberately): 30 display / 22 heading /
    14 body / 13 sub / 12 label / 10.5 eyebrow. Spacing on an 8px
    rhythm: 8 / 16 / 24 / 32. */
 #app.home-view {
+  /* #app's base min-height: 100vh is a floor that would otherwise force
+     this back open to the browser's (unreliable) layout-viewport height
+     even after height: below sets it correctly -- min-height always wins
+     over a shorter explicit height, so it has to be cleared here too. */
+  min-height: 0;
   height: 100vh;
   height: 100dvh;
+  height: var(--app-vh, 100dvh);
   overflow: hidden;
 }
 .home-topbar {
