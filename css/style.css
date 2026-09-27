@@ -221,6 +221,10 @@ button, input {
   background: var(--terracotta) url('../images/food-hero.jpg') 70% center/cover no-repeat;
   color: var(--cream-on-charcoal);
   margin: 0 20px 16px; padding: 18px; min-height: 110px;
+  /* Shares the screen's leftover height with .home-collection-row below
+     (roughly 46/54, that ratio set on the row) instead of keeping all
+     of it, so the hero reads about a third smaller and the bar bubbles
+     grow into the rest. */
   flex: 1 1 auto;
   position: relative; overflow: hidden;
   border: 1px solid var(--hairline);
@@ -259,14 +263,15 @@ button, input {
   text-transform: uppercase; letter-spacing: 0.8px; margin: 0;
 }
 .home-collection-row {
-  display: flex; gap: 14px; padding: 0 20px; margin-bottom: 18px;
-  flex-shrink: 0;
+  display: flex; gap: 18px; padding: 0 20px; margin-bottom: 18px;
+  flex: 1.15 1 auto; align-items: center;
+  min-height: 84px;
 }
 .home-circle-item {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer;
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
 }
 .home-circle {
-  width: 100%; aspect-ratio: 1; max-width: 84px;
+  width: 100%; aspect-ratio: 1; max-width: 112px;
   background: #F0E6D4 center/cover no-repeat;
   border: 1px solid var(--hairline);
 }
@@ -274,7 +279,7 @@ button, input {
 .home-circle-bar { background-image: url('../images/bar-circle.jpg'); }
 .home-circle-coffee { background-image: url('../images/coffee-circle.jpg'); }
 .home-circle-item p {
-  font-family: var(--font-display); font-size: 10px; font-weight: 700; color: var(--shoyu-700);
+  font-family: var(--font-display); font-size: 11px; font-weight: 700; color: var(--shoyu-700);
   margin: 0; letter-spacing: 0.6px; text-transform: uppercase;
 }
 
@@ -315,7 +320,7 @@ button, input {
   .home-hero-card { min-height: 90px; padding: 14px; }
   .home-collection-label { margin-bottom: 8px; }
   .home-collection-row { margin-bottom: 12px; }
-  .home-circle { max-width: 68px; }
+  .home-circle { max-width: 90px; }
   .home-banner-row { gap: 8px; padding-bottom: 10px; }
   .home-banner-card { padding: 12px 14px; gap: 12px; }
   .home-banner-icon { width: 24px; height: 24px; }
