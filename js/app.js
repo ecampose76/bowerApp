@@ -736,11 +736,6 @@ function renderHome() {
   heroCard.onclick = () => go("menu-list");
   app.appendChild(heroCard);
 
-  const collectionLabel = document.createElement("div");
-  collectionLabel.className = "home-collection-label";
-  collectionLabel.innerHTML = `<p>The Bar</p>`;
-  app.appendChild(collectionLabel);
-
   const collectionRow = document.createElement("div");
   collectionRow.className = "home-collection-row";
   collectionRow.innerHTML = `

@@ -249,19 +249,8 @@ button, input {
   padding: 9px 20px; position: relative; z-index: 1;
 }
 
-.home-collection-label {
-  display: flex; align-items: baseline; justify-content: space-between;
-  /* Left edge matches the hero's internal text inset (20px card margin +
-     18px hero padding = 38px), not the hero card's own outer edge. */
-  padding: 0 20px 0 38px; margin-bottom: 6px;
-  flex-shrink: 0;
-}
-.home-collection-label p {
-  font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--shoyu-700);
-  text-transform: uppercase; letter-spacing: 0.8px; margin: 0;
-}
 .home-collection-row {
-  display: flex; gap: 18px; padding: 0 20px; margin-bottom: 10px;
+  display: flex; gap: 18px; padding: 0 20px; margin-bottom: 4px;
   flex: 1.15 1 auto; align-items: center;
   min-height: 84px;
 }
@@ -284,20 +273,19 @@ button, input {
 /* Game Room and Learning, stacked -- each the full-width card, a
    tighter gap between them than the page's usual 20px section gap
    since they read as one pair rather than two separate sections.
-   The bottom padding is larger than the other gutters on this screen
-   on purpose: it's carrying the space reclaimed from tightening the
-   two gutters above (label-to-row, row-to-banner) so the lowest card
-   on screen isn't sitting flush against the bottom edge. */
+   Dropping "The Bar" label and tightening the row-to-banner gutter
+   freed up height that now goes into taller cards (more vertical
+   padding) rather than sitting as empty space above them. */
 .home-banner-row {
   display: flex; flex-direction: column; gap: 10px; padding: 0 20px 26px;
   flex-shrink: 0;
 }
 .home-banner-card {
   background: var(--washi-200);
-  padding: 16px 18px; display: flex; align-items: center; gap: 16px;
+  padding: 24px 18px; display: flex; align-items: center; gap: 16px;
   border: 1px solid var(--hairline);
 }
-.home-banner-icon { width: 28px; height: 28px; flex-shrink: 0; color: var(--herb); }
+.home-banner-icon { width: 32px; height: 32px; flex-shrink: 0; color: var(--herb); }
 .home-banner-icon svg { width: 100%; height: 100%; stroke: currentColor; fill: none; }
 .home-banner-divider {
   align-self: stretch; width: 1px; flex-shrink: 0;
@@ -320,12 +308,11 @@ button, input {
 @media (max-width: 360px) {
   .home-hero-eyebrow { max-width: 100%; }
   .home-hero-card { min-height: 80px; padding: 14px; }
-  .home-collection-label { padding-left: 34px; margin-bottom: 5px; }
-  .home-collection-row { margin-bottom: 8px; }
+  .home-collection-row { margin-bottom: 4px; }
   .home-circle { max-width: 90px; }
   .home-banner-row { gap: 8px; padding-bottom: 18px; }
-  .home-banner-card { padding: 12px 14px; gap: 12px; }
-  .home-banner-icon { width: 24px; height: 24px; }
+  .home-banner-card { padding: 18px 14px; gap: 12px; }
+  .home-banner-icon { width: 26px; height: 26px; }
   .home-banner-title { font-size: 12px; margin: 0 0 4px; }
 }
 .home-options { display: flex; flex-direction: column; gap: 10px; padding: 12px; }
