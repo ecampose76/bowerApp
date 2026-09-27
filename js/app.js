@@ -731,7 +731,6 @@ function renderHome() {
     <div class="home-hero-scrim"></div>
     <p class="home-hero-eyebrow">The Food</p>
     <p class="home-hero-title">Menu</p>
-    <p class="home-hero-sub">${DISHES.length} dishes across ${SECTION_ORDER.length} sections</p>
     <span class="home-hero-btn">View Menu</span>
   `;
   heroCard.onclick = () => go("menu-list");

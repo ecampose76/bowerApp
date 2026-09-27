@@ -220,12 +220,13 @@ button, input {
 .home-hero-card {
   background: var(--terracotta) url('../images/food-hero.jpg') 70% center/cover no-repeat;
   color: var(--cream-on-charcoal);
-  margin: 0 20px 16px; padding: 18px; min-height: 110px;
-  /* Shares the screen's leftover height with .home-collection-row below
-     (roughly 46/54, that ratio set on the row) instead of keeping all
-     of it, so the hero reads about a third smaller and the bar bubbles
-     grow into the rest. */
-  flex: 1 1 auto;
+  margin: 0 20px 16px; padding: 18px; min-height: 96px;
+  /* Shares the screen's leftover height with .home-collection-row below.
+     The row now carries a larger share (flex 1.15 vs the hero's 0.85)
+     so the hero reads about 10% smaller still and the bar bubbles grow
+     to fill the difference. */
+  flex: 0.85 1 auto;
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
   position: relative; overflow: hidden;
   border: 1px solid var(--hairline);
 }
@@ -234,18 +235,13 @@ button, input {
   background: linear-gradient(90deg, rgba(35,46,31,0.78) 0%, rgba(35,46,31,0.62) 32%, rgba(35,46,31,0.1) 62%, rgba(35,46,31,0) 78%);
 }
 .home-hero-eyebrow {
-  font-family: var(--font-display); font-size: 10px; font-weight: 700; color: var(--cream-on-charcoal-soft);
-  text-transform: uppercase; letter-spacing: 0.8px; margin: 0 0 4px; position: relative; z-index: 1;
-  max-width: 56%;
+  font-family: var(--font-display); font-size: 11px; font-weight: 700; color: var(--cream-on-charcoal-soft);
+  text-transform: uppercase; letter-spacing: 0.8px; margin: 0 0 5px; position: relative; z-index: 1;
+  max-width: 60%;
 }
 .home-hero-title {
-  font-family: var(--font-display); font-size: 24px; font-weight: 800; margin: 0 0 4px; color: var(--cream-on-charcoal);
+  font-family: var(--font-display); font-size: 27px; font-weight: 800; margin: 0 0 14px; color: var(--cream-on-charcoal);
   letter-spacing: 0.8px; line-height: 1.05; position: relative; z-index: 1;
-}
-.home-hero-sub {
-  font-family: var(--font-body); font-size: 13px; color: var(--cream-on-charcoal-soft);
-  margin: 0 0 14px; position: relative; z-index: 1;
-  max-width: 56%;
 }
 .home-hero-btn {
   display: inline-block; background: var(--terracotta); color: var(--terracotta-ink);
@@ -255,15 +251,17 @@ button, input {
 
 .home-collection-label {
   display: flex; align-items: baseline; justify-content: space-between;
-  padding: 0 20px; margin-bottom: 10px;
+  /* Left edge matches the hero's internal text inset (20px card margin +
+     18px hero padding = 38px), not the hero card's own outer edge. */
+  padding: 0 20px 0 38px; margin-bottom: 6px;
   flex-shrink: 0;
 }
 .home-collection-label p {
-  font-family: var(--font-display); font-size: 10px; font-weight: 700; color: var(--shoyu-700);
+  font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--shoyu-700);
   text-transform: uppercase; letter-spacing: 0.8px; margin: 0;
 }
 .home-collection-row {
-  display: flex; gap: 18px; padding: 0 20px; margin-bottom: 18px;
+  display: flex; gap: 18px; padding: 0 20px; margin-bottom: 10px;
   flex: 1.15 1 auto; align-items: center;
   min-height: 84px;
 }
@@ -285,9 +283,13 @@ button, input {
 
 /* Game Room and Learning, stacked -- each the full-width card, a
    tighter gap between them than the page's usual 20px section gap
-   since they read as one pair rather than two separate sections. */
+   since they read as one pair rather than two separate sections.
+   The bottom padding is larger than the other gutters on this screen
+   on purpose: it's carrying the space reclaimed from tightening the
+   two gutters above (label-to-row, row-to-banner) so the lowest card
+   on screen isn't sitting flush against the bottom edge. */
 .home-banner-row {
-  display: flex; flex-direction: column; gap: 10px; padding: 0 20px 14px;
+  display: flex; flex-direction: column; gap: 10px; padding: 0 20px 26px;
   flex-shrink: 0;
 }
 .home-banner-card {
@@ -316,12 +318,12 @@ button, input {
    loosen that first rather than let it wrap into an extra line and
    push past the fixed viewport. */
 @media (max-width: 360px) {
-  .home-hero-eyebrow, .home-hero-sub { max-width: 100%; }
-  .home-hero-card { min-height: 90px; padding: 14px; }
-  .home-collection-label { margin-bottom: 8px; }
-  .home-collection-row { margin-bottom: 12px; }
+  .home-hero-eyebrow { max-width: 100%; }
+  .home-hero-card { min-height: 80px; padding: 14px; }
+  .home-collection-label { padding-left: 34px; margin-bottom: 5px; }
+  .home-collection-row { margin-bottom: 8px; }
   .home-circle { max-width: 90px; }
-  .home-banner-row { gap: 8px; padding-bottom: 10px; }
+  .home-banner-row { gap: 8px; padding-bottom: 18px; }
   .home-banner-card { padding: 12px 14px; gap: 12px; }
   .home-banner-icon { width: 24px; height: 24px; }
   .home-banner-title { font-size: 12px; margin: 0 0 4px; }
