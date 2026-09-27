@@ -763,6 +763,19 @@ function renderHome() {
   `;
   bannerCard.onclick = () => go("game-room");
   app.appendChild(bannerCard);
+
+  if (LEARNING_MODULES.length) {
+    const learningCard = document.createElement("div");
+    learningCard.className = "learning-card";
+    learningCard.innerHTML = `
+      <div class="list-row-text">
+        <p>Learning</p>
+        <span>${LEARNING_MODULES.length} module${LEARNING_MODULES.length === 1 ? "" : "s"} · Modules &amp; courses &rsaquo;</span>
+      </div>
+    `;
+    learningCard.onclick = () => go("learning-hub");
+    app.appendChild(learningCard);
+  }
 }
 
 /* Shared card builder — full-height colored thumb, name pinned to top,
