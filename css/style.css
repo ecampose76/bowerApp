@@ -277,7 +277,7 @@ button, input {
    freed up height that now goes into taller cards (more vertical
    padding) rather than sitting as empty space above them. */
 .home-banner-row {
-  display: flex; flex-direction: column; gap: 10px; padding: 0 20px 26px;
+  display: flex; flex-direction: column; gap: 10px; padding: 0 20px 40px;
   flex-shrink: 0;
 }
 .home-banner-card {
@@ -310,7 +310,7 @@ button, input {
   .home-hero-card { min-height: 80px; padding: 14px; }
   .home-collection-row { margin-bottom: 4px; }
   .home-circle { max-width: 90px; }
-  .home-banner-row { gap: 8px; padding-bottom: 18px; }
+  .home-banner-row { gap: 8px; padding-bottom: 28px; }
   .home-banner-card { padding: 18px 14px; gap: 12px; }
   .home-banner-icon { width: 26px; height: 26px; }
   .home-banner-title { font-size: 12px; margin: 0 0 4px; }
